@@ -198,6 +198,21 @@
       </div>
     </section>
     <hr/>
+    <section class="resume-section languages" contenteditable="true">
+      <h2>Languages</h2>
+      <ul>
+        <li>
+          <b>English</b>
+        </li>
+        <li>
+          <b>German</b>
+        </li>
+        <li>
+          <b>Persian</b>
+        </li>
+      </ul>
+    </section>
+    <hr/>
     <br/>
     <div class="signature">
       <div contenteditable="true">
