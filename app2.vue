@@ -14,7 +14,7 @@
       </aside>
     </header>
     <hr/>
-    <section class="resume-section">
+    <section class="resume-section hide">
       <h2>Research/Academic Interests</h2>
       <div>
         <ul>
@@ -52,85 +52,14 @@
       </div>
       <br/>
     </section>
-    <br/>
-    <hr/>
     <section class="resume-section">
-      <h2>Education</h2>
-      <div>
-        <div class="title-row">
-          <div>
-            <div>
-              <span class="bold">Shahrood University of Technology</span>, Shahrood, Iran
-            </div>          
-            <div>B.Sc. Software Engineering</div>
-          </div>
-          <div class="bold">2008 - 2013</div>
-        </div>
-        <ul>
-          <li>
-            <strong>Key Coursework</strong>
-            <ul>
-              <li>Algorithms & Data Structures</li>
-              <li>Database Systems & SQL</li>
-              <li>Web Programming & Software Architecture</li>
-              <li>Operating Systems Fundamentals</li>
-              <li>Operating Systems Fundamentals</li>
-              <li>Computer Networks</li>
-            </ul>
-          </li>
-          <br/>
-          <li>
-            <strong>Final Year Project: Introduction to Quantum Computing</strong>
-            <ul>
-              <li><strong>Objective:</strong> Explored the fundamental principles of quantum mechanics and their application to computational models.</li>
-              <li><strong>Key Topics:</strong> Covered qubits, superposition, entanglement, and quantum logic gates, focusing on how these concepts differ from classical computing paradigms.</li>
-              <li><strong>Outcome: Designed a Quantum Multiplexer</strong> that leverages quantum-state encoding to efficiently route data, showcasing the potential of quantum computing in advanced information processing.</li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-      <br/>
-      <div>
-        <div class="title-row">
-          <div>
-            <div>
-              <span class="bold">Rah-e Danesh Pre-University Center</span>, Semnan, Iran
-            </div>
-            <div>Pre-University Diploma in Mathematics & Physics</div>
-          </div>
-          <div class="bold">2007 – 2008</div>
-        </div>
-        <ul>
-          <li>
-            <strong>Overall GPA:</strong> 18.70/20
-          </li>
-          <li>
-            Emphasis on advanced mathematics, discrete structures, and fundamental physics—providing a robust foundation for computer and data-driven disciplines.
-          </li>
-        </ul>
-      </div>
-      <br/>
-      <div>
-        <div class="title-row">
-          <div>
-            <div>
-              <span class="bold">Rah-e Danesh Boys High School</span>, Semnan, Iran
-            </div>
-            <div>Diploma in Mathematics & Physics</div>
-          </div>
-          <div class="bold">2004 – 2007</div>
-        </div>
-        <ul>
-          <li>
-            <strong>Overall GPA:</strong> 18.82/20
-          </li>
-          <li>
-            Strong background in calculus, geometry, and physical sciences, supporting further studies in computer engineering and data analytics.
-          </li>
-        </ul>
-      </div>
+      <h2>Summary</h2>
+      <p>
+         Experienced <b>Front-end Engineer</b> with a strong background in <b>React, TypeScript, Next.js, and UI/UX collaboration</b>, specializing in building high-performance, user-friendly web applications.
+         Proven track record of enhancing <b>user engagement, optimizing web performance, and implementing state management solutions</b> across e-commerce, logistics, and digital platforms. 
+         Passionate about crafting seamless digital experiences, improving accessibility, and driving innovation through modern front-end technologies.
+      </p>
     </section>
-    <br/>
     <hr/>
     <section class="resume-section">
       <h2>Experience</h2>
@@ -285,15 +214,15 @@
     <section class="resume-section skills">
       <h2>Skills</h2>
       <div>
-        <span>Data Structures & Algorithms</span>
-        <span>SQL & NoSQL Databases</span>
-        <span>Data Visualization (D3.js, Chart.js, Tableau)</span>
-        <span>Linux, Bash Scripting</span>
-        <span>Design Patterns & Best Practices</span>
-        <span>Adobe Photoshop, Illustrator, Figma</span>
-        <span>Typography & Layout Design</span>
-        <span>Writing clear documentation (Notion, Confluence)</span>
-        <span>Leadership & Team Collaboration</span>
+        <span class="hide">Data Structures & Algorithms</span>
+        <span class="hide">SQL & NoSQL Databases</span>
+        <span class="hide">Data Visualization (D3.js, Chart.js, Tableau)</span>
+        <span class="hide">Linux, Bash Scripting</span>
+        <span class="hide">Design Patterns & Best Practices</span>
+        <span class="hide">Adobe Photoshop, Illustrator, Figma</span>
+        <span class="hide">Typography & Layout Design</span>
+        <span class="hide">Writing clear documentation (Notion, Confluence)</span>
+        <span class="hide">Leadership & Team Collaboration</span>
         <span>JavaScript & TypeScript</span>
         <span>React & Next.js</span>
         <span>CSS & Sass</span>
@@ -307,7 +236,7 @@
     </section>
     <br/>
     <hr/>
-    <section class="resume-section">
+    <section class="resume-section hide">
       <h2>Publications</h2>
       <div>
         <ul>
@@ -327,9 +256,9 @@
         </ul> 
       </div>
     </section>
-    <br/>
-    <hr/>
-    <section class="resume-section">
+    <br class="hide"/>
+    <hr class="hide"/>
+    <section class="resume-section hide">
       <h2>Volunteering & Community Involvement</h2>
       <div>
         <div class="title-row">
@@ -399,8 +328,86 @@
         </ul>
       </div>
     </section>
-    <br/>
-    <hr/>
+    <br class="hide"/>
+    <hr class="hide"/>
+    <br class="hide"/>
+    <hr class="hide"/>
+    <section class="resume-section">
+      <h2>Education</h2>
+      <div>
+        <div class="title-row">
+          <div>
+            <div>
+              <span class="bold">Shahrood University of Technology</span>, Shahrood, Iran
+            </div>          
+            <div>B.Sc. Software Engineering</div>
+          </div>
+          <div class="bold">2008 - 2013</div>
+        </div>
+        <ul class="hide">
+          <li>
+            <strong>Key Coursework</strong>
+            <ul>
+              <li>Algorithms & Data Structures</li>
+              <li>Database Systems & SQL</li>
+              <li>Web Programming & Software Architecture</li>
+              <li>Operating Systems Fundamentals</li>
+              <li>Operating Systems Fundamentals</li>
+              <li>Computer Networks</li>
+            </ul>
+          </li>
+          <br/>
+          <li>
+            <strong>Final Year Project: Introduction to Quantum Computing</strong>
+            <ul>
+              <li><strong>Objective:</strong> Explored the fundamental principles of quantum mechanics and their application to computational models.</li>
+              <li><strong>Key Topics:</strong> Covered qubits, superposition, entanglement, and quantum logic gates, focusing on how these concepts differ from classical computing paradigms.</li>
+              <li><strong>Outcome: Designed a Quantum Multiplexer</strong> that leverages quantum-state encoding to efficiently route data, showcasing the potential of quantum computing in advanced information processing.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <br/>
+      <div class="hide">
+        <div class="title-row">
+          <div>
+            <div>
+              <span class="bold">Rah-e Danesh Pre-University Center</span>, Semnan, Iran
+            </div>
+            <div>Pre-University Diploma in Mathematics & Physics</div>
+          </div>
+          <div class="bold">2007 – 2008</div>
+        </div>
+        <ul>
+          <li>
+            <strong>Overall GPA:</strong> 18.70/20
+          </li>
+          <li>
+            Emphasis on advanced mathematics, discrete structures, and fundamental physics—providing a robust foundation for computer and data-driven disciplines.
+          </li>
+        </ul>
+      </div>
+      <br/>
+      <div class="hide">
+        <div class="title-row">
+          <div>
+            <div>
+              <span class="bold">Rah-e Danesh Boys High School</span>, Semnan, Iran
+            </div>
+            <div>Diploma in Mathematics & Physics</div>
+          </div>
+          <div class="bold">2004 – 2007</div>
+        </div>
+        <ul>
+          <li>
+            <strong>Overall GPA:</strong> 18.82/20
+          </li>
+          <li>
+            Strong background in calculus, geometry, and physical sciences, supporting further studies in computer engineering and data analytics.
+          </li>
+        </ul>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -435,7 +442,6 @@
     padding: 75.6px;
     background: white;
     box-sizing: border-box;
-    
 
     @media print {
       .resume-wrapper {
@@ -502,6 +508,10 @@
 
   .bold {
     font-weight: bold;
+  }
+
+  .hide {
+    display: none;
   }
 
 </style>

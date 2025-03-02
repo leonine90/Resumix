@@ -9,7 +9,7 @@
         </h1>
       </div>
       <aside>
-        <div>Phone: <a href="tel:+4917641772328">+4917641772328</a></div>
+        <div>Phone: <a href="tel:+4917677412328">+4917677412328</a></div>
         <div>Date of Birth: <span>May 8th, 1997</span></div>
         <div>Location: <span>12459 Berlin</span></div>
         <div>Email: <a href="mailto:jasminesmaeilian@gmail.com">jasminesmaeilian@gmail.com</a></div>
