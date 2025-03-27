@@ -27,6 +27,54 @@
       </p>
     </section>
     <hr/>
+    <section class="resume-section">
+      <h2>Education</h2>
+      <div contenteditable="true">
+        <div>
+          <div class="title-row">
+            <div>
+              <div class="bold">Master of Project Management and Data Science</div>
+              <div>HTW Berlin</div>
+            </div>          
+            <div class="bold">October 2024 - Now</div>
+          </div>
+          <ul>
+            <li>
+              test
+            </li>
+          </ul>
+        </div>
+        <div>
+          <div class="title-row">
+            <div>
+              <div class="bold">MBA in Human Resource Management and Behavioral Organization</div>
+              <div>Kharazmi University, Tehran</div>
+            </div>          
+            <div class="bold">September 2019 - September  2021</div>
+          </div>
+          <ul>
+            <li>
+              test
+            </li>
+          </ul>
+        </div>
+        <div>
+          <div class="title-row">
+            <div>
+              <div class="bold">Bachelor of Computer Science in IT</div>
+              <div>Vali-e-Asr University of Rafsanjan</div>
+            </div>          
+            <div class="bold">September 2015 - September 2019</div>
+          </div>
+          <ul>
+            <li>
+              test
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <hr/>
     <section class="resume-section" contenteditable="true">
       <h2>Professional Experience</h2>
       <div>
@@ -150,40 +198,22 @@
       </div>
     </section>
     <hr/>
-    <section class="resume-section">
-      <h2>Education</h2>
-      <div contenteditable="true">
+    <section class="resume-section" contenteditable="true">
+      <h2>Volunteering & Community Involvement</h2>
+      <div>
         <div class="title-row">
           <div>
-            <div>
-              <div class="bold">Master of Project Management and Data Science</div>
-            </div>          
-            <div>HTW Berlin</div>
-            <div>October 2024 - Now</div>
+            <div class="bold">Human Resources Business Partner</div>
+            <div><span>Lamasoo (in Partnership with Fanap Co.),</span> Tehran, Iran</div>
           </div>
+          <div class="bold">July 2023 - September 2024</div>
         </div>
-        <br>
-        <div class="title-row">
-          <div>
-            <div>
-              <div class="bold">MBA in Human Resource Management and Behavioral Organization</div>
-            </div>          
-            <div>Kharazmi University, Tehran</div>
-            <div>September 2019 - September  2021</div>
-          </div>
-        </div>
-        <br>
-        <div class="title-row">
-          <div>
-            <div>
-              <div class="bold">Bachelor of Computer Science in IT</div>
-            </div>          
-            <div>Vali-e-Asr University of Rafsanjan</div>
-            <div>September 2015 - September 2019</div>
-          </div>
-        </div>
+        <ul>
+          <li>
+            <span class="bold">Agile & Process Optimization:</span> Promoted Agile mindset across the company and facilitated SCRUM adoption, improving team collaboration and workflow efficiency. Leveraged Jira to optimize processes and inter-team communication.
+          </li>
+        </ul>
       </div>
-      <br/>
     </section>
     <hr/>
     <section class="resume-section skills" contenteditable="true">
@@ -198,7 +228,7 @@
       </div>
     </section>
     <hr/>
-    <section class="resume-section languages" contenteditable="true">
+    <section class="resume-section languages hide" contenteditable="true">
       <h2>Languages</h2>
       <ul>
         <li>
@@ -212,8 +242,8 @@
         </li>
       </ul>
     </section>
-    <hr/>
-    <br/>
+    <!-- <hr/>
+    <br/> -->
     <div class="signature">
       <div contenteditable="true">
         <div>Yasaman Esmaeilian</div>
