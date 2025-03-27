@@ -214,6 +214,20 @@
           </li>
         </ul>
       </div>
+      <div>
+        <div class="title-row">
+          <div>
+            <div class="bold">Human Resources Business Partner</div>
+            <div><span>Lamasoo (in Partnership with Fanap Co.),</span> Tehran, Iran</div>
+          </div>
+          <div class="bold">July 2023 - September 2024</div>
+        </div>
+        <ul>
+          <li>
+            <span class="bold">Agile & Process Optimization:</span> Promoted Agile mindset across the company and facilitated SCRUM adoption, improving team collaboration and workflow efficiency. Leveraged Jira to optimize processes and inter-team communication.
+          </li>
+        </ul>
+      </div>
     </section>
     <hr/>
     <section class="resume-section skills" contenteditable="true">
