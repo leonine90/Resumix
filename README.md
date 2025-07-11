@@ -12,6 +12,7 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 - **Professional Headshot**: Support for profile pictures
 - **Print-Friendly**: Optimized for printing with proper page breaks
 - **Responsive Design**: Works well on different screen sizes
+- **Import/Export Resume Data**: Easily export your resume as a JSON file or import data from a JSON file using the sidebar controls
 
 ## Project Structure
 
@@ -229,6 +230,25 @@ The resume supports multiple versions that can be switched using the version sel
 2. Update the `headshot` path in `data/resume.js`
 3. Recommended size: 120x120 pixels
 4. Supported formats: JPG, PNG, WebP
+
+## Importing and Exporting Resume Data
+
+### Exporting
+- Open the sidebar (left panel) and expand the **Data Management** section.
+- Click **Export as JSON** to download your current resume data as a JSON file.
+- The exported file includes all sections, personal info, header elements, section order, and visibility settings.
+
+### Importing
+- Open the sidebar and expand the **Data Management** section.
+- Click **Import from JSON** to open the import modal.
+- Paste your JSON data or upload a previously exported file.
+- Click **Import Data**. Your resume will update with the imported data, merging with the current structure.
+
+## Sidebar Controls
+
+- **Header Elements**: Toggle the visibility of header elements (e.g., address, phone, email, LinkedIn, headshot) using checkboxes. Name and Title are always visible.
+- **Resume Sections**: Show/hide entire sections (Summary, Research Interests, Education, etc.) and reorder them using the up/down arrows.
+- **Data Management**: Import/export your resume data as JSON for easy backup, sharing, or migration.
 
 ## Development
 
