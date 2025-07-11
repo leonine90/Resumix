@@ -5,7 +5,7 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 ## Features
 
 - **Modular Components**: Each section of the resume is a separate, reusable component
-- **Multiple Versions**: Support for different resume versions (Web Development, Data Science, Research & Academia, AI & Business)
+- **Multiple Versions**: Support for different resume versions (Web Development, Data Science, Research & Academia, AI & Business). The version selector can be enabled by setting `enableVersions: true` in `data/resume.js` (disabled by default).
 - **Data-Driven**: All content is stored in a single data file for easy modification
 - **Inline Editing**: Click any text to edit it directly on the page
 - **Section Controls**: Toggle sections on/off with checkboxes
@@ -22,6 +22,7 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 │   └── resume.js          # All resume data
 ├── components/
 │   ├── ResumeHeader.vue   # Personal information header with headshot
+│   ├── ResumeSidebar.vue  # Sidebar controls for sections and data management
 │   ├── ResearchInterests.vue # Research interests with version support
 │   ├── Education.vue      # Education history
 │   ├── Summary.vue        # Professional summary
@@ -31,10 +32,9 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 │   ├── Languages.vue      # Language skills
 │   ├── Volunteering.vue   # Volunteer experience
 │   ├── Signature.vue      # Signature section
-│   ├── VersionSelector.vue # Version switcher and PDF download
-│   └── SectionControls.vue # Section visibility controls
+│   └── VersionSelector.vue # Version switcher and PDF download
 ├── public/
-│   └── headshot.jpg       # Professional headshot image
+│   └── favicon.ico        # Site favicon
 ```
 
 ## How to Modify Your Resume
@@ -52,7 +52,7 @@ personal: {
   email: "your.email@example.com",
   linkedin: "https://linkedin.com/in/your-profile",
   linkedinText: "/your-profile",
-  headshot: "/headshot.jpg" // Path to your headshot image
+  headshot: "https://example.com/your-headshot.jpg" // URL to your headshot image
 }
 ```
 
@@ -199,9 +199,12 @@ signature: {
 
 ## Using the Interface
 
-### Section Controls
-- **Left Panel**: Checkboxes to show/hide sections
-- **Right Panel**: Version selector and PDF download button
+### Sidebar Controls
+- **Collapsible Sidebar**: Toggle the sidebar on the left to access all controls
+- **Header Elements**: Checkboxes to show/hide header elements (address, phone, email, LinkedIn, headshot)
+- **Resume Sections**: Checkboxes to show/hide sections and arrows to reorder them
+- **Data Management**: Import/export resume data as JSON
+- **Version Selector**: Switch between different resume versions in the top-right
 
 ### Inline Editing
 1. **Enable Editing**: Set `editable: true` in `data/resume.js`
@@ -217,6 +220,8 @@ signature: {
 
 ## Switching Between Versions
 
+> **Note:** Make sure `enableVersions` is set to `true` in `data/resume.js` to display the version selector dropdown. When this flag is `false`, the app defaults to the "web-version" and only the **Download PDF** button is visible.
+
 The resume supports multiple versions that can be switched using the version selector in the top-right corner:
 
 - **Web Development**: Focused on web technologies and front-end development
@@ -226,10 +231,11 @@ The resume supports multiple versions that can be switched using the version sel
 
 ## Adding Your Headshot
 
-1. Place your headshot image in the `public/` directory
-2. Update the `headshot` path in `data/resume.js`
-3. Recommended size: 120x120 pixels
-4. Supported formats: JPG, PNG, WebP
+1. **Enable Headshot**: In the sidebar, expand "Header Elements" and check the "Headshot" checkbox
+2. **Paste URL**: In the **Headshot URL** input field, paste the link to your profile image (local uploads are not supported)
+3. **Supported URLs**: Any publicly accessible image URL (JPG, PNG, WebP, etc.)
+4. **Recommended**: Use a square image (120x120 pixels or larger) for best results
+5. **Examples**: LinkedIn profile photo, GitHub avatar, or any hosted image URL
 
 ## Importing and Exporting Resume Data
 
@@ -241,7 +247,7 @@ The resume supports multiple versions that can be switched using the version sel
 ### Importing
 - Open the sidebar and expand the **Data Management** section.
 - Click **Import from JSON** to open the import modal.
-- Paste your JSON data or upload a previously exported file.
+- Paste your JSON data into the text area provided.
 - Click **Import Data**. Your resume will update with the imported data, merging with the current structure.
 
 ## Sidebar Controls
