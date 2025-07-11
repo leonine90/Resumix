@@ -1,0 +1,105 @@
+<template>
+  <section class="resume-section" :contenteditable="editable">
+    <h2>Experience</h2>
+    <div v-for="(job, index) in experienceData" :key="index">
+      <div class="title-row">
+        <div>
+          <div>
+            <span class="bold" 
+              :class="{ editable }"
+              @blur="updateExperience(index, 'company', $event.target.textContent)"
+            >{{ job.company }},</span> 
+            <span 
+              :class="{ editable }"
+              @blur="updateExperience(index, 'location', $event.target.textContent)"
+            >{{ job.location }}</span>
+          </div>
+          <div 
+            :class="{ editable }"
+            @blur="updateExperience(index, 'position', $event.target.textContent)"
+          >{{ job.position }}</div>
+        </div>
+        <div class="bold" 
+          :class="{ editable }"
+          @blur="updateExperience(index, 'period', $event.target.textContent)"
+        >{{ job.period }}</div>
+      </div>
+      <ul>
+        <li v-for="(achievement, achievementIndex) in job.achievements" :key="achievementIndex">
+          <span 
+            :class="{ editable }"
+            @blur="updateAchievement(index, achievementIndex, $event.target.textContent)"
+          >{{ achievement }}</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</template>
+
+<script setup>
+const props = defineProps({
+  experienceData: {
+    type: Array,
+    required: true
+  },
+  editable: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['update:experienceData'])
+
+const updateExperience = (index, field, value) => {
+  if (props.editable) {
+    const updatedExperience = [...props.experienceData]
+    updatedExperience[index][field] = value
+    emit('update:experienceData', updatedExperience)
+  }
+}
+
+const updateAchievement = (jobIndex, achievementIndex, value) => {
+  if (props.editable) {
+    const updatedExperience = [...props.experienceData]
+    updatedExperience[jobIndex].achievements[achievementIndex] = value
+    emit('update:experienceData', updatedExperience)
+  }
+}
+</script>
+
+<style scoped>
+.title-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+/* Editable styles */
+.editable {
+  position: relative;
+  min-width: 1em;
+  display: inline-block;
+}
+
+.editable:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+  border-radius: 2px;
+}
+
+.editable:focus {
+  outline: 2px solid #007bff;
+  border-radius: 2px;
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+@media print {
+  .editable:hover,
+  .editable:focus {
+    background-color: transparent;
+    outline: none;
+  }
+}
+</style> 
