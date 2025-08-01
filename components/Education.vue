@@ -28,22 +28,21 @@
         <li v-if="education.coursework">
           <strong>Key Coursework</strong>
           <ul>
-            <li v-for="(course, courseIndex) in education.coursework" :key="courseIndex">
-              <span 
-                :class="{ editable }"
-                @blur="updateCoursework(index, courseIndex, $event.target.textContent)"
-              >{{ course }}</span>
-            </li>
+            <li 
+              v-for="(course, courseIndex) in education.coursework" 
+              :key="courseIndex"
+              :class="{ editable }"
+              @blur="updateCoursework(index, courseIndex, $event.target.textContent)"
+            >{{ course }}</li>
           </ul>
         </li>
         <br v-if="education.coursework"/>
         <li v-if="education.finalProject">
-          <strong>Final Year Project: 
-            <span 
-              :class="{ editable }"
-              @blur="updateFinalProject(index, 'title', $event.target.textContent)"
-            >{{ education.finalProject.title }}</span>
-          </strong>
+<strong>Final Year Project:</strong> 
+          <span 
+            :class="{ editable }"
+            @blur="updateFinalProject(index, 'title', $event.target.textContent)"
+          >{{ education.finalProject.title }}</span>
           <ul>
             <li><strong>Objective:</strong> 
               <span 
@@ -57,12 +56,12 @@
                 @blur="updateFinalProject(index, 'keyTopics', $event.target.textContent)"
               >{{ education.finalProject.keyTopics }}</span>
             </li>
-            <li><strong>Outcome: 
+            <li><strong>Outcome:</strong> 
               <span 
                 :class="{ editable }"
                 @blur="updateFinalProject(index, 'outcome', $event.target.textContent)"
               >{{ education.finalProject.outcome }}</span>
-            </strong></li>
+            </li>
           </ul>
         </li>
         <li v-if="education.gpa">
@@ -72,12 +71,11 @@
             @blur="updateEducation(index, 'gpa', $event.target.textContent)"
           >{{ education.gpa }}</span>
         </li>
-        <li v-if="education.description">
-          <span 
-            :class="{ editable }"
-            @blur="updateEducation(index, 'description', $event.target.textContent)"
-          >{{ education.description }}</span>
-        </li>
+        <li 
+          v-if="education.description"
+          :class="{ editable }"
+          @blur="updateEducation(index, 'description', $event.target.textContent)"
+        >{{ education.description }}</li>
       </ul>
     </div>
   </section>
@@ -130,6 +128,31 @@ const updateFinalProject = (educationIndex, field, value) => {
 
 .bold {
   font-weight: bold;
+}
+
+/* Ensure all li elements have proper bullet positioning */
+ul li {
+  list-style-position: outside;
+  list-style-type: disc;
+  margin-left: 20px;
+  padding-left: 0;
+  line-height: 1.5;
+}
+
+/* Specific styles for editable li elements */
+li.editable {
+  display: list-item;
+  list-style-position: outside;
+  list-style-type: disc;
+  margin-left: 0;
+  padding-left: 0;
+  line-height: 1.5;
+}
+
+/* For li elements containing spans, ensure proper alignment */
+li span.editable {
+  display: inline;
+  vertical-align: baseline;
 }
 
 /* Editable styles */

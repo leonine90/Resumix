@@ -25,12 +25,12 @@
         >{{ job.period }}</div>
       </div>
       <ul>
-        <li v-for="(achievement, achievementIndex) in job.achievements" :key="achievementIndex">
-          <span 
-            :class="{ editable }"
-            @blur="updateAchievement(index, achievementIndex, $event.target.textContent)"
-          >{{ achievement }}</span>
-        </li>
+        <li 
+          v-for="(achievement, achievementIndex) in job.achievements" 
+          :key="achievementIndex"
+          :class="{ editable }"
+          @blur="updateAchievement(index, achievementIndex, $event.target.textContent)"
+        >{{ achievement }}</li>
       </ul>
     </div>
   </section>
@@ -82,6 +82,25 @@ const updateAchievement = (jobIndex, achievementIndex, value) => {
   position: relative;
   min-width: 1em;
   display: inline-block;
+}
+
+/* Specific styles for editable li elements */
+li.editable {
+  display: list-item;
+  list-style-position: outside;
+  list-style-type: disc;
+  margin-left: 0;
+  padding-left: 0;
+  line-height: 1.5;
+}
+
+/* Ensure all li elements have proper bullet positioning */
+ul li {
+  list-style-position: outside;
+  list-style-type: disc;
+  margin-left: 20px;
+  padding-left: 0;
+  line-height: 1.5;
 }
 
 .editable:hover {

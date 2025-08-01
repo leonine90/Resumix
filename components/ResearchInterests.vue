@@ -50,6 +50,15 @@ const updateInterest = (version, index, field, value) => {
   display: none;
 }
 
+/* Ensure all li elements have proper bullet positioning */
+ul li {
+  list-style-position: outside;
+  list-style-type: disc;
+  margin-left: 20px;
+  padding-left: 0;
+  line-height: 1.5;
+}
+
 /* Editable styles */
 .editable {
   position: relative;

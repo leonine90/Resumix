@@ -25,12 +25,10 @@
         >{{ volunteer.period }}</div>
       </div>
       <ul>
-        <li>
-          <span 
-            :class="{ editable }"
-            @blur="updateVolunteer(index, 'description', $event.target.textContent)"
-          >{{ volunteer.description }}</span>
-        </li>
+        <li 
+          :class="{ editable }"
+          @blur="updateVolunteer(index, 'description', $event.target.textContent)"
+        >{{ volunteer.description }}</li>
       </ul>
     </div>
   </section>
@@ -74,6 +72,25 @@ const updateVolunteer = (index, field, value) => {
   position: relative;
   min-width: 1em;
   display: inline-block;
+}
+
+/* Specific styles for editable li elements */
+li.editable {
+  display: list-item;
+  list-style-position: outside;
+  list-style-type: disc;
+  margin-left: 0;
+  padding-left: 0;
+  line-height: 1.5;
+}
+
+/* Ensure all li elements have proper bullet positioning */
+ul li {
+  list-style-position: outside;
+  list-style-type: disc;
+  margin-left: 20px;
+  padding-left: 0;
+  line-height: 1.5;
 }
 
 .editable:hover {
