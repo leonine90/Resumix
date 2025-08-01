@@ -13,6 +13,8 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 - **Print-Friendly**: Optimized for printing with proper page breaks
 - **Responsive Design**: Works well on different screen sizes
 - **Import/Export Resume Data**: Easily export your resume as a JSON file or import data from a JSON file using the sidebar controls
+- **🤖 AI-Powered Resume Import**: Paste your resume text and let AI automatically convert it to the proper JSON format
+- **🎯 AI Job Optimizer**: Tailor your resume to specific job postings by optimizing Summary, Experience achievements, and Skills while preserving all other content
 
 ## Project Structure
 
@@ -33,6 +35,10 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 │   ├── Volunteering.vue   # Volunteer experience
 │   ├── Signature.vue      # Signature section
 │   └── VersionSelector.vue # Version switcher and PDF download
+├── server/
+│   └── api/
+│       ├── import-resume.post.js  # AI-powered resume text to JSON conversion
+│       └── tailor-resume.post.js  # AI-powered resume optimization for job posts
 ├── public/
 │   └── favicon.ico        # Site favicon
 ```
@@ -309,3 +315,73 @@ The resume is designed to print well on A4 paper with:
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
+
+## AI-Powered Features
+
+### 🤖 AI Resume Import
+
+**Convert any resume format to structured JSON automatically!**
+
+1. **Open the sidebar** and expand the **Import & Export** section
+2. **Click "Import Resume Text"** to open the AI import modal
+3. **Paste your resume text** (from Word, PDF, or any format) into the textarea
+4. **Click "Convert with AI"** to automatically parse and structure your resume
+5. **Review the results** and click "Apply Changes" to update your resume
+
+**Supported Formats:**
+- Microsoft Word documents (copy-pasted text)
+- PDF files (copy-pasted text)
+- Plain text resumes
+- Any unstructured resume format
+
+**What the AI extracts:**
+- Personal information (name, contact details, address)
+- Education history with institutions, degrees, and periods
+- Work experience with companies, positions, and achievements
+- Skills and technical competencies
+- Publications and research interests
+- Languages and certifications
+- All other resume sections
+
+### 🎯 AI Job Optimizer
+
+**Tailor your resume to specific job postings with AI!**
+
+1. **Open the sidebar** and expand the **Job Optimizer** section
+2. **Click "Tailor for Job Post"** to open the optimization modal
+3. **Paste your resume text** in the first textarea
+4. **Paste the job posting** in the second textarea
+5. **Click "Optimize Resume"** to let AI tailor your resume
+6. **Review the before/after comparison** and click "Apply Optimizations"
+
+**What the AI optimizes:**
+- **Summary**: Rewrites your professional summary to match job requirements
+- **Experience Achievements**: Enhances achievement descriptions with relevant keywords
+- **Skills**: Adapts skills list to include job-specific competencies
+
+**What the AI preserves:**
+- All personal information and contact details
+- Company names, positions, and employment dates
+- Education history and credentials
+- Publications and research interests
+- All other resume sections and structure
+
+**Smart Data Handling:**
+- When you paste a new resume, all information (personal details, education, etc.) is updated from the new text
+- AI optimizations are applied on top of the updated base resume
+- No data loss - everything is preserved and enhanced
+
+### 🔧 AI Configuration
+
+**Setup Required:**
+1. **Get a Google AI API Key** from [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. **Create a `.env` file** in the project root:
+   ```
+   GOOGLE_AI_API_KEY=your_api_key_here
+   ```
+3. **Restart the development server** after adding the API key
+
+**Security:**
+- API keys are stored securely in `.env` files (not committed to git)
+- All AI processing happens server-side to protect your API key
+- No sensitive data is exposed to the client
