@@ -3,6 +3,7 @@
     <h2>Summary</h2>
     <p 
       :class="{ editable }"
+      :contenteditable="editable"
       @blur="updateSummary"
     >{{ summaryText }}</p>
   </section>

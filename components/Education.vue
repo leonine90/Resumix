@@ -7,20 +7,24 @@
           <div>
             <span class="bold" 
               :class="{ editable }"
+              :contenteditable="editable"
               @blur="updateEducation(index, 'institution', $event.target.textContent)"
             >{{ education.institution }}</span>, 
             <span 
               :class="{ editable }"
+              :contenteditable="editable"
               @blur="updateEducation(index, 'location', $event.target.textContent)"
             >{{ education.location }}</span>
           </div>          
           <div 
             :class="{ editable }"
+            :contenteditable="editable"
             @blur="updateEducation(index, 'degree', $event.target.textContent)"
           >{{ education.degree }}</div>
         </div>
         <div class="bold" 
           :class="{ editable }"
+          :contenteditable="editable"
           @blur="updateEducation(index, 'period', $event.target.textContent)"
         >{{ education.period }}</div>
       </div>

@@ -7,20 +7,24 @@
           <div>
             <span class="bold" 
               :class="{ editable }"
+              :contenteditable="editable"
               @blur="updateExperience(index, 'company', $event.target.textContent)"
             >{{ job.company }},</span> 
             <span 
               :class="{ editable }"
+              :contenteditable="editable"
               @blur="updateExperience(index, 'location', $event.target.textContent)"
             >{{ job.location }}</span>
           </div>
           <div 
             :class="{ editable }"
+            :contenteditable="editable"
             @blur="updateExperience(index, 'position', $event.target.textContent)"
           >{{ job.position }}</div>
         </div>
         <div class="bold" 
           :class="{ editable }"
+          :contenteditable="editable"
           @blur="updateExperience(index, 'period', $event.target.textContent)"
         >{{ job.period }}</div>
       </div>
@@ -29,6 +33,7 @@
           v-for="(achievement, achievementIndex) in job.achievements" 
           :key="achievementIndex"
           :class="{ editable }"
+          :contenteditable="editable"
           @blur="updateAchievement(index, achievementIndex, $event.target.textContent)"
         >{{ achievement }}</li>
       </ul>

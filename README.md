@@ -7,7 +7,7 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 - **Modular Components**: Each section of the resume is a separate, reusable component
 - **Multiple Versions**: Support for different resume versions (Web Development, Data Science, Research & Academia, AI & Business). The version selector can be enabled by setting `enableVersions: true` in `data/resume.js` (disabled by default).
 - **Data-Driven**: All content is stored in a single data file for easy modification
-- **Inline Editing**: Click any text to edit it directly on the page
+- **Inline Editing**: Click any text to edit it directly on the page with rich text formatting toolbar
 - **Section Controls**: Toggle sections on/off with checkboxes
 - **Professional Headshot**: Support for profile pictures
 - **Print-Friendly**: Optimized for printing with proper page breaks
@@ -212,11 +212,57 @@ signature: {
 - **Data Management**: Import/export resume data as JSON
 - **Version Selector**: Switch between different resume versions in the top-right
 
-### Inline Editing
+### Inline Editing with Rich Text Formatting
+
+#### 🎨 Floating Toolbar
+When editing is enabled, a Notion-like floating toolbar provides rich text formatting options:
+
 1. **Enable Editing**: Set `editable: true` in `data/resume.js`
-2. **Click any text** to edit it directly
-3. **Press Enter or click away** to save changes
-4. **Visual feedback**: Hover effects show editable areas
+2. **Click any editable text** to activate the editing mode
+3. **Floating toolbar appears** above the clicked element with formatting options
+4. **Apply formatting** using toolbar buttons or keyboard shortcuts
+5. **Click outside** to save changes and hide the toolbar
+
+#### ✨ Available Formatting Options
+
+**Text Formatting:**
+- **Bold** (Ctrl+B / Cmd+B) - Make text bold
+- **Italic** (Ctrl+I / Cmd+I) - Make text italic
+
+**Lists:**
+- **Bullet List** - Convert text to bulleted lists
+- **Numbered List** - Convert text to numbered lists
+
+**Links:**
+- **Insert Link** - Create hyperlinks to external resources
+  - Select text and click link button to make it clickable
+  - Click without selection to insert URL as both text and link
+  - Links open in new tabs for better user experience
+
+**Utilities:**
+- **Remove Format** - Clear all formatting from selected text
+
+#### 🎯 How It Works
+
+1. **Smart Detection**: Toolbar only appears for elements with the `.editable` class
+2. **Click-Based Activation**: Toolbar shows when you click on editable text (not just selection)
+3. **Auto-Positioning**: Toolbar positions itself above the clicked element, staying within viewport
+4. **Non-Intrusive**: Toolbar disappears when clicking outside or on non-editable areas
+5. **Print-Safe**: Toolbar is automatically hidden when printing
+
+#### 💡 Usage Tips
+
+- **Hover Effects**: Blue highlight on hover shows which elements are editable
+- **Focus Indicators**: Blue outline appears when editing an element
+- **Persistent Formatting**: All formatting is preserved when you save changes
+- **Cross-Component**: Works across all resume sections (Summary, Experience, Education, etc.)
+
+#### 🔧 Technical Details
+
+- Built with Vue 3 composables for optimal performance
+- Uses native `document.execCommand` for reliable formatting
+- Integrates seamlessly with existing blur handlers for data persistence
+- SSR-compatible with proper client-side hydration
 
 ### Download PDF
 1. **Click the "Download PDF" button** in the top-right

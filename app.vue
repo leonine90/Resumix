@@ -116,6 +116,9 @@
       <!-- HR separator -->
       <hr v-if="reactiveResumeData.sections[section] && hasNextSection(section)" :key="`hr-${section}`"/>
     </template>
+    
+    <!-- Floating Toolbar -->
+    <FloatingToolbar :editable="reactiveResumeData.editable" />
   </div>
 </template>
 
@@ -124,6 +127,9 @@ import { resumeData } from './data/resume.js'
 
 const activeVersion = ref('web-version')
 const sidebarCollapsed = ref(false)
+
+// Initialize text selection tracking for floating toolbar
+const { initializeSelectionTracking, destroySelectionTracking } = useTextSelection()
 
 // Make the data reactive
 const reactiveResumeData = ref({ ...resumeData })
@@ -215,6 +221,24 @@ const updateResumeData = (newResumeData) => {
 const updateSidebarCollapsed = (collapsed) => {
   sidebarCollapsed.value = collapsed
 }
+
+// Initialize text selection tracking when editable mode is active (client-side only)
+onMounted(() => {
+  watch(() => reactiveResumeData.value.editable, (editable) => {
+    if (editable) {
+      nextTick(() => {
+        initializeSelectionTracking()
+      })
+    } else {
+      destroySelectionTracking()
+    }
+  }, { immediate: true })
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  destroySelectionTracking()
+})
 
 useHead({
   title: 'Navid Shiry',
