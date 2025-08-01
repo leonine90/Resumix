@@ -1,3 +1,5 @@
+// REAL DATA BACKUP - This file contains the actual personal data
+// Use this as reference for the real resume structure
 export const resumeData = {
   // Flag to enable/disable editing mode
   editable: true,

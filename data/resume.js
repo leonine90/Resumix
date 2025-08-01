@@ -1,3 +1,5 @@
+// MOCK DATA - This file contains fictional data for demonstration purposes
+// See "resume example.js" for the real data structure
 export const resumeData = {
   // Flag to enable/disable editing mode
   editable: true,
@@ -32,14 +34,14 @@ export const resumeData = {
   sectionOrder: ['summary', 'researchInterests', 'education', 'experience', 'publications', 'skills', 'languages', 'volunteering', 'signature'],
   
   personal: {
-    name: "Navid Shiry",
-    title: "Front-end Engineer",
-    address: "Tehran, Iran",
-    dateOfBirth: "1990/06/11",
-    phone: "+989362067267",
-    email: "navid.shiry@gmail.com",
-    linkedin: "https://linkedin.com/in/navid-shiry",
-    linkedinText: "/navid-shiry",
+    name: "John Doe",
+    title: "Software Engineer",
+    address: "San Francisco, CA",
+    dateOfBirth: "1990/01/15",
+    phone: "+1-555-123-4567",
+    email: "john.doe@example.com",
+    linkedin: "https://linkedin.com/in/john-doe",
+    linkedinText: "/john-doe",
     headshot: "" // Headshot URL - paste image URL in sidebar
   },
 
@@ -144,10 +146,10 @@ export const resumeData = {
 
   education: [
     {
-      institution: "Shahrood University of Technology",
-      location: "Shahrood, Iran",
-      degree: "B.Sc. Software Engineering",
-      period: "2008 - 2013",
+      institution: "Stanford University",
+      location: "Stanford, CA",
+      degree: "B.Sc. Computer Science",
+      period: "2012 - 2016",
       coursework: [
         "Algorithms & Data Structures",
         "Artificial Intelligence",
@@ -157,113 +159,94 @@ export const resumeData = {
         "Computer Networks"
       ],
       finalProject: {
-        title: "Introduction to Quantum Computing",
-        objective: "Explored the fundamental principles of quantum mechanics and their application to computational models.",
-        keyTopics: "Covered qubits, superposition, entanglement, and quantum logic gates, focusing on how these concepts differ from classical computing paradigms.",
-        outcome: "Designed a Quantum Multiplexer that leverages quantum-state encoding to efficiently route data, showcasing the potential of quantum computing in advanced information processing."
+        title: "Machine Learning for Web Applications",
+        objective: "Explored the integration of machine learning algorithms into web-based platforms for enhanced user experience.",
+        keyTopics: "Covered neural networks, recommendation systems, and real-time data processing, focusing on scalable web architectures.",
+        outcome: "Developed a recommendation engine that improved user engagement by 25% in e-commerce applications."
       }
     },
     {
-      institution: "Rah-e Danesh Pre-University Center",
-      location: "Semnan, Iran",
-      degree: "Pre-University Diploma in Mathematics & Physics",
-      period: "2007 – 2008",
-      gpa: "18.70/20",
-      description: "Emphasis on advanced mathematics, discrete structures, and fundamental physics—providing a robust foundation for computer and data-driven disciplines."
-    },
-    {
-      institution: "Rah-e Danesh Boys High School",
-      location: "Semnan, Iran",
-      degree: "Diploma in Mathematics & Physics",
-      period: "2004 – 2007",
-      gpa: "18.82/20",
-      description: "Strong background in calculus, geometry, and physical sciences, supporting further studies in computer engineering and data analytics."
+      institution: "Tech Valley High School",
+      location: "Palo Alto, CA",
+      degree: "High School Diploma in Science & Technology",
+      period: "2008 – 2012",
+      gpa: "3.9/4.0",
+      description: "Emphasis on advanced mathematics, computer science, and physics—providing a strong foundation for software engineering disciplines."
     }
   ],
 
   summary: {
-    "default": "Experienced Front-end Engineer with a strong background in React, TypeScript, Next.js, and UI/UX collaboration, specializing in building high-performance, user-friendly web applications. Proven track record of enhancing user engagement, optimizing web performance, and implementing state management solutions across e-commerce, logistics, and digital platforms. Passionate about crafting seamless digital experiences, improving accessibility, and driving innovation through modern front-end technologies."
+    "default": "Innovative Software Engineer with expertise in React, TypeScript, Node.js, and full-stack development, specializing in building scalable, high-performance web applications. Proven track record of delivering robust solutions for fintech, e-commerce, and SaaS platforms. Passionate about clean code, user experience, and leveraging cutting-edge technologies to solve complex business challenges."
   },
 
   experience: [
     {
-      company: "Snapp! Market",
-      location: "Tehran, Iran",
-      position: "Front-end Engineer",
-      period: "September 2023 - Now",
+      company: "TechCorp Solutions",
+      location: "San Francisco, CA",
+      position: "Senior Software Engineer",
+      period: "March 2023 - Now",
       achievements: [
-        "Launched a desktop version of the web app, resulting in a 11% increase in user engagement.",
-        "Engineered a custom metrics tracking library integrating Google Analytics, leading to a 13% improvement in performance monitoring accuracy.",
-        "Improved core web vitals by 10%, significantly reducing load times and enhancing user experience and accessibility.",
-        "Spearheaded the development of promotional features, including discounts, coupons, and vouchers, enhancing the back-oﬃce panel by employing React, RTK, Redux Saga, and Sass to build robust solutions."
+        "Launched a microservices architecture, resulting in a 15% improvement in system scalability and performance.",
+        "Developed a real-time analytics dashboard using React and Node.js, leading to 20% better decision-making speed for stakeholders.",
+        "Improved application load times by 25% through code optimization and implementing advanced caching strategies.",
+        "Led the development of a payment processing system handling $2M+ in daily transactions using React, TypeScript, and PostgreSQL."
       ]
     },
     {
-      company: "DFreight",
-      location: "Dubai, UAE",
-      position: "Front-end Engineer",
-      period: "August 2022 - June 2023",
+      company: "CloudTech Inc",
+      location: "Seattle, WA",
+      position: "Full-Stack Developer",
+      period: "June 2021 - February 2023",
       achievements: [
-        "Elevated user experience and drove platform innovation by introducing advanced features to the customer and back-oﬃce Panels using React, SWR, Next.js, TypeScript, and Tailwind.",
-        "Boosted operational eﬃciency and customer satisfaction, decreasing the time to register a freight request by 9% through panels, and positively impacting the productivity of both freight forwarders and the DFreight Operations team."
+        "Built scalable web applications serving 100K+ users using React, Node.js, TypeScript, and AWS services.",
+        "Reduced deployment time by 40% by implementing CI/CD pipelines and containerization with Docker and Kubernetes."
       ]
     },
     {
-      company: "Digistyle",
-      location: "Tehran, Iran",
-      position: "Front-end Engineer",
-      period: "February 2021 - August 2022",
+      company: "StartupXYZ",
+      location: "Austin, TX",
+      position: "Frontend Developer",
+      period: "January 2020 - May 2021",
       achievements: [
-        "Implemented redesigned version of the website and mobile app, collaborating with product managers, UI/UX designers, and backend developers.",
-        "Enhanced the checkout process with responsive design improvements, leading to an 9% increase in user conversion rates by optimizing the mobile user experience, improving customer journeys, and increasing mobile engagement.",
-        "Built a new version of the platform using cutting-edge frontend technologies, significantly enhancing user satisfaction compared to the legacy version."
+        "Developed responsive web applications from scratch, collaborating with designers and product managers.",
+        "Implemented A/B testing framework that increased user conversion rates by 12% through data-driven UI optimizations.",
+        "Built progressive web application using modern frontend technologies, significantly improving user engagement."
       ]
     },
     {
-      company: "Digikala (Engineering Department)",
-      location: "Tehran, Iran",
-      position: "Front-end Developer",
-      period: "August 2019 - February 2021",
+      company: "Digital Innovations LLC",
+      location: "New York, NY",
+      position: "Junior Developer",
+      period: "August 2018 - December 2019",
       achievements: [
-        "Led the creation of impactful features for the e-commerce and shipping platform, enhancing functionality for over 20 million users and improving engagement rate by 5%.",
-        "Directed key projects such as Digiplus (premium membership program) and Digiclub (customer loyalty program), increasing membership sign-ups by 8% and customer retention by 13% through frontend enhancements.",
-        "Contributed to the development of a new platform version using React, TypeScript, Storybook, and Tailwind, ensuring a modern user experience."
+        "Contributed to the development of e-commerce platform features, enhancing functionality for 50K+ active users.",
+        "Worked on customer loyalty program implementation, increasing user retention by 18% through frontend enhancements.",
+        "Participated in code reviews and agile development processes, ensuring high-quality deliverables."
       ]
     },
     {
-      company: "Digikala (Marketing Department)",
-      location: "Tehran, Iran",
-      position: "Front-end Developer",
-      period: "November 2017 - August 2019",
+      company: "WebDev Agency",
+      location: "Los Angeles, CA",
+      position: "Frontend Intern",
+      period: "June 2017 - July 2018",
       achievements: [
-        "Crafted more than 35 engaging landing pages for marketing promotions and campaigns, significantly increased engagement.",
-        "Established a tracking system to measure clicks, views, CTR, and other key metrics, enhanced performance analysis by 18%.",
-        "Developed a panel for the partnership marketing team to create interactive landing pages eﬃciently and implemented captivating animations and interactions using JavaScript libraries, boosting engagement rates by 13%."
-      ]
-    },
-    {
-      company: "Himart",
-      location: "Tehran, Iran",
-      position: "Front-end Developer",
-      period: "June 2017 - November 2017",
-      achievements: [
-        "Led the development of the flagship website and web app by utilizing jQuery, Materialize, DevExtreme Components, and the Razor template engine, built adaptive and responsive user interfaces.",
-        "Improved customer engagement by creating user-friendly digital experiences resulted in adding 1200 supermarkets to the website, and optimized the web application for better performance.",
-        "Collaborated with the development team to implement best practices and innovative solutions."
+        "Created responsive landing pages for client marketing campaigns, improving engagement metrics.",
+        "Implemented tracking and analytics systems for better performance measurement and optimization.",
+        "Developed interactive web components using modern JavaScript frameworks and libraries."
       ]
     }
   ],
 
   publications: [
     {
-      title: "Design and implementation of a quantum multiplexer",
-      url: "https://www.academia.edu/7978723/Design_and_Implementation_of_a_Quantum_Multiplexer",
-      description: "Proposes a novel architecture that utilizes quantum entanglement and superposition to efficiently route multiple qubit signals, reducing circuit overhead and paving the way for more scalable quantum computations."
+      title: "Modern Web Development: Performance Optimization Techniques",
+      url: "https://medium.com/@johndoe/modern-web-development-performance-optimization",
+      description: "Explores advanced techniques for optimizing web application performance, including code splitting, lazy loading, and efficient state management patterns that improve user experience."
     },
     {
-      title: "Managing Software Complexity: A Guide to Simplicity in an Intricate World",
-      url: "https://medium.com/@navid.shiry/managing-software-complexity-a-guide-to-simplicity-in-an-intricate-world-081d50c270ca",
-      description: "Discusses practical strategies for reducing technical debt in large-scale software systems by embracing modular design, clear communication, and continuous refactoring—ultimately promoting maintainability and scalability."
+      title: "Building Scalable React Applications: Best Practices and Patterns",
+      url: "https://dev.to/johndoe/building-scalable-react-applications",
+      description: "Comprehensive guide covering architectural patterns, component design strategies, and testing methodologies for large-scale React applications in enterprise environments."
     }
   ],
 
@@ -301,32 +284,32 @@ export const resumeData = {
 
   volunteering: [
     {
-      organization: "Shahrood University of Technology",
-      location: "Shahrood, Iran",
-      role: "Active Member of the Computer and IT Scientific Association",
-      period: "2009 - 2011",
-      description: "Participating in organizing tech-related events, workshops, and academic discussions."
+      organization: "Code for Good",
+      location: "San Francisco, CA",
+      role: "Software Development Volunteer",
+      period: "2020 - Present",
+      description: "Developing web applications for non-profit organizations, helping them digitize their operations and reach more beneficiaries."
     },
     {
-      organization: "Shahrood University of Technology",
-      location: "Shahrood, Iran",
-      role: "Member of the Student Council",
-      period: "2010 - 2011",
-      description: "Advocating for student rights, academic improvements, and campus welfare initiatives."
+      organization: "Stanford University Alumni Association",
+      location: "Stanford, CA",
+      role: "Technical Mentor",
+      period: "2018 - Present",
+      description: "Mentoring computer science students in career development, technical skills, and industry best practices."
     },
     {
-      organization: "Shahrood University of Technology",
-      location: "Shahrood, Iran",
-      role: "Designer for Student Scientific Associations",
-      period: "2010 - 2013",
-      description: "Created posters, banners, magazines, and publications for various student-led academic and scientific associations, enhancing event visibility and engagement."
+      organization: "Local Community Center",
+      location: "Palo Alto, CA",
+      role: "Coding Workshop Instructor",
+      period: "2017 - 2019",
+      description: "Teaching basic programming and web development skills to underserved youth in the community."
     },
     {
-      organization: "Shahrood University of Technology",
-      location: "Shahrood, Iran",
-      role: "Member of the Handicrafts and Visual Arts Club",
-      period: "2011 - 2012",
-      description: "Engaging in creative arts, cultural events, and fostering interdisciplinary collaboration."
+      organization: "Open Source Initiative",
+      location: "Remote",
+      role: "Contributing Developer",
+      period: "2016 - Present",
+      description: "Contributing to various open-source projects, focusing on React components and developer tools."
     }
   ]
 } 
