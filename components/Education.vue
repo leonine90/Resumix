@@ -29,7 +29,7 @@
         >{{ education.period }}</div>
       </div>
       <ul>
-        <li v-if="education.coursework">
+        <li v-if="education.coursework && education.coursework.length > 0">
           <strong>Key Coursework</strong>
           <ul>
             <li 
