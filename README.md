@@ -17,6 +17,7 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 - **🎯 AI Job Optimizer**: Tailor your resume to specific job postings by completely rewriting Summary and Experience achievements to match job requirements, with intelligent keyword bolding and structure preservation
 - **🔔 Toast Notification System**: Modern, non-intrusive notifications with auto-close for short messages and manual close for longer ones
 - **🎨 Enhanced User Experience**: Improved error handling, better AI response parsing, and smart section management
+- **🔄 Drag & Drop Section Reordering**: Intuitive drag handles to reorder resume sections with visual feedback and smooth animations
 
 ## Project Structure
 
@@ -216,9 +217,33 @@ signature: {
 ### Sidebar Controls
 - **Collapsible Sidebar**: Toggle the sidebar on the left to access all controls
 - **Header Elements**: Checkboxes to show/hide header elements (address, phone, email, LinkedIn, headshot)
-- **Resume Sections**: Checkboxes to show/hide sections and arrows to reorder them
+- **Resume Sections**: Checkboxes to show/hide sections and drag handles to reorder them
 - **Data Management**: Import/export resume data as JSON
 - **Version Selector**: Switch between different resume versions in the top-right
+
+#### 🔄 Drag & Drop Section Reordering
+
+**Intuitive section reordering with visual feedback!**
+
+**How to Use:**
+1. **Open the sidebar** and expand the **Resume Sections** section
+2. **Look for drag handles** (⋮⋮) on the left side of each section name
+3. **Click and hold** the drag handle to start dragging
+4. **Drag the section** to your desired position
+5. **Drop the section** to reorder it in your resume
+
+**Features:**
+- **Visual Feedback**: Sections highlight with blue border when dragging over them
+- **Smooth Animations**: Smooth transitions and scaling effects during drag operations
+- **Smart Constraints**: Summary section cannot be moved (always stays at top)
+- **Non-Intrusive**: Drag handles only appear on hover for clean interface
+- **Responsive Design**: Works seamlessly on desktop and tablet devices
+
+**Benefits:**
+- **Faster Reordering**: No need to click multiple arrow buttons
+- **Intuitive Interface**: Natural drag and drop interaction
+- **Visual Clarity**: Clear indication of where sections will be placed
+- **Professional Appearance**: Clean, modern interface design
 
 ### Inline Editing with Rich Text Formatting
 

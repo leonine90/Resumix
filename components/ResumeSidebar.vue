@@ -57,7 +57,21 @@
           <Icon class="toggle-icon" :icon="sectionsSectionOpen ? 'material-symbols:expand-more' : 'material-symbols:chevron-right'" style="font-size: 12px;" />
         </div>
         <div v-if="sectionsSectionOpen" class="section-content">
-          <div v-for="section in sectionOrder" :key="section" class="control-item">
+          <div 
+            v-for="section in sectionOrder" 
+            :key="section" 
+            class="control-item draggable-section"
+            :draggable="section !== 'summary'"
+            @dragstart="handleDragStart($event, section)"
+            @dragover="handleDragOver($event)"
+            @drop="handleDrop($event, section)"
+            @dragenter="handleDragEnter($event, section)"
+            @dragleave="handleDragLeave($event)"
+            :class="{ 'drag-over': dragOverSection === section }"
+          >
+            <div class="drag-handle" :class="{ 'disabled': section === 'summary' }">
+              <Icon icon="material-symbols:drag-handle" style="font-size: 16px; color: #64748b;" />
+            </div>
             <label class="checkbox-label">
               <input 
                 type="checkbox" 
@@ -67,24 +81,6 @@
               >
               <span class="section-name">{{ formatSectionName(section) }}</span>
             </label>
-            <div v-if="section !== 'summary'" class="section-controls">
-              <button 
-                class="move-btn" 
-                @click="moveSectionUp(section)"
-                :disabled="!canMoveUp(section)"
-                title="Move up"
-              >
-                <Icon icon="material-symbols:keyboard-arrow-up" style="font-size: 12px;" />
-              </button>
-              <button 
-                class="move-btn" 
-                @click="moveSectionDown(section)"
-                :disabled="!canMoveDown(section)"
-                title="Move down"
-              >
-                <Icon icon="material-symbols:keyboard-arrow-down" style="font-size: 12px;" />
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -510,6 +506,10 @@ const sectionsSectionOpen = ref(false)
 const importExportSectionOpen = ref(true)
 const jobOptimizerSectionOpen = ref(true)
 
+// Drag and drop variables
+const draggedSection = ref(null)
+const dragOverSection = ref(null)
+
 // Job Optimizer variables
 const resumeTextInput = ref('')
 const jobPostText = ref('')
@@ -595,6 +595,61 @@ const canMoveUp = (section) => {
 const canMoveDown = (section) => {
   const currentIndex = props.sectionOrder.indexOf(section)
   return currentIndex < props.sectionOrder.length - 1
+}
+
+// Drag and drop methods
+const handleDragStart = (event, section) => {
+  if (section === 'summary') return
+  draggedSection.value = section
+  event.dataTransfer.effectAllowed = 'move'
+  event.dataTransfer.setData('text/plain', section)
+}
+
+const handleDragOver = (event) => {
+  event.preventDefault()
+  event.dataTransfer.dropEffect = 'move'
+}
+
+const handleDrop = (event, targetSection) => {
+  event.preventDefault()
+  
+  if (!draggedSection.value || draggedSection.value === targetSection || targetSection === 'summary') {
+    return
+  }
+  
+  const currentOrder = [...props.sectionOrder]
+  const draggedIndex = currentOrder.indexOf(draggedSection.value)
+  const targetIndex = currentOrder.indexOf(targetSection)
+  
+  if (draggedIndex === -1 || targetIndex === -1) {
+    return
+  }
+  
+  // Remove the dragged section from its current position
+  currentOrder.splice(draggedIndex, 1)
+  
+  // Insert it at the target position
+  currentOrder.splice(targetIndex, 0, draggedSection.value)
+  
+  // Update the section order
+  emit('update:sectionOrder', currentOrder)
+  
+  // Reset drag state
+  draggedSection.value = null
+  dragOverSection.value = null
+}
+
+const handleDragEnter = (event, section) => {
+  if (section !== 'summary' && draggedSection.value !== section) {
+    dragOverSection.value = section
+  }
+}
+
+const handleDragLeave = (event) => {
+  // Only clear if we're actually leaving the element (not entering a child)
+  if (!event.currentTarget.contains(event.relatedTarget)) {
+    dragOverSection.value = null
+  }
 }
 
 const exportData = () => {
@@ -1512,6 +1567,16 @@ const formatSectionName = (section) => {
   padding: 8px 0;
 }
 
+.control-item.draggable-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin: 2px 0;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
 .checkbox-label {
   display: flex;
   align-items: center;
@@ -1519,6 +1584,11 @@ const formatSectionName = (section) => {
   cursor: pointer;
   flex: 1;
   transition: color 0.2s ease;
+}
+
+.draggable-section .checkbox-label {
+  flex: 1;
+  margin-left: 0;
 }
 
 .checkbox-label:hover {
@@ -1615,6 +1685,61 @@ const formatSectionName = (section) => {
 .move-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+}
+
+/* Drag and drop styles */
+.draggable-section {
+  position: relative;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 2px 0;
+}
+
+.draggable-section:hover {
+  background: #f8fafc;
+}
+
+.draggable-section.drag-over {
+  background: #dbeafe;
+  border: 2px dashed #3b82f6;
+  transform: scale(1.02);
+}
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  cursor: grab;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.drag-handle:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.draggable-section:active .drag-handle {
+  cursor: grabbing;
+}
+
+.draggable-section[draggable="false"] {
+  cursor: default;
+}
+
+.draggable-section[draggable="false"] .drag-handle {
+  cursor: default;
+  opacity: 0.3;
+}
+
+.drag-handle.disabled {
+  cursor: default;
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 .export-btn {
