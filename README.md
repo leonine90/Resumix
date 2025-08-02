@@ -12,9 +12,11 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 - **Professional Headshot**: Support for profile pictures
 - **Print-Friendly**: Optimized for printing with proper page breaks
 - **Responsive Design**: Works well on different screen sizes
-- **Import/Export Resume Data**: Easily export your resume as a JSON file or import data from a JSON file using the sidebar controls
-- **🤖 AI-Powered Resume Import**: Paste your resume text and let AI automatically convert it to the proper JSON format
-- **🎯 AI Job Optimizer**: Tailor your resume to specific job postings by optimizing Summary, Experience achievements, and Skills while preserving all other content
+- **Import/Export Resume Data**: Easily export your resume as a JSON file using the sidebar controls
+- **📄 Smart Resume Import**: Paste resume text or JSON data and let the system automatically convert it to the proper format with intelligent section visibility management
+- **🎯 AI Job Optimizer**: Tailor your resume to specific job postings by completely rewriting Summary and Experience achievements to match job requirements, with intelligent keyword bolding and structure preservation
+- **🔔 Toast Notification System**: Modern, non-intrusive notifications with auto-close for short messages and manual close for longer ones
+- **🎨 Enhanced User Experience**: Improved error handling, better AI response parsing, and smart section management
 
 ## Project Structure
 
@@ -27,18 +29,24 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 │   ├── ResumeSidebar.vue  # Sidebar controls for sections and data management
 │   ├── ResearchInterests.vue # Research interests with version support
 │   ├── Education.vue      # Education history
-│   ├── Summary.vue        # Professional summary
-│   ├── Experience.vue     # Work experience
+│   ├── Summary.vue        # Professional summary with HTML rendering
+│   ├── Experience.vue     # Work experience with HTML rendering
 │   ├── Publications.vue   # Publications and articles
-│   ├── Skills.vue         # Skills list
+│   ├── Skills.vue         # Skills list with 3-column grid layout
 │   ├── Languages.vue      # Language skills
 │   ├── Volunteering.vue   # Volunteer experience
 │   ├── Signature.vue      # Signature section
-│   └── VersionSelector.vue # Version switcher and PDF download
+│   ├── VersionSelector.vue # Version switcher and PDF download
+│   ├── ToastContainer.vue # Toast notification system
+│   └── FloatingToolbar.vue # Rich text editing toolbar
+├── composables/
+│   ├── useTextCommands.js # Rich text editing commands for floating toolbar
+│   ├── useTextSelection.js # Text selection utilities for editing
+│   └── useToast.js        # Toast notification composable
 ├── server/
 │   └── api/
-│       ├── import-resume.post.js  # AI-powered resume text to JSON conversion
-│       └── tailor-resume.post.js  # AI-powered resume optimization for job posts
+│       ├── import-resume.post.js  # Enhanced AI-powered resume text to JSON conversion
+│       └── tailor-resume.post.js  # Enhanced AI-powered resume optimization for job posts
 ├── public/
 │   └── favicon.ico        # Site favicon
 ```
@@ -364,28 +372,35 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## AI-Powered Features
 
-### 🤖 AI Resume Import
+### 📄 Smart Resume Import
 
-**Convert any resume format to structured JSON automatically!**
+**Intelligently import resume text or JSON data automatically!**
 
-1. **Open the sidebar** and expand the **Import & Export** section
-2. **Click "Import Resume Text"** to open the AI import modal
-3. **Paste your resume text** (from Word, PDF, or any format) into the textarea
-4. **Click "Convert with AI"** to automatically parse and structure your resume
-5. **Review the results** and click "Apply Changes" to update your resume
+1. **Open the sidebar** and expand the **Data Management** section
+2. **Click "Import Resume"** to open the smart import modal
+3. **Paste your content** (resume text OR JSON data) into the textarea
+4. **Click "Import Resume"** to automatically process your data
+5. **Review the results** - your resume will be updated instantly
+
+**Smart Detection:**
+- **JSON Input**: Automatically detects and imports valid JSON resume data instantly
+- **Text Input**: Uses AI to convert unstructured text to proper JSON format
+- **Seamless Experience**: One interface handles both formats intelligently
 
 **Supported Formats:**
+- Valid JSON resume data (exported from this app or AI-generated)
 - Microsoft Word documents (copy-pasted text)
 - PDF files (copy-pasted text)
 - Plain text resumes
 - Any unstructured resume format
 
-**What the AI extracts:**
+**What gets imported:**
 - Personal information (name, contact details, address)
 - Education history with institutions, degrees, and periods
 - Work experience with companies, positions, and achievements
 - Skills and technical competencies
 - Publications and research interests
+- Volunteering experience
 - Languages and certifications
 - All other resume sections
 
@@ -401,9 +416,9 @@ This project is open source and available under the [MIT License](LICENSE).
 6. **Review the before/after comparison** and click "Apply Optimizations"
 
 **What the AI optimizes:**
-- **Summary**: Rewrites your professional summary to match job requirements
-- **Experience Achievements**: Enhances achievement descriptions with relevant keywords
-- **Skills**: Adapts skills list to include job-specific competencies
+- **Summary**: Completely rewrites your professional summary to match job requirements with **bold technical keywords**
+- **Experience Achievements**: Completely rewrites achievement descriptions to demonstrate job-relevant skills and technologies with **selective technical keyword bolding**
+- **Skills**: Adapts and reorders skills list to prioritize job-specific competencies (displayed as clean text)
 
 **What the AI preserves:**
 - All personal information and contact details
@@ -431,3 +446,129 @@ This project is open source and available under the [MIT License](LICENSE).
 - API keys are stored securely in `.env` files (not committed to git)
 - All AI processing happens server-side to protect your API key
 - No sensitive data is exposed to the client
+
+## Recent Enhancements (2024)
+
+### 🔔 Toast Notification System
+
+**Modern, non-intrusive notifications that enhance the user experience!**
+
+**Features:**
+- **Smart Auto-Close**: Short messages (≤60 characters) auto-close in 4 seconds
+- **Manual Close**: Long messages stay visible with a close button for user control
+- **Multiple Types**: Success (green), Error (red), Warning (orange), Info (blue) with appropriate icons
+- **Non-Blocking**: Notifications appear in bottom-right corner without interrupting workflow
+- **Smooth Animations**: Slide-in from right with opacity transitions
+- **Responsive Design**: Adapts to mobile screens with full-width display
+- **Accessibility**: Proper ARIA labels and keyboard navigation support
+
+**Design:**
+- **Minimal Black Theme**: Dark gray background (#1f2937) with light text
+- **Color-Coded Icons**: Material Design icons for each notification type
+- **Professional Appearance**: Subtle shadows and clean typography
+- **Print-Safe**: Hidden during printing for clean output
+
+**Replaced Alert System:**
+- All browser `alert()` dialogs have been replaced with elegant toast notifications
+- Better user experience with non-blocking notifications
+- Consistent design throughout the application
+
+### 🎯 Enhanced AI Job Optimizer
+
+**Significantly improved content optimization capabilities!**
+
+**New Content Focus:**
+- **Complete Rewriting**: AI now completely rewrites summary and experience achievements instead of just adding keywords
+- **Job Alignment**: Content is transformed to specifically match job posting requirements
+- **Technical Keyword Bolding**: Strategic use of `<strong>` tags for technical terms only (3-5 per paragraph max)
+- **Factual Accuracy**: Preserves all factual information while enhancing how it's presented
+
+**Rewriting Strategy:**
+1. **Analyze job posting** for key requirements, technologies, and responsibilities
+2. **Rewrite summary** to position candidate as ideal fit for specific requirements
+3. **Transform achievements** to highlight relevant skills and quantifiable impact
+4. **Prioritize skills** based on job posting requirements
+5. **Apply selective bolding** to technical keywords using HTML `<strong>` tags
+
+**Example Transformation:**
+- **Before**: "Developed web applications for internal teams"
+- **After**: "Architected and delivered enterprise-scale web applications using **React** and **TypeScript**, serving 10,000+ users and reducing operational overhead by 40%"
+
+### 📄 Enhanced Smart Resume Import
+
+**Improved AI parsing with robust error handling and data preservation!**
+
+**Enhanced Parsing:**
+- **Robust JSON Extraction**: Multiple fallback methods for extracting valid JSON from AI responses
+- **Markdown Cleanup**: Automatic removal of code blocks and formatting artifacts
+- **Text Preprocessing**: Normalization of whitespace, line endings, and formatting
+- **Length Validation**: 10,000 character limit to prevent token overflow
+- **Better Error Messages**: Detailed logging and user-friendly error descriptions
+
+**Smart Section Management:**
+- **Auto-Hide Empty Sections**: Sections with no content are automatically unchecked
+- **Core Sections Always Visible**: Summary, Education, Experience, Skills always remain enabled
+- **Manual Override**: Users can still enable any hidden section to add content later
+- **Intelligent Detection**: Comprehensive checks for empty arrays, objects, and strings
+
+**Data Preservation Logic:**
+- **Structure Preservation**: Maintains original resume structure and formatting
+- **Versioned Data**: Preserves complex data structures like versioned research interests
+- **Detailed Information**: Keeps education coursework, GPA, final projects, publication details
+- **Format Consistency**: Maintains original data formats (strings vs objects, date formats)
+
+### 🛠️ Technical Improvements
+
+**Enhanced system reliability and user experience!**
+
+**HTML Rendering Support:**
+- **Summary & Experience**: Now support HTML `<strong>` tags for keyword bolding
+- **Conditional Rendering**: Separate view and edit modes to prevent browser HTML escaping
+- **Content Preservation**: HTML tags maintained during inline editing
+- **CSS Grid Layout**: Skills section uses CSS Grid for reliable 3-column display
+
+**Error Handling:**
+- **Comprehensive Logging**: Detailed error information for troubleshooting
+- **Graceful Degradation**: System continues to work even when some features fail
+- **User-Friendly Messages**: Clear, actionable error messages with suggested solutions
+- **Fallback Mechanisms**: Multiple strategies for handling AI response parsing
+
+**Data Integrity:**
+- **Smart Merging**: Intelligent data merging that preserves existing information
+- **Fallback Logic**: Uses current data when imported data is incomplete
+- **Validation Checks**: Ensures data structure integrity throughout the import process
+- **Section Visibility**: Automatic management of section visibility based on content
+
+**Performance Optimizations:**
+- **Parallel Processing**: Toast notifications and data operations run efficiently
+- **Memory Management**: Proper cleanup of temporary data and event listeners
+- **Client-Side Validation**: Reduced server calls through smart client-side checks
+- **Responsive Loading**: Better loading states and progress indicators
+
+### 🎨 User Interface Enhancements
+
+**Improved visual design and interaction patterns!**
+
+**Toast Notifications:**
+- **Material Design Icons**: Consistent iconography across all notification types
+- **Hover States**: Interactive close buttons with smooth transitions
+- **Focus Management**: Proper keyboard navigation and accessibility
+- **Mobile Optimization**: Full-width notifications on smaller screens
+
+**Resume Content:**
+- **Technical Keyword Highlighting**: Bold formatting for technical terms in optimized content
+- **Clean Typography**: Improved readability with proper font weights
+- **Grid Layouts**: Better organization of skills and other list-based content
+- **Print Optimization**: Enhanced print styles for professional output
+
+**Data Management:**
+- **Smart Defaults**: Checkbox for using current resume data in optimizer
+- **Progress Indicators**: Clear feedback during AI processing operations
+- **Status Messages**: Informative loading and success states
+- **Error Recovery**: Clear paths for users to recover from errors
+
+**Accessibility:**
+- **ARIA Labels**: Proper labeling for screen readers
+- **Keyboard Navigation**: Full keyboard support for all interactive elements
+- **High Contrast**: Sufficient color contrast for readability
+- **Focus Indicators**: Clear visual feedback for focused elements

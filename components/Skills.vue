@@ -37,14 +37,13 @@ const updateSkill = (index, value) => {
 
 <style scoped>
 .skills div {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 
 .skills div span {
-  flex: 1 0 calc(calc(100% - 3*8px)/3);
-  margin-bottom: 8px;
-  margin-right: 8px;
+  /* Grid items automatically fill the columns */
 }
 
 /* Editable styles */

@@ -2,10 +2,16 @@
   <section class="resume-section" :class="{ hide: !show }" :contenteditable="editable">
     <h2>Summary</h2>
     <p 
+      v-if="!editable"
+      v-html="summaryText"
+    ></p>
+    <p 
+      v-else
       :class="{ editable }"
       :contenteditable="editable"
       @blur="updateSummary"
-    >{{ summaryText }}</p>
+      v-html="summaryText"
+    ></p>
   </section>
 </template>
 
@@ -38,10 +44,12 @@ const summaryText = computed(() => {
 const updateSummary = (event) => {
   if (props.editable) {
     const updatedSummary = { ...props.summaryData }
-    updatedSummary[props.activeVersion] = event.target.textContent
+    updatedSummary[props.activeVersion] = event.target.innerHTML
     emit('update:summaryData', updatedSummary)
   }
 }
+
+
 </script>
 
 <style scoped>
@@ -73,5 +81,10 @@ const updateSummary = (event) => {
     background-color: transparent;
     outline: none;
   }
+}
+
+/* Style for bold keywords from AI optimization */
+:deep(strong) {
+  font-weight: bold;
 }
 </style> 

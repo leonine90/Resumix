@@ -40,7 +40,6 @@
             >{{ course }}</li>
           </ul>
         </li>
-        <br v-if="education.coursework"/>
         <li v-if="education.finalProject">
 <strong>Final Year Project:</strong> 
           <span 

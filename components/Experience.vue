@@ -28,14 +28,22 @@
           @blur="updateExperience(index, 'period', $event.target.textContent)"
         >{{ job.period }}</div>
       </div>
-      <ul>
+      <ul v-if="!editable">
+        <li 
+          v-for="(achievement, achievementIndex) in job.achievements" 
+          :key="achievementIndex"
+          v-html="achievement"
+        ></li>
+      </ul>
+      <ul v-else>
         <li 
           v-for="(achievement, achievementIndex) in job.achievements" 
           :key="achievementIndex"
           :class="{ editable }"
           :contenteditable="editable"
-          @blur="updateAchievement(index, achievementIndex, $event.target.textContent)"
-        >{{ achievement }}</li>
+          @blur="updateAchievement(index, achievementIndex, $event.target.innerHTML)"
+          v-html="achievement"
+        ></li>
       </ul>
     </div>
   </section>
@@ -125,5 +133,10 @@ ul li {
     background-color: transparent;
     outline: none;
   }
+}
+
+/* Style for bold keywords from AI optimization */
+:deep(strong) {
+  font-weight: bold;
 }
 </style> 

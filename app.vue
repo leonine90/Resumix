@@ -119,6 +119,9 @@
     
     <!-- Floating Toolbar -->
     <FloatingToolbar :editable="reactiveResumeData.editable" />
+    
+    <!-- Toast Notifications -->
+    <ToastContainer />
   </div>
 </template>
 
@@ -315,7 +318,7 @@ useHead({
   }
 
   .resume-section h2 {
-    margin: 0 0 15px 0;
+    margin: 8px 0;
     font-size: 18px;
     font-weight: bold;
   }
@@ -367,5 +370,20 @@ useHead({
       width: 100%;
       padding: 20px;
     }
+  }
+
+  /* Global title-row spacing */
+  .title-row {
+    margin-bottom: 8px;
+  }
+
+  /* Parent of title-row spacing - target the v-for divs in resume sections */
+  .resume-section > div {
+    margin-bottom: 16px;
+  }
+
+  /* Remove margin from the last child to avoid extra spacing */
+  .resume-section > div:last-child {
+    margin-bottom: 0;
   }
 </style>
