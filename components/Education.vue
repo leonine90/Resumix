@@ -9,12 +9,12 @@
               :class="{ editable }"
               :contenteditable="editable"
               @blur="updateEducation(index, 'institution', $event.target.textContent)"
-            >{{ education.institution }}</span>, 
-            <span 
+            >{{ education.institution }}</span>
+            <span v-if="education.location && education.location.trim()"
               :class="{ editable }"
               :contenteditable="editable"
               @blur="updateEducation(index, 'location', $event.target.textContent)"
-            >{{ education.location }}</span>
+            >, {{ education.location }}</span>
           </div>          
           <div 
             :class="{ editable }"

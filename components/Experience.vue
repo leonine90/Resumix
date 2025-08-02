@@ -9,12 +9,12 @@
               :class="{ editable }"
               :contenteditable="editable"
               @blur="updateExperience(index, 'company', $event.target.textContent)"
-            >{{ job.company }},</span> 
-            <span 
+            >{{ job.company }}</span>
+            <span v-if="job.location && job.location.trim()"
               :class="{ editable }"
               :contenteditable="editable"
               @blur="updateExperience(index, 'location', $event.target.textContent)"
-            >{{ job.location }}</span>
+            >, {{ job.location }}</span>
           </div>
           <div 
             :class="{ editable }"

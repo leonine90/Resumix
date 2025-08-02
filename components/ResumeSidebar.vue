@@ -895,15 +895,16 @@ const processWithAI = async () => {
         },
         
         // Merge all section data, preserving structure
-        researchInterests: importedData.researchInterests || currentData.researchInterests,
-        education: importedData.education || currentData.education,
-        summary: importedData.summary || currentData.summary,
-        experience: importedData.experience || currentData.experience,
-        publications: importedData.publications || currentData.publications,
-        skills: importedData.skills || currentData.skills,
-        languages: importedData.languages || currentData.languages,
-        volunteering: importedData.volunteering || currentData.volunteering,
-        signature: importedData.signature || currentData.signature
+        // Use imported data if available, otherwise use empty defaults instead of mock data
+        researchInterests: importedData.researchInterests || { default: "" },
+        education: importedData.education || [],
+        summary: importedData.summary || { default: "" },
+        experience: importedData.experience || [],
+        publications: importedData.publications || [],
+        skills: importedData.skills || [],
+        languages: importedData.languages || [],
+        volunteering: importedData.volunteering || [],
+        signature: importedData.signature || { name: "", date: "" }
       }
 
       // Emit the merged data to update the resume

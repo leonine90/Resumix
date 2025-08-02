@@ -52,14 +52,15 @@ CRITICAL INSTRUCTIONS:
 4. For missing information, use empty arrays [] for array fields or empty strings "" for text fields
 5. Extract dates in the format shown in the text (e.g., "October 2024 - Now", "May 8th, 1997")
 6. For dateOfBirth, look for "Date of Birth", "DOB", or birth date information
-7. For education: extract institution, degree, period, location from education sections
-8. For experience: extract company, position, period, location, and convert job descriptions into achievement bullet points
+7. For education: extract institution, degree, period, location from education sections. If location is not mentioned, use empty string "" instead of default values
+8. For experience: extract company, position, period, location, and convert job descriptions into achievement bullet points. If location is not mentioned, use empty string "" instead of default values
 9. For skills: extract individual skills, technologies, and competencies mentioned
-10. For volunteering: look for volunteer activities, community involvement, or similar sections
+10. For volunteering: look for volunteer activities, community involvement, or similar sections. If location is not mentioned, use empty string "" instead of default values
 11. For languages: if mentioned, extract language skills and proficiency levels
 12. For publications: if any research papers, articles, or publications are mentioned
-13. Parse name and contact information carefully from the header
+13. Parse name and contact information carefully from the header. If address is not mentioned, use empty string "" instead of default values
 14. The JSON must be syntactically perfect and parseable
+15. IMPORTANT: Never use placeholder text like "City, Country" or "University Name" - use empty strings "" for missing information
 
 TARGET JSON STRUCTURE:
 {
@@ -88,7 +89,7 @@ TARGET JSON STRUCTURE:
   "personal": {
     "name": "Full Name",
     "title": "Job Title",
-    "address": "City, Country",
+    "address": "",
     "dateOfBirth": "",
     "phone": "Phone Number",
     "email": "email@example.com",
@@ -99,7 +100,7 @@ TARGET JSON STRUCTURE:
   "education": [
     {
       "institution": "University Name",
-      "location": "City, Country",
+      "location": "",
       "degree": "Degree Name",
       "period": "Start Year - End Year",
       "gpa": "",
@@ -113,7 +114,7 @@ TARGET JSON STRUCTURE:
   "experience": [
     {
       "company": "Company Name",
-      "location": "City, Country",
+      "location": "",
       "position": "Job Title",
       "period": "Start Date - End Date",
       "achievements": [

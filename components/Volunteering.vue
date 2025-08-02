@@ -8,11 +8,11 @@
             <span class="bold" 
               :class="{ editable }"
               @blur="updateVolunteer(index, 'organization', $event.target.textContent)"
-            >{{ volunteer.organization }}</span>, 
-            <span 
+            >{{ volunteer.organization }}</span>
+            <span v-if="volunteer.location && volunteer.location.trim()"
               :class="{ editable }"
               @blur="updateVolunteer(index, 'location', $event.target.textContent)"
-            >{{ volunteer.location }}</span>
+            >, {{ volunteer.location }}</span>
           </div>
           <div 
             :class="{ editable }"

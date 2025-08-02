@@ -26,7 +26,7 @@
       </h1>
     </div>
     <aside>
-      <div v-if="headerElements.address">Address: <span 
+      <div v-if="headerElements.address && personal.address && personal.address.trim()">Address: <span 
         :contenteditable="editable" 
         :class="{ editable }"
         @blur="updatePersonal('address', $event.target.textContent)"
