@@ -61,7 +61,7 @@
             v-for="section in sectionOrder" 
             :key="section" 
             class="control-item draggable-section"
-            :draggable="section !== 'summary'"
+            :draggable="section !== 'summary' && section !== 'signature'"
             @dragstart="handleDragStart($event, section)"
             @dragover="handleDragOver($event)"
             @drop="handleDrop($event, section)"
@@ -69,7 +69,7 @@
             @dragleave="handleDragLeave($event)"
             :class="{ 'drag-over': dragOverSection === section }"
           >
-            <div class="drag-handle" :class="{ 'disabled': section === 'summary' }">
+            <div class="drag-handle" :class="{ 'disabled': section === 'summary' || section === 'signature' }">
               <Icon icon="material-symbols:drag-handle" style="font-size: 16px; color: #64748b;" />
             </div>
             <label class="checkbox-label">
@@ -599,7 +599,7 @@ const canMoveDown = (section) => {
 
 // Drag and drop methods
 const handleDragStart = (event, section) => {
-  if (section === 'summary') return
+  if (section === 'summary' || section === 'signature') return
   draggedSection.value = section
   event.dataTransfer.effectAllowed = 'move'
   event.dataTransfer.setData('text/plain', section)
@@ -613,7 +613,7 @@ const handleDragOver = (event) => {
 const handleDrop = (event, targetSection) => {
   event.preventDefault()
   
-  if (!draggedSection.value || draggedSection.value === targetSection || targetSection === 'summary') {
+  if (!draggedSection.value || draggedSection.value === targetSection || targetSection === 'summary' || targetSection === 'signature') {
     return
   }
   
@@ -640,7 +640,7 @@ const handleDrop = (event, targetSection) => {
 }
 
 const handleDragEnter = (event, section) => {
-  if (section !== 'summary' && draggedSection.value !== section) {
+  if (section !== 'summary' && section !== 'signature' && draggedSection.value !== section) {
     dragOverSection.value = section
   }
 }

@@ -231,11 +231,12 @@ signature: {
 3. **Click and hold** the drag handle to start dragging
 4. **Drag the section** to your desired position
 5. **Drop the section** to reorder it in your resume
+6. **Note**: Summary and Signature sections cannot be moved (they stay at top and bottom respectively)
 
 **Features:**
 - **Visual Feedback**: Sections highlight with blue border when dragging over them
 - **Smooth Animations**: Smooth transitions and scaling effects during drag operations
-- **Smart Constraints**: Summary section cannot be moved (always stays at top)
+- **Smart Constraints**: Summary section cannot be moved (always stays at top), Signature section cannot be moved (always stays at bottom)
 - **Non-Intrusive**: Drag handles only appear on hover for clean interface
 - **Responsive Design**: Works seamlessly on desktop and tablet devices
 
