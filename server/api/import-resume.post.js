@@ -56,7 +56,7 @@ CRITICAL INSTRUCTIONS:
 8. For experience: extract company, position, period, location, and convert job descriptions into achievement bullet points. If location is not mentioned, use empty string "" instead of default values
 9. For skills: extract individual skills, technologies, and competencies mentioned
 10. For volunteering: look for volunteer activities, community involvement, or similar sections. If location is not mentioned, use empty string "" instead of default values
-11. For languages: if mentioned, extract language skills and proficiency levels
+11. For languages: if mentioned, extract language skills and proficiency levels. Format as "Language Name (Proficiency Level)" - e.g., "English (Fluent)", "Spanish (Intermediate)"
 12. For publications: if any research papers, articles, or publications are mentioned
 13. Parse name and contact information carefully from the header. If address is not mentioned, use empty string "" instead of default values
 14. The JSON must be syntactically perfect and parseable
@@ -139,10 +139,7 @@ TARGET JSON STRUCTURE:
     }
   ],
   "languages": [
-    {
-      "language": "Language Name",
-      "proficiency": "Proficiency Level"
-    }
+    "Language Name (Proficiency Level)"
   ],
   "volunteering": [
     {

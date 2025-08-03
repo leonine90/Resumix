@@ -18,6 +18,7 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 - **🔔 Toast Notification System**: Modern, non-intrusive notifications with auto-close for short messages and manual close for longer ones
 - **🎨 Enhanced User Experience**: Improved error handling, better AI response parsing, and smart section management
 - **🔄 Drag & Drop Section Reordering**: Intuitive drag handles to reorder resume sections with visual feedback and smooth animations
+- **📝 AI Cover Letter Generator**: Create professional, tailored cover letters using AI that connect your experience to specific job requirements
 
 ## Project Structure
 
@@ -44,10 +45,11 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 │   ├── useTextCommands.js # Rich text editing commands for floating toolbar
 │   ├── useTextSelection.js # Text selection utilities for editing
 │   └── useToast.js        # Toast notification composable
-├── server/
+      ├── server/
 │   └── api/
 │       ├── import-resume.post.js  # Enhanced AI-powered resume text to JSON conversion
-│       └── tailor-resume.post.js  # Enhanced AI-powered resume optimization for job posts
+│       ├── tailor-resume.post.js  # Enhanced AI-powered resume optimization for job posts
+│       └── generate-cover-letter.post.js  # AI-powered cover letter generation
 ├── public/
 │   └── favicon.ico        # Site favicon
 ```
@@ -219,6 +221,8 @@ signature: {
 - **Header Elements**: Checkboxes to show/hide header elements (address, phone, email, LinkedIn, headshot)
 - **Resume Sections**: Checkboxes to show/hide sections and drag handles to reorder them
 - **Data Management**: Import/export resume data as JSON
+- **Job Optimizer**: Tailor your resume for specific job postings using AI
+- **Cover Letter Generator**: Create professional cover letters tailored to job descriptions
 - **Version Selector**: Switch between different resume versions in the top-right
 
 #### 🔄 Drag & Drop Section Reordering
@@ -457,6 +461,38 @@ This project is open source and available under the [MIT License](LICENSE).
 - When you paste a new resume, all information (personal details, education, etc.) is updated from the new text
 - AI optimizations are applied on top of the updated base resume
 - No data loss - everything is preserved and enhanced
+
+### 📝 AI Cover Letter Generator
+
+**Create professional, tailored cover letters with AI!**
+
+1. **Open the sidebar** and expand the **Cover Letter Generator** section
+2. **Click "Generate Cover Letter"** to open the cover letter modal
+3. **Paste your resume text** in the first textarea (or use current resume data)
+4. **Paste the job description** in the second textarea
+5. **Click "Generate Cover Letter"** to let AI create a tailored cover letter
+6. **Review the generated cover letter** and click "Download as PDF"
+
+**What the AI creates:**
+- **Professional Structure**: 3-4 paragraph business letter format
+- **Tailored Content**: Connects your experience to specific job requirements
+- **Proper Formatting**: Includes date, salutation, and professional closing
+- **Compelling Narrative**: Highlights relevant achievements and skills
+- **Enthusiasm**: Shows genuine interest in the role and company
+
+**Cover Letter Best Practices:**
+- **Opening Paragraph**: Expresses interest in the specific position and company
+- **Body Paragraph(s)**: Connects relevant experience to job requirements with specific examples
+- **Closing Paragraph**: Reiterates interest and includes clear call-to-action
+- **Professional Tone**: Confident but not arrogant, specific and detailed
+- **Proper Formatting**: Business letter format with proper spacing and typography
+
+**Features:**
+- **Smart Resume Integration**: Use current resume data or paste new text
+- **Job-Specific Tailoring**: AI analyzes job requirements and matches your experience
+- **Professional Formatting**: Business letter format ready for submission
+- **PDF Download**: Download cover letter as a properly formatted PDF
+- **Editable Results**: Review and edit the generated cover letter before downloading
 
 ### 🔧 AI Configuration
 
