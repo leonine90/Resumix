@@ -34,14 +34,14 @@ export const resumeData = {
   sectionOrder: ['summary', 'researchInterests', 'education', 'experience', 'publications', 'skills', 'languages', 'volunteering', 'signature'],
   
   personal: {
-    name: "John Doe",
+    name: "Robert Plant",
     title: "Software Engineer",
     address: "San Francisco, CA",
     dateOfBirth: "1990/01/15",
     phone: "+1-555-123-4567",
-    email: "john.doe@example.com",
-    linkedin: "https://linkedin.com/in/john-doe",
-    linkedinText: "/john-doe",
+    email: "robert.plant@example.com",
+    linkedin: "https://linkedin.com/in/robert-plant",
+    linkedinText: "/robert-plant",
     headshot: "" // Headshot URL - paste image URL in sidebar
   },
 

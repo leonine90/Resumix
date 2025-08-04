@@ -7,8 +7,8 @@ export const useToast = () => {
   const addToast = (message, type = 'info', duration = null) => {
     const id = ++toastId
     
-    // Determine if toast should auto-close based on message length
-    const autoClose = duration !== null ? duration : (message.length > 60 ? 0 : 4000)
+    // Set auto-close to 5 seconds (5000ms) for all toasts unless duration is explicitly set
+    const autoClose = duration !== null ? duration : 5000
     
     const toast = {
       id,

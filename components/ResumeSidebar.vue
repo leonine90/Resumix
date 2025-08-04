@@ -162,32 +162,86 @@
   </div>
 
   <!-- Import Modal -->
-  <div v-if="showAiImportModal" class="modal-overlay" @click="showAiImportModal = false">
-    <div class="modal-content" @click.stop>
-      <div class="modal-header">
-        <h3>Import Resume</h3>
-        <button class="modal-close" @click="showAiImportModal = false">
-          <Icon icon="material-symbols:close" style="font-size: 20px;" />
-        </button>
+  <div v-if="showAiImportModal" class="fullscreen-modal-overlay">
+    <div class="fullscreen-modal-content" @click.stop>
+      <div class="fullscreen-header">
+        <div class="header-content">
+          <div class="header-left">
+            <Icon icon="material-symbols:upload-file" style="font-size: 24px; margin-right: 12px;" />
+            <h1>Import Resume</h1>
+          </div>
+          <button class="close-btn" @click="showAiImportModal = false">
+            <Icon icon="material-symbols:close" style="font-size: 24px;" />
+          </button>
+        </div>
       </div>
-      <div class="modal-body">
-        <label class="modal-label">Paste your resume text or JSON:</label>
-        <textarea 
-          v-model="resumeText"
-          class="modal-textarea"
-          placeholder="Paste your resume text (from Word, PDF, etc.) or valid JSON resume data here..."
-          rows="12"
-        ></textarea>
+      <div class="fullscreen-body">
+        <!-- File Upload Section -->
+        <div class="upload-section">
+          <label class="modal-label">Upload Resume File:</label>
+          <div 
+            class="file-upload-area"
+            :class="{ 'drag-over': isDragOver, 'has-file': uploadedFile }"
+            @drop="handleFileDrop"
+            @dragover.prevent="isDragOver = true"
+            @dragleave.prevent="isDragOver = false"
+            @click="triggerFileInput"
+          >
+            <input 
+              ref="fileInput"
+              type="file" 
+              accept=".txt,.rtf,.doc,.docx,.pdf"
+              @change="handleFileSelect"
+              style="display: none;"
+            />
+            <div class="upload-content">
+              <Icon icon="material-symbols:cloud-upload" style="font-size: 48px; color: #666; margin-bottom: 16px;" />
+              <p class="upload-text">
+                <span v-if="!uploadedFile">Drag and drop your resume file here, or click to browse</span>
+                <span v-else class="file-name">{{ uploadedFile.name }}</span>
+              </p>
+              <p class="upload-hint">Supported formats: .txt, .rtf, .doc, .docx, .pdf</p>
+              <button v-if="uploadedFile" class="remove-file-btn" @click.stop="removeFile">
+                <Icon icon="material-symbols:delete" style="font-size: 16px;" />
+                Remove File
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Divider -->
+        <div class="modal-divider">
+          <span>or</span>
+        </div>
+
+        <!-- Text Input Section -->
+        <div class="text-section">
+          <label class="modal-label">Paste your resume text or JSON:</label>
+          <textarea 
+            v-model="resumeText"
+            class="modal-textarea"
+            placeholder="Paste your resume text (from Word, PDF, etc.) or valid JSON resume data here..."
+            rows="8"
+          ></textarea>
+        </div>
+
         <div class="ai-status" v-if="isProcessing">
           <Icon icon="material-symbols:hourglass-top" style="font-size: 16px; margin-right: 8px;" />
           Processing...
         </div>
-        <div class="modal-actions">
-          <button @click="showAiImportModal = false" class="cancel-btn" :disabled="isProcessing">Cancel</button>
-          <button @click="processWithAI" :disabled="!resumeText.trim() || isProcessing" class="submit-btn ai-btn">
-            <Icon icon="material-symbols:upload" style="font-size: 14px; margin-right: 4px;" />
-            Import Resume
-          </button>
+        
+        <div class="fullscreen-actions">
+          <div class="action-buttons">
+            <button @click="showAiImportModal = false" class="action-btn cancel-action" :disabled="isProcessing">
+              <Icon icon="material-symbols:close" style="font-size: 16px; margin-right: 8px;" />
+              Cancel
+            </button>
+            <button @click="processWithAI" :disabled="(!resumeText.trim() && !uploadedFile) || isProcessing" class="action-btn optimize-action">
+              <Icon icon="material-symbols:upload" style="font-size: 16px; margin-right: 8px;" />
+              Import Resume
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -197,10 +251,15 @@
   <div v-if="showImportModal" class="modal-overlay" @click="showImportModal = false">
     <div class="modal-content" @click.stop>
       <div class="modal-header">
-        <h3>Import Resume Data</h3>
-        <button class="modal-close" @click="showImportModal = false">
-          <Icon icon="material-symbols:close" style="font-size: 20px;" />
-        </button>
+        <div class="header-content">
+          <div class="header-left">
+            <Icon icon="material-symbols:code" style="font-size: 20px; margin-right: 8px;" />
+            <h3>Import Resume Data</h3>
+          </div>
+          <button class="modal-close" @click="showImportModal = false">
+            <Icon icon="material-symbols:close" style="font-size: 20px;" />
+          </button>
+        </div>
       </div>
       <div class="modal-body">
         <label class="modal-label">Paste JSON data:</label>
@@ -222,32 +281,44 @@
   <div v-if="showInfoModal" class="modal-overlay" @click="showInfoModal = false">
     <div class="modal-content" @click.stop>
       <div class="modal-header">
-        <h3>Using AI to Generate a Resume</h3>
-        <button class="modal-close" @click="showInfoModal = false">
-          <Icon icon="material-symbols:close" style="font-size: 20px;" />
-        </button>
+        <div class="header-content">
+          <div class="header-left">
+            <Icon icon="material-symbols:info" style="font-size: 20px; margin-right: 8px;" />
+            <h3>Using AI to Generate a Resume</h3>
+          </div>
+          <button class="modal-close" @click="showInfoModal = false">
+            <Icon icon="material-symbols:close" style="font-size: 20px;" />
+          </button>
+        </div>
       </div>
       <div class="modal-body">
         <div class="info-content">
-          <p>This application now includes a smart import feature that can handle both resume text and JSON data. For more advanced customization, you can also use external AI tools.</p>
+          <p>This application now includes a smart import feature that can handle file uploads, resume text, and JSON data. For more advanced customization, you can also use external AI tools.</p>
           
           <div class="step-list">
             <div class="step-item">
               <span class="step-number">1</span>
               <div class="step-content">
-                <strong>Quick Import:</strong> Use the "Import Resume" button to paste any resume text directly. The system will automatically convert it to the correct format.
+                <strong>File Upload:</strong> Drag and drop or browse to upload resume files (.txt, .rtf, .doc, .docx, .pdf). The system will extract text and process it automatically.
               </div>
             </div>
             
             <div class="step-item">
               <span class="step-number">2</span>
               <div class="step-content">
-                <strong>JSON Import:</strong> If you have valid JSON resume data (exported from this app or generated by AI), paste it directly in the Import Resume field. It will be detected and imported instantly.
+                <strong>Text Import:</strong> Use the "Import Resume" button to paste any resume text directly. The system will automatically convert it to the correct format.
               </div>
             </div>
             
             <div class="step-item">
               <span class="step-number">3</span>
+              <div class="step-content">
+                <strong>JSON Import:</strong> If you have valid JSON resume data (exported from this app or generated by AI), paste it directly in the Import Resume field. It will be detected and imported instantly.
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <span class="step-number">4</span>
               <div class="step-content">
                 <strong>External AI (Advanced):</strong> Export your current resume as JSON, provide it to ChatGPT/Claude/Gemini along with your content, ask for a new JSON structure, then import the result.
               </div>
@@ -437,10 +508,15 @@
   <div v-if="showOptimizerInfoModal" class="modal-overlay" @click="showOptimizerInfoModal = false">
     <div class="modal-content" @click.stop>
       <div class="modal-header">
-        <h3>AI Resume Optimization</h3>
-        <button class="modal-close" @click="showOptimizerInfoModal = false">
-          <Icon icon="material-symbols:close" style="font-size: 20px;" />
-        </button>
+        <div class="header-content">
+          <div class="header-left">
+            <Icon icon="material-symbols:psychology" style="font-size: 20px; margin-right: 8px;" />
+            <h3>AI Resume Optimization</h3>
+          </div>
+          <button class="modal-close" @click="showOptimizerInfoModal = false">
+            <Icon icon="material-symbols:close" style="font-size: 20px;" />
+          </button>
+        </div>
       </div>
       <div class="modal-body">
         <div class="info-content">
@@ -592,10 +668,15 @@
   <div v-if="showCoverLetterInfoModal" class="modal-overlay" @click="showCoverLetterInfoModal = false">
     <div class="modal-content" @click.stop>
       <div class="modal-header">
-        <h3>AI Cover Letter Generation</h3>
-        <button class="modal-close" @click="showCoverLetterInfoModal = false">
-          <Icon icon="material-symbols:close" style="font-size: 20px;" />
-        </button>
+        <div class="header-content">
+          <div class="header-left">
+            <Icon icon="material-symbols:description" style="font-size: 20px; margin-right: 8px;" />
+            <h3>AI Cover Letter Generation</h3>
+          </div>
+          <button class="modal-close" @click="showCoverLetterInfoModal = false">
+            <Icon icon="material-symbols:close" style="font-size: 20px;" />
+          </button>
+        </div>
       </div>
       <div class="modal-body">
         <div class="info-content">
@@ -680,6 +761,9 @@ const showCoverLetterInfoModal = ref(false)
 const importJsonText = ref('')
 const resumeText = ref('')
 const isProcessing = ref(false)
+const uploadedFile = ref(null)
+const isDragOver = ref(false)
+const fileInput = ref(null)
 const headerSectionOpen = ref(false)
 const sectionsSectionOpen = ref(false)
 const importExportSectionOpen = ref(true)
@@ -1005,8 +1089,8 @@ const importData = () => {
 }
 
 const processWithAI = async () => {
-  if (!resumeText.value.trim()) {
-    showWarning('Please enter some resume text to process.')
+  if (!resumeText.value.trim() && !uploadedFile.value) {
+    showWarning('Please enter some resume text or upload a file to process.')
     return
   }
 
@@ -1015,37 +1099,56 @@ const processWithAI = async () => {
   try {
     let importedData = null
     
-    // First, check if the input is valid JSON
-    try {
-      const trimmedText = resumeText.value.trim()
-      if (trimmedText.startsWith('{') && trimmedText.endsWith('}')) {
-        const parsedJson = JSON.parse(trimmedText)
-        
-        // Basic validation to check if it looks like resume data
-        if (parsedJson && typeof parsedJson === 'object') {
-          importedData = parsedJson
-          console.log('Detected valid JSON, using directly without AI processing')
-        }
-      }
-    } catch (jsonError) {
-      // Not valid JSON, will use AI processing
-      console.log('Not valid JSON, will use AI processing')
-    }
-    
-    // If not valid JSON, use AI processing
-    if (!importedData) {
-      const response = await $fetch('/api/import-resume', {
+    // Handle file upload if present
+    if (uploadedFile.value) {
+      const formData = new FormData()
+      formData.append('file', uploadedFile.value)
+      
+      const response = await $fetch('/api/import-resume-file', {
         method: 'POST',
-        body: {
-          resumeText: resumeText.value
-        }
+        body: formData
       })
       
       if (response.success && response.data) {
         importedData = response.data
       } else {
-        showError(response.error || 'Failed to process resume. Please try again.')
+        showError(response.error || 'Failed to process file. Please try again.')
         return
+      }
+    } else if (resumeText.value.trim()) {
+      // Handle text input
+      // First, check if the input is valid JSON
+      try {
+        const trimmedText = resumeText.value.trim()
+        if (trimmedText.startsWith('{') && trimmedText.endsWith('}')) {
+          const parsedJson = JSON.parse(trimmedText)
+          
+          // Basic validation to check if it looks like resume data
+          if (parsedJson && typeof parsedJson === 'object') {
+            importedData = parsedJson
+            console.log('Detected valid JSON, using directly without AI processing')
+          }
+        }
+      } catch (jsonError) {
+        // Not valid JSON, will use AI processing
+        console.log('Not valid JSON, will use AI processing')
+      }
+      
+      // If not valid JSON, use AI processing
+      if (!importedData) {
+        const response = await $fetch('/api/import-resume', {
+          method: 'POST',
+          body: {
+            resumeText: resumeText.value
+          }
+        })
+        
+        if (response.success && response.data) {
+          importedData = response.data
+        } else {
+          showError(response.error || 'Failed to process resume. Please try again.')
+          return
+        }
       }
     }
 
@@ -1157,9 +1260,13 @@ const processWithAI = async () => {
       // Emit the merged data to update the resume
       emit('update:resumeData', mergedData)
       
-      // Close modal and clear text
+      // Close modal and clear text and file
       showAiImportModal.value = false
       resumeText.value = ''
+      uploadedFile.value = null
+      if (fileInput.value) {
+        fileInput.value.value = ''
+      }
       
       showSuccess('Resume imported successfully! All sections have been updated.')
     }
@@ -1170,6 +1277,38 @@ const processWithAI = async () => {
     isProcessing.value = false
   }
 }
+
+// File upload functions
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+
+const handleFileSelect = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    uploadedFile.value = file
+  }
+}
+
+const handleFileDrop = (event) => {
+  event.preventDefault()
+  isDragOver.value = false
+  
+  const files = event.dataTransfer.files
+  if (files.length > 0) {
+    const file = files[0]
+    uploadedFile.value = file
+  }
+}
+
+const removeFile = () => {
+  uploadedFile.value = null
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
+}
+
+
 
 // Job Optimizer functions - No longer need to populate, user provides their own text
 
@@ -2433,10 +2572,10 @@ const formatSectionName = (section) => {
 }
 
 .fullscreen-header {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: white;
+  background: #e2e8f0;
+  color: #1e293b;
   padding: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid #cbd5e1;
   flex-shrink: 0;
 }
 
@@ -2463,9 +2602,9 @@ const formatSectionName = (section) => {
 }
 
 .close-btn {
-  background: rgba(255, 255, 255, 0.1);
+  background: #cbd5e1;
   border: none;
-  color: white;
+  color: #475569;
   cursor: pointer;
   padding: 12px;
   border-radius: 8px;
@@ -2473,11 +2612,11 @@ const formatSectionName = (section) => {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
 }
 
 .close-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: #94a3b8;
+  color: #334155;
   transform: scale(1.05);
 }
 
@@ -3117,6 +3256,23 @@ const formatSectionName = (section) => {
   color: #1e293b;
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Remove padding from header-content in guidance modals */
+.modal-header .header-content {
+  padding: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
 .modal-close {
   background: none;
   border: none;
@@ -3223,6 +3379,114 @@ const formatSectionName = (section) => {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* File Upload Styles */
+.upload-section {
+  margin-bottom: 24px;
+}
+
+.text-section {
+  margin-bottom: 16px;
+}
+
+.modal-divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.modal-divider::before,
+.modal-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
+
+.modal-divider span {
+  padding: 0 16px;
+  background: #ffffff;
+}
+
+.file-upload-area {
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 32px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #f8fafc;
+  position: relative;
+}
+
+.file-upload-area:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+}
+
+.file-upload-area.drag-over {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+  transform: scale(1.02);
+}
+
+.file-upload-area.has-file {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-text {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.file-name {
+  color: #059669;
+  font-weight: 600;
+}
+
+.upload-hint {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.remove-file-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.remove-file-btn:hover {
+  background: #dc2626;
+}
+
+.upload-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
 }
 
 @media print {

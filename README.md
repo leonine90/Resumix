@@ -14,6 +14,7 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 - **Responsive Design**: Works well on different screen sizes
 - **Import/Export Resume Data**: Easily export your resume as a JSON file using the sidebar controls
 - **📄 Smart Resume Import**: Paste resume text or JSON data and let the system automatically convert it to the proper format with intelligent section visibility management
+- **📁 File Upload Support**: Drag and drop or browse to upload resume files (.txt, .rtf, .doc, .docx, .pdf) with automatic text extraction and AI processing
 - **🎯 AI Job Optimizer**: Tailor your resume to specific job postings by completely rewriting Summary and Experience achievements to match job requirements, with intelligent keyword bolding and structure preservation
 - **🔔 Toast Notification System**: Modern, non-intrusive notifications with auto-close for short messages and manual close for longer ones
 - **🎨 Enhanced User Experience**: Improved error handling, better AI response parsing, and smart section management
@@ -404,25 +405,37 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ### 📄 Smart Resume Import
 
-**Intelligently import resume text or JSON data automatically!**
+**Intelligently import resume text, JSON data, or upload files automatically!**
 
 1. **Open the sidebar** and expand the **Data Management** section
 2. **Click "Import Resume"** to open the smart import modal
-3. **Paste your content** (resume text OR JSON data) into the textarea
+3. **Choose your import method:**
+   - **File Upload**: Drag and drop or browse to upload resume files
+   - **Text Input**: Paste your content (resume text OR JSON data) into the textarea
 4. **Click "Import Resume"** to automatically process your data
 5. **Review the results** - your resume will be updated instantly
 
 **Smart Detection:**
 - **JSON Input**: Automatically detects and imports valid JSON resume data instantly
 - **Text Input**: Uses AI to convert unstructured text to proper JSON format
-- **Seamless Experience**: One interface handles both formats intelligently
+- **File Upload**: Extracts text from uploaded files and processes with AI
+- **Seamless Experience**: One interface handles all formats intelligently
 
-**Supported Formats:**
-- Valid JSON resume data (exported from this app or AI-generated)
-- Microsoft Word documents (copy-pasted text)
-- PDF files (copy-pasted text)
-- Plain text resumes
-- Any unstructured resume format
+**Supported File Formats:**
+- **Text Files (.txt)**: Plain text resumes with automatic processing
+- **Rich Text (.rtf)**: Rich text format files with text extraction
+- **Word Documents (.doc, .docx)**: Microsoft Word files (text extraction recommended)
+- **PDF Files (.pdf)**: PDF documents (text extraction recommended)
+- **JSON Data**: Valid JSON resume data (exported from this app or AI-generated)
+- **Any Text Format**: Copy-pasted text from any source
+
+**File Upload Features:**
+- **Drag & Drop**: Simply drag files onto the upload area
+- **Click to Browse**: Traditional file picker for easy selection
+- **Visual Feedback**: Different states for hover, drag-over, and file selected
+- **File Validation**: Automatic format checking and error handling
+- **Progress Indicators**: Loading states during file processing
+- **Easy Removal**: Remove uploaded files with a single click
 
 **What gets imported:**
 - Personal information (name, contact details, address)
