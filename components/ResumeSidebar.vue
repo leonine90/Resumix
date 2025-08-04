@@ -176,54 +176,56 @@
         </div>
       </div>
       <div class="fullscreen-body">
-        <!-- File Upload Section -->
-        <div class="upload-section">
-          <label class="modal-label">Upload Resume File:</label>
-          <div 
-            class="file-upload-area"
-            :class="{ 'drag-over': isDragOver, 'has-file': uploadedFile }"
-            @drop="handleFileDrop"
-            @dragover.prevent="isDragOver = true"
-            @dragleave.prevent="isDragOver = false"
-            @click="triggerFileInput"
-          >
-            <input 
-              ref="fileInput"
-              type="file" 
-              accept=".txt,.rtf,.doc,.docx,.pdf"
-              @change="handleFileSelect"
-              style="display: none;"
-            />
-            <div class="upload-content">
-              <Icon icon="material-symbols:cloud-upload" style="font-size: 48px; color: #666; margin-bottom: 16px;" />
-              <p class="upload-text">
-                <span v-if="!uploadedFile">Drag and drop your resume file here, or click to browse</span>
-                <span v-else class="file-name">{{ uploadedFile.name }}</span>
-              </p>
-              <p class="upload-hint">Supported formats: .txt, .rtf, .doc, .docx, .pdf</p>
-              <button v-if="uploadedFile" class="remove-file-btn" @click.stop="removeFile">
-                <Icon icon="material-symbols:delete" style="font-size: 16px;" />
-                Remove File
-              </button>
+        <!-- Horizontal Layout Container -->
+        <div class="import-layout">
+          <!-- File Upload Section -->
+          <div class="upload-section">
+            <label class="modal-label">Upload Resume File:</label>
+            <div 
+              class="file-upload-area"
+              :class="{ 'drag-over': isDragOver, 'has-file': uploadedFile }"
+              @drop="handleFileDrop"
+              @dragover.prevent="isDragOver = true"
+              @dragleave.prevent="isDragOver = false"
+              @click="triggerFileInput"
+            >
+              <input 
+                ref="fileInput"
+                type="file" 
+                accept=".txt,.rtf,.doc,.docx,.pdf"
+                @change="handleFileSelect"
+                style="display: none;"
+              />
+              <div class="upload-content">
+                <Icon icon="material-symbols:cloud-upload" style="font-size: 48px; color: #666; margin-bottom: 16px;" />
+                <p class="upload-text">
+                  <span v-if="!uploadedFile">Drag and drop your resume file here, or click to browse</span>
+                  <span v-else class="file-name">{{ uploadedFile.name }}</span>
+                </p>
+                <p class="upload-hint">Supported formats: .txt, .rtf, .doc, .docx, .pdf</p>
+                <button v-if="uploadedFile" class="remove-file-btn" @click.stop="removeFile">
+                  <Icon icon="material-symbols:delete" style="font-size: 16px;" />
+                  Remove File
+                </button>
+              </div>
             </div>
           </div>
 
-        </div>
+          <!-- Divider -->
+          <div class="modal-divider">
+            <span>or</span>
+          </div>
 
-        <!-- Divider -->
-        <div class="modal-divider">
-          <span>or</span>
-        </div>
-
-        <!-- Text Input Section -->
-        <div class="text-section">
-          <label class="modal-label">Paste your resume text or JSON:</label>
-          <textarea 
-            v-model="resumeText"
-            class="modal-textarea"
-            placeholder="Paste your resume text (from Word, PDF, etc.) or valid JSON resume data here..."
-            rows="8"
-          ></textarea>
+          <!-- Text Input Section -->
+          <div class="text-section">
+            <label class="modal-label">Paste your resume text or JSON:</label>
+            <textarea 
+              v-model="resumeText"
+              class="modal-textarea"
+              placeholder="Paste your resume text (from Word, PDF, etc.) or valid JSON resume data here..."
+              rows="8"
+            ></textarea>
+          </div>
         </div>
 
         <div class="ai-status" v-if="isProcessing">
@@ -3369,10 +3371,11 @@ const formatSectionName = (section) => {
   padding: 14px;
   font-family: monospace;
   font-size: 13px;
-  resize: vertical;
+  resize: none;
   box-sizing: border-box;
   transition: all 0.2s ease;
   background: #ffffff;
+  flex: 1;
 }
 
 .modal-textarea:focus {
@@ -3381,21 +3384,38 @@ const formatSectionName = (section) => {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* Import Layout Styles */
+.import-layout {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-bottom: 24px;
+  height: calc(100vh - 300px);
+  min-height: 400px;
+}
+
 /* File Upload Styles */
 .upload-section {
-  margin-bottom: 24px;
+  flex: 1;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .text-section {
-  margin-bottom: 16px;
+  flex: 1;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-divider {
   display: flex;
   align-items: center;
-  margin: 24px 0;
+  margin: 0 16px;
   color: #64748b;
   font-size: 13px;
+  flex-shrink: 0;
 }
 
 .modal-divider::before,
@@ -3411,6 +3431,8 @@ const formatSectionName = (section) => {
   background: #ffffff;
 }
 
+
+
 .file-upload-area {
   border: 2px dashed #cbd5e1;
   border-radius: 8px;
@@ -3420,6 +3442,10 @@ const formatSectionName = (section) => {
   transition: all 0.2s ease;
   background: #f8fafc;
   position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .file-upload-area:hover {
