@@ -1,6 +1,6 @@
-# Resume Maker
+# Resumix
 
-A modular, component-based resume builder built with Nuxt.js and Vue 3. This project allows you to create multiple versions of your resume by simply modifying data files, with full inline editing capabilities and section visibility controls.
+A modular, component-based resume builder built with Nuxt.js and Vue 3. Resumix allows you to create multiple versions of your resume by simply modifying data files, with full inline editing capabilities and section visibility controls.
 
 ## Features
 
@@ -12,7 +12,7 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. This pro
 - **Professional Headshot**: Support for profile pictures
 - **Print-Friendly**: Optimized for printing with proper page breaks
 - **Responsive Design**: Works well on different screen sizes
-- **Import/Export Resume Data**: Easily export your resume as a JSON file using the sidebar controls
+- **Import/Export Resume Data**: Easily export your resume as a JSON file using Resumix's sidebar controls
 - **📄 Smart Resume Import**: Paste resume text or JSON data and let the system automatically convert it to the proper format with intelligent section visibility management
 - **📁 File Upload Support**: Drag and drop or browse to upload resume files (.txt, .rtf, .doc, .docx, .pdf) with automatic text extraction and AI processing
 - **🎯 AI Job Optimizer**: Tailor your resume to specific job postings by completely rewriting Summary and Experience achievements to match job requirements, with intelligent keyword bolding and structure preservation
@@ -311,7 +311,7 @@ When editing is enabled, a Notion-like floating toolbar provides rich text forma
 
 ## Switching Between Versions
 
-> **Note:** Make sure `enableVersions` is set to `true` in `data/resume.js` to display the version selector dropdown. When this flag is `false`, the app defaults to the "web-version" and only the **Download PDF** button is visible.
+> **Note:** Make sure `enableVersions` is set to `true` in `data/resume.js` to display the version selector dropdown. When this flag is `false`, Resumix defaults to the "web-version" and only the **Download PDF** button is visible.
 
 The resume supports multiple versions that can be switched using the version selector in the top-right corner:
 
@@ -339,7 +339,7 @@ The resume supports multiple versions that can be switched using the version sel
 - Open the sidebar and expand the **Data Management** section.
 - Click **Import from JSON** to open the import modal.
 - Paste your JSON data into the text area provided.
-- Click **Import Data**. Your resume will update with the imported data, merging with the current structure.
+- Click **Import Data**. Your resume will update with the imported data, merging with Resumix's current structure.
 
 ## Sidebar Controls
 
@@ -381,7 +381,7 @@ npm run preview
 2. Add the component to `app.vue`
 3. Add corresponding data to `data/resume.js`
 4. Add section visibility control to the `sections` object
-5. Pass the data as props to the component
+5. Pass the data as props to the component in Resumix
 
 ### Styling
 - Global styles are in `app.vue`
@@ -426,7 +426,7 @@ This project is open source and available under the [MIT License](LICENSE).
 - **Rich Text (.rtf)**: Rich text format files with text extraction
 - **Word Documents (.doc, .docx)**: Microsoft Word files (text extraction recommended)
 - **PDF Files (.pdf)**: PDF documents (text extraction recommended)
-- **JSON Data**: Valid JSON resume data (exported from this app or AI-generated)
+- **JSON Data**: Valid JSON resume data (exported from Resumix or AI-generated)
 - **Any Text Format**: Copy-pasted text from any source
 
 **File Upload Features:**
@@ -501,7 +501,7 @@ This project is open source and available under the [MIT License](LICENSE).
 - **Proper Formatting**: Business letter format with proper spacing and typography
 
 **Features:**
-- **Smart Resume Integration**: Use current resume data or paste new text
+- **Smart Resume Integration**: Use current resume data or paste new text in Resumix
 - **Job-Specific Tailoring**: AI analyzes job requirements and matches your experience
 - **Professional Formatting**: Business letter format ready for submission
 - **PDF Download**: Download cover letter as a properly formatted PDF
