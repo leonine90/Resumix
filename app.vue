@@ -244,10 +244,10 @@ onUnmounted(() => {
 })
 
 useHead({
-  title: 'Navid Shiry',
-  meta: [
-    { name: 'description', content: 'Navid Shiry' }
-  ]
+      title: 'Resumix',
+    meta: [
+      { name: 'description', content: 'Resumix' }
+    ]
 })
 </script>
 

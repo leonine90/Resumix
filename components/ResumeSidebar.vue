@@ -6,7 +6,7 @@
         <Icon v-if="!isCollapsed" icon="material-symbols:chevron-left" style="font-size: 16px;" />
         <Icon v-else icon="material-symbols:chevron-right" style="font-size: 16px;" />
       </button>
-      <h3 v-if="!isCollapsed">Resume Controls</h3>
+      <h3 v-if="!isCollapsed">Resumix</h3>
     </div>
     
     <div v-if="!isCollapsed" class="sidebar-content">
