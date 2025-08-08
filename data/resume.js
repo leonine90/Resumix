@@ -4,8 +4,7 @@ export const resumeData = {
   // Flag to enable/disable editing mode
   editable: true,
   
-  // Flag to enable/disable version functionality (currently disabled)
-  enableVersions: false,
+
   
   // Header visibility controls
   headerElements: {
@@ -45,104 +44,32 @@ export const resumeData = {
     headshot: "" // Headshot URL - paste image URL in sidebar
   },
 
-  researchInterests: {
-    "data-version": [
-      {
-        title: "Scalable Software Architectures for Data-Intensive Systems",
-        description: "Focus on designing and optimizing large-scale web applications that handle high-volume data, emphasizing reliability and maintainability."
-      },
-      {
-        title: "Big Data Analytics & Machine Learning",
-        description: "Interest in leveraging machine learning models and data pipelines to provide predictive insights, improve personalization, and enhance user experience."
-      },
-      {
-        title: "Distributed Computing & Cloud Technologies",
-        description: "Exploring containerization, microservices, and distributed databases for efficient data processing and real-time analytics."
-      },
-      {
-        title: "Performance Optimization & Front-End Engineering",
-        description: "Investigating advanced caching strategies, code optimization, and micro-frontends to achieve seamless, high-performance user interfaces in data-rich applications."
-      },
-      {
-        title: "User-Centric Design & Human-Computer Interaction",
-        description: "Studying user engagement methods, data-driven UI/UX design, and accessibility guidelines to create intuitive systems for diverse user bases."
-      }
-    ],
-    "v-3": [
-      {
-        title: "High-Performance and Distributed Computing",
-        description: "Investigating scalable software systems that utilize distributed architectures, containerization, and real-time data pipelines for efficient computation."
-      },
-      {
-        title: "Machine Learning & Data-Driven Engineering",
-        description: "Applying predictive models and data analytics to improve user experiences, automation, and decision-making in complex software systems."
-      },
-      {
-        title: "Quantum and Emerging Computational Models",
-        description: "Exploring the potential of quantum computing and non-traditional paradigms for solving computationally intensive problems."
-      },
-      {
-        title: "Scientific Computing & Simulation",
-        description: "Developing visualization tools and interactive interfaces to support computational simulations and model-driven problem-solving."
-      },
-      {
-        title: "AI-Enhanced Human-Computer Interaction",
-        description: "Studying the integration of AI, UI/UX, and front-end systems to build intelligent, responsive, and accessible user environments."
-      },
-      {
-        title: "Software Engineering for Innovation",
-        description: "Designing modular, maintainable software architectures that support interdisciplinary research and agile development in tech-intensive domains."
-      }
-    ],
-    "web-version": [
-      {
-        title: "Advanced Web Application Architectures",
-        description: "Exploring scalable and maintainable designs for web applications, emphasizing the use of both proprietary and open-source back-end technologies to enhance performance and user experience."
-      },
-      {
-        title: "Front-End Development for Diverse Platforms",
-        description: "Investigating methodologies for creating responsive and adaptive user interfaces optimized for browsers and mobile devices, utilizing the latest front-end technologies and frameworks."
-      },
-      {
-        title: "Web Application Security",
-        description: "Analyzing risk assessment strategies and implementing robust security measures to protect web applications from vulnerabilities and threats.​"
-      },
-      {
-        title: "Agile and Traditional Web Development Methodologies",
-        description: "Comparing and contrasting agile and traditional project management approaches in web development to optimize workflow efficiency and product quality."
-      },
-      {
-        title: "Human-Computer Interaction in Web Environments",
-        description: "Studying user behavior and interaction patterns to inform the design of intuitive and user-friendly web interfaces."
-      },
-      {
-        title: "Integration of Emerging Technologies in Web Engineering",
-        description: "Exploring the incorporation of cutting-edge technologies such as Progressive Web Apps (PWAs), serverless architectures, and microservices into web development practices."
-      }
-    ],
-    "ai-version": [
-      {
-        title: "Digital Transformation & Innovation Management",
-        description: "Exploring strategies for successfully navigating digital transformation in businesses, focusing on leveraging emerging technologies to optimize organizational processes and enhance competitive advantage."
-      },
-      {
-        title: "Business Intelligence & Data-Driven Decision Making",
-        description: "Interest in utilizing data analytics, machine learning, and AI-driven models to inform strategic decision-making, improve operational efficiency, and foster innovation across industries."
-      },
-      {
-        title: "Technology & Innovation Strategy",
-        description: "Investigating frameworks for managing technological innovation, understanding technology adoption patterns, and analyzing the impact of disruptive innovations on traditional business models."
-      },
-      {
-        title: "IT Governance & Enterprise Systems",
-        description: "Studying effective governance frameworks for IT infrastructures, emphasizing enterprise system integration, cybersecurity management, and aligning IT strategy with overall business objectives."
-      },
-      {
-        title: "User-Centric Digital Platforms & Services",
-        description: "Developing insights into designing user-focused digital platforms and services, emphasizing enhancing user experience, customer engagement, and accessibility in digital business ecosystems."
-      }
-    ]
-  },
+  researchInterests: [
+    {
+      title: "Advanced Web Application Architectures",
+      description: "Exploring scalable and maintainable designs for web applications, emphasizing the use of both proprietary and open-source back-end technologies to enhance performance and user experience."
+    },
+    {
+      title: "Front-End Development for Diverse Platforms",
+      description: "Investigating methodologies for creating responsive and adaptive user interfaces optimized for browsers and mobile devices, utilizing the latest front-end technologies and frameworks."
+    },
+    {
+      title: "Web Application Security",
+      description: "Analyzing risk assessment strategies and implementing robust security measures to protect web applications from vulnerabilities and threats.​"
+    },
+    {
+      title: "Agile and Traditional Web Development Methodologies",
+      description: "Comparing and contrasting agile and traditional project management approaches in web development to optimize workflow efficiency and product quality."
+    },
+    {
+      title: "Human-Computer Interaction in Web Environments",
+      description: "Studying user behavior and interaction patterns to inform the design of intuitive and user-friendly web interfaces."
+    },
+    {
+      title: "Integration of Emerging Technologies in Web Engineering",
+      description: "Exploring the incorporation of cutting-edge technologies such as Progressive Web Apps (PWAs), serverless architectures, and microservices into web development practices."
+    }
+  ],
 
   education: [
     {
@@ -175,9 +102,7 @@ export const resumeData = {
     }
   ],
 
-  summary: {
-    "default": "Innovative Software Engineer with expertise in React, TypeScript, Node.js, and full-stack development, specializing in building scalable, high-performance web applications. Proven track record of delivering robust solutions for fintech, e-commerce, and SaaS platforms. Passionate about clean code, user experience, and leveraging cutting-edge technologies to solve complex business challenges."
-  },
+  summary: "Innovative Software Engineer with expertise in React, TypeScript, Node.js, and full-stack development, specializing in building scalable, high-performance web applications. Proven track record of delivering robust solutions for fintech, e-commerce, and SaaS platforms. Passionate about clean code, user experience, and leveraging cutting-edge technologies to solve complex business challenges.",
 
   experience: [
     {

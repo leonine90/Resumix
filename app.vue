@@ -14,10 +14,7 @@
       @update:resume-data="updateResumeData"
     />
     
-    <VersionSelector 
-      v-model="activeVersion" 
-      :show-versions="reactiveResumeData.enableVersions"
-    />
+    <PDFDownloader />
     
     <ResumeHeader 
       :personal="reactiveResumeData.personal" 
@@ -34,7 +31,7 @@
         v-if="section === 'summary' && reactiveResumeData.sections.summary"
         :key="`summary-${section}`"
         :summary-data="reactiveResumeData.summary" 
-        :active-version="activeVersion"
+
         :editable="reactiveResumeData.editable"
         @update:summary-data="updateSummary"
       />
@@ -44,7 +41,7 @@
         v-if="section === 'researchInterests' && reactiveResumeData.sections.researchInterests"
         :key="`researchInterests-${section}`"
         :research-interests="reactiveResumeData.researchInterests" 
-        :active-version="currentResearchVersion"
+
         :editable="reactiveResumeData.editable"
         @update:research-interests="updateResearchInterests"
       />
@@ -128,7 +125,7 @@
 <script setup>
 import { resumeData } from './data/resume.js'
 
-const activeVersion = ref('web-version')
+
 const sidebarCollapsed = ref(false)
 
 // Initialize text selection tracking for floating toolbar
@@ -137,10 +134,7 @@ const { initializeSelectionTracking, destroySelectionTracking } = useTextSelecti
 // Make the data reactive
 const reactiveResumeData = ref({ ...resumeData })
 
-// Use the current version for research interests when versions are disabled
-const currentResearchVersion = computed(() => {
-  return reactiveResumeData.value.enableVersions ? activeVersion.value : 'web-version'
-})
+
 
 // Compute wrapper margin based on sidebar state
 const wrapperMargin = computed(() => {

@@ -1,11 +1,11 @@
 # Resumix
 
-A modular, component-based resume builder built with Nuxt.js and Vue 3. Resumix allows you to create multiple versions of your resume by simply modifying data files, with full inline editing capabilities and section visibility controls.
+A modular, component-based resume builder built with Nuxt.js and Vue 3. Resumix allows you to create professional resumes with full inline editing capabilities and section visibility controls.
 
 ## Features
 
 - **Modular Components**: Each section of the resume is a separate, reusable component
-- **Multiple Versions**: Support for different resume versions (Web Development, Data Science, Research & Academia, AI & Business). The version selector can be enabled by setting `enableVersions: true` in `data/resume.js` (disabled by default).
+
 - **Data-Driven**: All content is stored in a single data file for easy modification
 - **Inline Editing**: Click any text to edit it directly on the page with rich text formatting toolbar
 - **Section Controls**: Toggle sections on/off with checkboxes
@@ -30,7 +30,7 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. Resumix 
 ├── components/
 │   ├── ResumeHeader.vue   # Personal information header with headshot
 │   ├── ResumeSidebar.vue  # Sidebar controls for sections and data management
-│   ├── ResearchInterests.vue # Research interests with version support
+│   ├── ResearchInterests.vue # Research interests
 │   ├── Education.vue      # Education history
 │   ├── Summary.vue        # Professional summary with HTML rendering
 │   ├── Experience.vue     # Work experience with HTML rendering
@@ -39,7 +39,7 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. Resumix 
 │   ├── Languages.vue      # Language skills
 │   ├── Volunteering.vue   # Volunteer experience
 │   ├── Signature.vue      # Signature section
-│   ├── VersionSelector.vue # Version switcher and PDF download
+│   ├── PDFDownloader.vue # PDF download
 │   ├── ToastContainer.vue # Toast notification system
 │   └── FloatingToolbar.vue # Rich text editing toolbar
 ├── composables/
@@ -92,26 +92,15 @@ sections: {
 ```
 
 ### 3. Research Interests
-The research interests section supports multiple versions. Each version is an array of objects with `title` and `description`:
+The research interests section contains an array of objects with `title` and `description`:
 
 ```javascript
-researchInterests: {
-  "web-version": [
-    {
-      title: "Your Research Interest",
-      description: "Description of your research interest..."
-    }
-  ],
-  "data-version": [
-    // Data science focused interests
-  ],
-  "v-3": [
-    // Research & academia focused interests
-  ],
-  "ai-version": [
-    // AI & business focused interests
-  ]
-}
+researchInterests: [
+  {
+    title: "Your Research Interest",
+    description: "Description of your research interest..."
+  }
+]
 ```
 
 ### 4. Education
@@ -224,7 +213,7 @@ signature: {
 - **Data Management**: Import/export resume data as JSON
 - **Job Optimizer**: Tailor your resume for specific job postings using AI
 - **Cover Letter Generator**: Create professional cover letters tailored to job descriptions
-- **Version Selector**: Switch between different resume versions in the top-right
+
 
 #### 🔄 Drag & Drop Section Reordering
 
@@ -309,16 +298,7 @@ When editing is enabled, a Notion-like floating toolbar provides rich text forma
 3. Use your browser's print dialog to save as PDF
 4. Controls will reappear after printing
 
-## Switching Between Versions
 
-> **Note:** Make sure `enableVersions` is set to `true` in `data/resume.js` to display the version selector dropdown. When this flag is `false`, Resumix defaults to the "web-version" and only the **Download PDF** button is visible.
-
-The resume supports multiple versions that can be switched using the version selector in the top-right corner:
-
-- **Web Development**: Focused on web technologies and front-end development
-- **Data Science**: Emphasizes data analysis, machine learning, and big data
-- **Research & Academia**: Highlights research interests and academic achievements
-- **AI & Business**: Focuses on AI, business intelligence, and digital transformation
 
 ## Adding Your Headshot
 
@@ -371,10 +351,7 @@ npm run preview
 
 ## Customization
 
-### Adding New Versions
-1. Add new version data to the `researchInterests` object in `data/resume.js`
-2. Update the `VersionSelector.vue` component to include the new version option
-3. The component will automatically handle showing/hiding content based on the selected version
+
 
 ### Adding New Sections
 1. Create a new component in the `components/` directory
@@ -588,7 +565,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **Data Preservation Logic:**
 - **Structure Preservation**: Maintains original resume structure and formatting
-- **Versioned Data**: Preserves complex data structures like versioned research interests
+
 - **Detailed Information**: Keeps education coursework, GPA, final projects, publication details
 - **Format Consistency**: Maintains original data formats (strings vs objects, date formats)
 

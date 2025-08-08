@@ -3,14 +3,14 @@
     <h2>Summary</h2>
     <p 
       v-if="!editable"
-      v-html="summaryText"
+      v-html="summaryData"
     ></p>
     <p 
       v-else
       :class="{ editable }"
       :contenteditable="editable"
       @blur="updateSummary"
-      v-html="summaryText"
+      v-html="summaryData"
     ></p>
   </section>
 </template>
@@ -18,12 +18,8 @@
 <script setup>
 const props = defineProps({
   summaryData: {
-    type: Object,
-    required: true
-  },
-  activeVersion: {
     type: String,
-    default: 'default'
+    required: true
   },
   show: {
     type: Boolean,
@@ -37,19 +33,11 @@ const props = defineProps({
 
 const emit = defineEmits(['update:summaryData'])
 
-const summaryText = computed(() => {
-  return props.summaryData[props.activeVersion] || props.summaryData.default || ''
-})
-
 const updateSummary = (event) => {
   if (props.editable) {
-    const updatedSummary = { ...props.summaryData }
-    updatedSummary[props.activeVersion] = event.target.innerHTML
-    emit('update:summaryData', updatedSummary)
+    emit('update:summaryData', event.target.innerHTML)
   }
 }
-
-
 </script>
 
 <style scoped>

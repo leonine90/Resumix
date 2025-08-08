@@ -65,7 +65,7 @@ CRITICAL INSTRUCTIONS:
 TARGET JSON STRUCTURE:
 {
   "editable": true,
-  "enableVersions": false,
+  
   "headerElements": {
     "headshot": true,
     "address": true,

@@ -1,16 +1,16 @@
 <template>
   <section class="resume-section" :contenteditable="editable" >
     <h2>Research/Academic Interests</h2>
-    <div v-for="(interests, version) in researchInterests" :key="version" :class="[version, { hide: activeVersion !== version && activeVersion !== 'all' }]">
+    <div>
       <ul>
-        <li v-for="(interest, index) in interests" :key="index">
+        <li v-for="(interest, index) in researchInterests" :key="index">
           <strong 
             :class="{ editable }"
-            @blur="updateInterest(version, index, 'title', $event.target.textContent)"
+            @blur="updateInterest(index, 'title', $event.target.textContent)"
           >{{ interest.title }}</strong>
           <p 
             :class="{ editable }"
-            @blur="updateInterest(version, index, 'description', $event.target.textContent)"
+            @blur="updateInterest(index, 'description', $event.target.textContent)"
           >{{ interest.description }}</p>
         </li>
       </ul>
@@ -21,12 +21,8 @@
 <script setup>
 const props = defineProps({
   researchInterests: {
-    type: Object,
+    type: Array,
     required: true
-  },
-  activeVersion: {
-    type: String,
-    default: 'web-version'
   },
   editable: {
     type: Boolean,
@@ -36,20 +32,16 @@ const props = defineProps({
 
 const emit = defineEmits(['update:researchInterests'])
 
-const updateInterest = (version, index, field, value) => {
+const updateInterest = (index, field, value) => {
   if (props.editable) {
-    const updatedInterests = { ...props.researchInterests }
-    updatedInterests[version][index][field] = value
+    const updatedInterests = [...props.researchInterests]
+    updatedInterests[index][field] = value
     emit('update:researchInterests', updatedInterests)
   }
 }
 </script>
 
 <style scoped>
-.hide {
-  display: none;
-}
-
 /* Ensure all li elements have proper bullet positioning */
 ul li {
   list-style-position: outside;
