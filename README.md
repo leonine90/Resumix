@@ -30,6 +30,8 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. Resumix 
 ├── components/
 │   ├── ResumeHeader.vue   # Personal information header with headshot
 │   ├── ResumeSidebar.vue  # Sidebar controls for sections and data management
+│   ├── sidebar/
+│   │   └── SidebarHeader.vue # Collapsible sidebar header with toggle functionality
 │   ├── ResearchInterests.vue # Research interests
 │   ├── Education.vue      # Education history
 │   ├── Summary.vue        # Professional summary with HTML rendering
@@ -207,7 +209,8 @@ signature: {
 ## Using the Interface
 
 ### Sidebar Controls
-- **Collapsible Sidebar**: Toggle the sidebar on the left to access all controls
+- **Collapsible Sidebar**: Toggle the sidebar on the left to access all controls using the chevron button in the header
+- **Sidebar Header**: Professional header with toggle button to maximize resume viewing space
 - **Header Elements**: Checkboxes to show/hide header elements (address, phone, email, LinkedIn, headshot)
 - **Resume Sections**: Checkboxes to show/hide sections and drag handles to reorder them
 - **Data Management**: Import/export resume data as JSON
@@ -436,9 +439,9 @@ This project is open source and available under the [MIT License](LICENSE).
 6. **Review the before/after comparison** and click "Apply Optimizations"
 
 **What the AI optimizes:**
-- **Summary**: Completely rewrites your professional summary to match job requirements with **bold technical keywords**
-- **Experience Achievements**: Completely rewrites achievement descriptions to demonstrate job-relevant skills and technologies with **selective technical keyword bolding**
-- **Skills**: Adapts and reorders skills list to prioritize job-specific competencies (displayed as clean text)
+- **Summary**: Completely rewrites your professional summary to match job requirements with **bold technical keywords** (now editable)
+- **Experience Achievements**: Completely rewrites achievement descriptions to demonstrate job-relevant skills and technologies with **selective technical keyword bolding** (now editable)
+- **Skills**: Adapts and reorders skills list to prioritize job-specific competencies (now editable as comma-separated text)
 
 **What the AI preserves:**
 - All personal information and contact details
@@ -500,6 +503,71 @@ This project is open source and available under the [MIT License](LICENSE).
 - No sensitive data is exposed to the client
 
 ## Recent Enhancements (2024)
+
+### 🎛️ Collapsible Sidebar Header
+
+**New collapsible sidebar with improved navigation!**
+
+**Features:**
+- **Toggle Button**: Click the chevron icon to collapse/expand the sidebar
+- **Clean Header**: Professional header with Resumix branding
+- **Space Optimization**: Collapse sidebar to maximize resume viewing area
+- **Smooth Transitions**: Animated collapse/expand with smooth transitions
+- **Visual Feedback**: Clear icons indicate sidebar state (left/right chevrons)
+- **Responsive Design**: Works seamlessly across all device sizes
+
+**How to Use:**
+1. **Look for the chevron icon** in the top-left of the sidebar
+2. **Click to collapse** the sidebar and maximize resume space
+3. **Click again to expand** and access all controls
+4. **Hover effects** provide visual feedback for better UX
+
+### ✏️ Editable AI-Optimized Content
+
+**Now you can edit AI-generated content before applying it to your resume!**
+
+**New Features:**
+- **Editable Summary**: Modify AI-optimized summary text directly in textareas
+- **Editable Achievements**: Edit each experience achievement individually
+- **Editable Skills**: Modify the optimized skills list as comma-separated text
+- **Auto-Resize Textareas**: Textareas automatically adjust height to content
+- **Visual Edit Indicators**: Orange border highlights when content has been edited
+- **Smart Button Text**: Button text changes to indicate when edits are present
+
+**How It Works:**
+1. **Run AI Optimization** as usual with your resume and job posting
+2. **Review the "After" panels** - they now contain editable textareas
+3. **Make your edits** directly in the textareas
+4. **Visual feedback** shows when content has been modified
+5. **Apply your edits** - the button text changes to "Apply Your Edits & Convert to Resume"
+
+**Benefits:**
+- **Fine-tune AI Output**: Perfect the AI-generated content to your preferences
+- **Maintain Control**: Keep your voice while benefiting from AI optimization
+- **Real-time Editing**: See changes immediately as you type
+- **Professional Polish**: Add personal touches to AI-generated content
+
+### 🔧 Enhanced Import & Summary Handling
+
+**Improved resume import functionality and summary processing!**
+
+**Summary Improvements:**
+- **Better HTML Rendering**: Enhanced support for HTML tags in summary content
+- **Improved Data Preservation**: Better handling of summary content during imports
+- **Fixed Display Issues**: Resolved problems with summary text rendering
+- **Enhanced Editing**: Improved inline editing capabilities for summary section
+
+**Import Enhancements:**
+- **Robust File Processing**: Better handling of various file formats during import
+- **Improved Error Handling**: More detailed error messages and recovery options
+- **Enhanced Data Parsing**: Better extraction and processing of resume content
+- **Research Interests Support**: Improved handling of research interests section
+
+**Technical Improvements:**
+- **Better Data Validation**: Enhanced checks for data integrity during imports
+- **Improved Error Recovery**: Graceful handling of import failures
+- **Enhanced Logging**: Better debugging information for troubleshooting
+- **Performance Optimizations**: Faster processing of imported content
 
 ### 🔔 Toast Notification System
 
