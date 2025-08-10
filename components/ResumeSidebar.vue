@@ -425,8 +425,14 @@
                   <div class="content-box original">{{ originalContent.summary }}</div>
                 </div>
                 <div class="after-panel">
-                  <h4>After</h4>
-                  <div class="content-box optimized">{{ optimizedContent.summary }}</div>
+                  <h4>After (Editable)</h4>
+                  <textarea 
+                    v-model="editableOptimizedContent.summary"
+                    @input="markAsEdited; autoResizeTextarea($event)"
+                    :class="['content-textarea', 'optimized', { 'edited': hasUserEdits }]"
+                    placeholder="Edit the AI-generated summary..."
+                    rows="4"
+                  ></textarea>
                 </div>
               </div>
             </div>
@@ -453,12 +459,22 @@
                       </ul>
                     </div>
                     <div class="after-panel">
-                      <h5>Optimized Achievements</h5>
-                      <ul class="achievements-list optimized">
-                        <li v-for="achievement in exp.achievements" :key="achievement">
-                          {{ achievement }}
-                        </li>
-                      </ul>
+                      <h5>Optimized Achievements (Editable)</h5>
+                      <div class="achievements-editable optimized">
+                        <div 
+                          v-for="(achievement, achievementIndex) in editableOptimizedContent.experience[index]?.achievements || []" 
+                          :key="achievementIndex"
+                          class="achievement-edit-item"
+                        >
+                          <textarea 
+                            v-model="editableOptimizedContent.experience[index].achievements[achievementIndex]"
+                            @input="markAsEdited; autoResizeTextarea($event)"
+                            :class="['achievement-textarea', { 'edited': hasUserEdits }]"
+                            placeholder="Edit achievement..."
+                            rows="2"
+                          ></textarea>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -476,10 +492,16 @@
                   <h4>Before</h4>
                   <div class="skills-box original">{{ originalContent.skills.join(', ') }}</div>
                 </div>
-                <div class="after-panel">
-                  <h4>After</h4>
-                  <div class="skills-box optimized">{{ optimizedContent.skills.join(', ') }}</div>
-                </div>
+                                  <div class="after-panel">
+                    <h4>After (Editable)</h4>
+                    <textarea 
+                      :value="editableOptimizedContent.skills.join(', ')"
+                      @input="updateSkillsFromText; autoResizeTextarea($event)"
+                      :class="['skills-textarea', 'optimized', { 'edited': hasUserEdits }]"
+                      placeholder="Edit skills (comma-separated)..."
+                      rows="3"
+                    ></textarea>
+                  </div>
               </div>
             </div>
 
@@ -497,7 +519,7 @@
               </button>
               <button @click="applyOptimizations" class="action-btn apply-action" :disabled="isApplying">
                 <Icon icon="material-symbols:check" style="font-size: 16px; margin-right: 8px;" />
-                {{ isApplying ? 'Converting to Resume...' : 'Apply & Convert to Resume' }}
+                {{ isApplying ? 'Converting to Resume...' : (hasUserEdits ? 'Apply Your Edits & Convert to Resume' : 'Apply & Convert to Resume') }}
               </button>
             </div>
           </div>
@@ -794,6 +816,16 @@ const optimizedContent = ref({
   skills: []
 })
 const optimizedResumeText = ref('')
+
+// Editable versions of optimized content for user editing
+const editableOptimizedContent = ref({
+  summary: '',
+  experience: [],
+  skills: []
+})
+
+// Track if user has made edits to the optimized content
+const hasUserEdits = ref(false)
 
 // Cover Letter variables
 const coverLetterResumeText = ref('')
@@ -1343,11 +1375,27 @@ const tailorResume = async () => {
       // Store optimized content
       optimizedContent.value = response.data
       
+      // Initialize editable content with the optimized content
+      editableOptimizedContent.value = {
+        summary: response.data.summary || '',
+        experience: response.data.experience ? response.data.experience.map(exp => ({
+          ...exp,
+          achievements: [...(exp.achievements || [])]
+        })) : [],
+        skills: [...(response.data.skills || [])]
+      }
+      
       // Create optimized resume text from the structured data
       optimizedResumeText.value = createOptimizedResumeText(response.data)
       
+      // Reset edit tracking for new optimization
+      hasUserEdits.value = false
+      
       // Show results section
       showResults.value = true
+      
+      // Initialize textarea heights after showing results
+      initializeTextareaHeights()
     } else {
       showError(response.error || 'Failed to optimize resume. Please try again.')
     }
@@ -1638,6 +1686,45 @@ const downloadCoverLetterPDF = () => {
   }, 500)
 }
 
+const updateSkillsFromText = (event) => {
+  const text = event.target.value
+  const skills = text
+    .split(',')
+    .map(skill => skill.trim())
+    .filter(skill => skill.length > 0)
+  editableOptimizedContent.value.skills = skills
+  hasUserEdits.value = true
+}
+
+const markAsEdited = () => {
+  hasUserEdits.value = true
+}
+
+// Auto-resize textarea function
+const autoResizeTextarea = (event) => {
+  const textarea = event.target
+  textarea.style.height = 'auto'
+  textarea.style.height = textarea.scrollHeight + 'px'
+}
+
+// Initialize textarea heights when results are shown
+const initializeTextareaHeights = () => {
+  nextTick(() => {
+    const textareas = document.querySelectorAll('.content-textarea, .skills-textarea, .achievement-textarea')
+    textareas.forEach(textarea => {
+      textarea.style.height = 'auto'
+      textarea.style.height = textarea.scrollHeight + 'px'
+    })
+  })
+}
+
+// Watch for when results section is shown to initialize textarea heights
+watch(showResults, (newValue) => {
+  if (newValue) {
+    initializeTextareaHeights()
+  }
+})
+
 const resetTailorModal = () => {
   showResults.value = false
   jobPostText.value = ''
@@ -1647,11 +1734,13 @@ const resetTailorModal = () => {
   isApplying.value = false
   originalContent.value = { summary: '', experience: [], skills: [] }
   optimizedContent.value = { summary: '', experience: [], skills: [] }
+  editableOptimizedContent.value = { summary: '', experience: [], skills: [] }
   optimizedResumeText.value = ''
+  hasUserEdits.value = false
 }
 
 const applyOptimizations = async () => {
-  if (!optimizedContent.value.summary || !optimizedContent.value.experience || !optimizedContent.value.skills) {
+  if (!editableOptimizedContent.value.summary || !editableOptimizedContent.value.experience || !editableOptimizedContent.value.skills) {
     showWarning('No optimized content to apply.')
     return
   }
@@ -1768,11 +1857,11 @@ const applyOptimizations = async () => {
           : currentData.personal?.dateOfBirth || ""
       },
       
-      // Apply AI-optimized summary
-      summary: optimizedContent.value.summary, // Apply AI-optimized summary as string
+      // Apply AI-optimized summary (from editable content)
+      summary: editableOptimizedContent.value.summary, // Apply AI-optimized summary as string
       
-      // Apply AI-optimized experience with proper merging
-      experience: optimizedContent.value.experience.map((optimizedExp, index) => {
+      // Apply AI-optimized experience with proper merging (from editable content)
+      experience: editableOptimizedContent.value.experience.map((optimizedExp, index) => {
         // Keep the base experience structure from pasted resume but use AI-optimized achievements
         const baseExp = (importedData.experience && importedData.experience[index]) || optimizedExp
         return {
@@ -1781,8 +1870,18 @@ const applyOptimizations = async () => {
         }
       }),
       
-      // Apply AI-optimized skills
-      skills: optimizedContent.value.skills,
+      // Apply AI-optimized skills (from editable content)
+      skills: (() => {
+        // Process skills from editable content (convert from string to array if needed)
+        if (typeof editableOptimizedContent.value.skills === 'string') {
+          // Split by comma and clean up
+          return editableOptimizedContent.value.skills
+            .split(',')
+            .map(skill => skill.trim())
+            .filter(skill => skill.length > 0)
+        }
+        return editableOptimizedContent.value.skills || []
+      })(),
       
       // Preserve all other sections - keep original structure and data unless specifically improved
       researchInterests: (() => {
@@ -3024,6 +3123,97 @@ const formatSectionName = (section) => {
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   color: #14532d;
+}
+
+/* Editable text areas for optimized content */
+.content-textarea,
+.skills-textarea {
+  width: 100%;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 80px;
+  height: auto;
+  border: 2px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #14532d;
+  font-family: inherit;
+  resize: none;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.content-textarea:focus,
+.skills-textarea:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.content-textarea::placeholder,
+.skills-textarea::placeholder {
+  color: #86efac;
+  opacity: 0.7;
+}
+
+.achievements-editable {
+  padding: 16px;
+  border-radius: 8px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  min-height: 100px;
+}
+
+.achievement-edit-item {
+  margin-bottom: 12px;
+}
+
+.achievement-edit-item:last-child {
+  margin-bottom: 0;
+}
+
+.achievement-textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  border: 1px solid #bbf7d0;
+  background: #ffffff;
+  color: #14532d;
+  font-family: inherit;
+  resize: none;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.achievement-textarea:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.1);
+}
+
+.achievement-textarea::placeholder {
+  color: #86efac;
+  opacity: 0.7;
+}
+
+/* Visual indicator for edited content */
+.content-textarea.edited,
+.skills-textarea.edited,
+.achievement-textarea.edited {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.content-textarea.edited:focus,
+.skills-textarea.edited:focus,
+.achievement-textarea.edited:focus {
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
 }
 
 .experience-comparison {
