@@ -343,7 +343,8 @@
         </div>
       </div>
       <div class="fullscreen-body">
-        <div v-if="!showResults" class="input-section fullscreen-input">
+        <!-- Input Section -->
+        <div v-if="!showAnalysis && !showResults" class="input-section fullscreen-input">
           <div class="input-grid">
             <div class="input-group">
               <label class="input-label">
@@ -384,22 +385,37 @@
             </div>
           </div>
 
-          <div class="ai-status" v-if="isTailoring">
-            <Icon icon="material-symbols:hourglass-top" style="font-size: 16px; margin-right: 8px;" />
-            Optimizing your resume with AI...
+          <div class="ai-status" v-if="isAnalyzing">
+            <Icon icon="material-symbols:analytics" style="font-size: 16px; margin-right: 8px;" />
+            Analyzing resume-job compatibility...
           </div>
 
           <div class="fullscreen-actions">
             <div class="action-buttons">
-              <button @click="showTailorModal = false" class="action-btn cancel-action" :disabled="isTailoring">
+              <button @click="showTailorModal = false" class="action-btn cancel-action" :disabled="isAnalyzing">
                 <Icon icon="material-symbols:close" style="font-size: 16px; margin-right: 8px;" />
                 Cancel
               </button>
-              <button @click="tailorResume" :disabled="!jobPostText.trim() || !resumeTextInput.trim() || isTailoring" class="action-btn optimize-action">
-                <Icon icon="material-symbols:psychology" style="font-size: 16px; margin-right: 8px;" />
-                Optimize Resume
+              <button @click="analyzeResumeMatch" :disabled="!jobPostText.trim() || !resumeTextInput.trim() || isAnalyzing" class="action-btn analyze-action">
+                <Icon icon="material-symbols:analytics" style="font-size: 16px; margin-right: 8px;" />
+                Analyze Compatibility
               </button>
             </div>
+          </div>
+        </div>
+
+        <!-- Analysis Section -->
+        <div v-if="showAnalysis" class="analysis-section fullscreen-analysis">
+          <ResumeMatchAnalysis 
+            :analysis-data="analysisData"
+            @proceed="proceedToOptimization"
+            @cancel="cancelAnalysis"
+            @revise="reviseResume"
+            :is-optimizing="isTailoring"
+          />
+          <div class="ai-status" v-if="isTailoring">
+            <Icon icon="material-symbols:hourglass-top" style="font-size: 16px; margin-right: 8px;" />
+            Optimizing your resume with AI...
           </div>
         </div>
 
@@ -743,6 +759,7 @@
 import { Icon } from '@iconify/vue'
 import { watch } from 'vue'
 import SidebarHeader from './sidebar/SidebarHeader.vue'
+import ResumeMatchAnalysis from './ResumeMatchAnalysis.vue'
 
 const props = defineProps({
   headerElements: {
@@ -803,6 +820,9 @@ const useCurrentResume = ref(true) // Default to checked
 const isTailoring = ref(false)
 const isApplying = ref(false)
 const showResults = ref(false)
+  const showAnalysis = ref(false)
+  const isAnalyzing = ref(false)
+  const analysisData = ref(null)
 const originalContent = ref({
   summary: '',
   experience: [],
@@ -867,6 +887,57 @@ const toggleSection = (section, visible) => {
   const updatedSections = { ...props.sections, [section]: visible }
   emit('update:sections', updatedSections)
 }
+
+  // Analyze resume vs job description compatibility
+  const analyzeResumeMatch = async () => {
+    if (!jobPostText.value.trim() || !resumeTextInput.value.trim()) {
+      showWarning('Please enter both your resume text and a job posting to analyze.')
+      return
+    }
+
+    isAnalyzing.value = true
+    showAnalysis.value = false
+
+    try {
+      const response = await $fetch('/api/analyze-resume-match', {
+        method: 'POST',
+        body: {
+          currentResume: resumeTextInput.value,
+          jobPost: jobPostText.value,
+          resumeData: props.resumeData
+        }
+      })
+
+      if (response.success && response.data) {
+        analysisData.value = response.data
+        showAnalysis.value = true
+      } else {
+        showError(response.error || 'Failed to analyze resume. Please try again.')
+      }
+    } catch (error) {
+      console.error('Analysis error:', error)
+      showError('Error analyzing resume. Please check your internet connection and try again.')
+    } finally {
+      isAnalyzing.value = false
+    }
+  }
+
+  const proceedToOptimization = () => {
+    // Keep analysis visible during optimization
+    tailorResume()
+  }
+
+  const cancelAnalysis = () => {
+    showAnalysis.value = false
+    analysisData.value = null
+  }
+
+  const reviseResume = () => {
+    // Go back to input section to revise resume
+    showAnalysis.value = false
+    analysisData.value = null
+    showInfo('Please update your resume to better match the job requirements, then analyze again.')
+  }
 
 const updateHeadshotUrl = (event) => {
   const newPersonal = { ...props.personal, headshot: event.target.value }
@@ -1351,7 +1422,8 @@ const tailorResume = async () => {
   }
 
   isTailoring.value = true
-  
+    showResults.value = false
+    
   try {
     const response = await $fetch('/api/tailor-resume', {
       method: 'POST',
@@ -1389,7 +1461,8 @@ const tailorResume = async () => {
       // Reset edit tracking for new optimization
       hasUserEdits.value = false
       
-      // Show results section
+      // Hide analysis and show results section
+      showAnalysis.value = false
       showResults.value = true
       
       // Initialize textarea heights after showing results
@@ -2867,6 +2940,22 @@ const formatSectionName = (section) => {
 .optimize-action:hover:not(:disabled) {
   background: #d97706;
   transform: translateY(-1px);
+}
+
+.analyze-action {
+  background: #3b82f6;
+  color: white;
+}
+
+.analyze-action:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.fullscreen-analysis {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 24px;
 }
 
 .apply-action {

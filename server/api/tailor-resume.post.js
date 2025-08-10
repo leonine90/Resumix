@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" })
 
     // Create a specialized prompt for job tailoring
-    const prompt = `You are an expert resume optimization AI. Your task is to completely rewrite and optimize specific sections of a resume to better match a job posting while preserving structural information.
+    const prompt = `You are an expert resume optimization AI. Your task is to AGGRESSIVELY optimize and rewrite specific sections of a resume to achieve MAXIMUM compatibility with the job posting while preserving structural information.
 
 CRITICAL INSTRUCTIONS:
 1. REWRITE AND OPTIMIZE these 3 sections: Summary, Experience achievements, and Skills
@@ -77,12 +77,13 @@ OUTPUT FORMAT (JSON only, no explanations):
   ]
 }
 
-OPTIMIZATION GUIDELINES:
-- COMPLETELY REWRITE: summary text, experience achievements, and skills list to match job requirements
+OPTIMIZATION GUIDELINES (AGGRESSIVE APPROACH):
+- COMPLETELY REWRITE: summary text, experience achievements, and skills list to MAXIMIZE job compatibility 
 - PRESERVE exactly: company names, job titles, dates, locations, personal info
-- REWRITE summary from scratch to incorporate job keywords and demonstrate alignment with role requirements
-- COMPLETELY REWRITE experience achievements to showcase relevant skills, technologies, and impact mentioned in job posting
-- Reorder and update skills to prioritize those mentioned in the job posting
+- REWRITE summary from scratch to incorporate ALL major job keywords and demonstrate STRONG alignment
+- COMPLETELY REWRITE experience achievements to showcase EVERY relevant skill, technology, and impact mentioned in job posting
+- TRANSFORM skills list to include ALL skills mentioned in job posting (that are reasonably applicable)
+- TARGET: Achieve 80%+ compatibility score on re-analysis
 - DO NOT change the number of experience entries
 - DO NOT modify any structural information (company, position, period, location)
 - Use action verbs and quantifiable results that resonate with the job requirements
@@ -99,12 +100,14 @@ OPTIMIZATION GUIDELINES:
 
 IMPORTANT: COMPLETELY REWRITE the summary and experience achievements to align with the job posting. Use the existing resume as inspiration for the candidate's background, but rewrite everything to demonstrate how their experience specifically matches the job requirements. Preserve company names, positions, and dates exactly, but transform the content to showcase relevant skills, technologies, and achievements that the job posting is looking for.
 
-REWRITING STRATEGY:
-1. Analyze job posting for key requirements, technologies, and responsibilities
-2. Rewrite summary to position candidate as ideal fit for these specific requirements
-3. Transform each experience achievement to highlight relevant skills and impact
-4. Prioritize skills that match job posting requirements
-5. After rewriting, apply selective technical keyword bolding using <strong></strong> tags
+REWRITING STRATEGY (MAXIMIZE COMPATIBILITY):
+1. Extract ALL skills, technologies, tools, and keywords from job posting
+2. Rewrite summary to incorporate as many job keywords as naturally possible
+3. Transform EACH experience achievement to include multiple job-relevant terms
+4. Completely rebuild skills list to include ALL applicable job requirements
+5. Use job posting language and terminology throughout
+6. After rewriting, apply selective technical keyword bolding using <strong></strong> tags
+7. GOAL: Make the resume appear as if written specifically for this exact job
 
 EXAMPLE TRANSFORMATION:
 - BEFORE: "Developed web applications for internal teams"  
