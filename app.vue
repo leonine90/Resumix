@@ -41,7 +41,6 @@
         v-if="section === 'researchInterests' && reactiveResumeData.sections.researchInterests"
         :key="`researchInterests-${section}`"
         :research-interests="reactiveResumeData.researchInterests" 
-
         :editable="reactiveResumeData.editable"
         @update:research-interests="updateResearchInterests"
       />

@@ -1248,9 +1248,9 @@ const processWithAI = async () => {
         
         // Merge all section data, preserving structure
         // Use imported data if available, otherwise use empty defaults instead of mock data
-        researchInterests: importedData.researchInterests || { default: "" },
+        researchInterests: importedData.researchInterests || [],
         education: importedData.education || [],
-        summary: importedData.summary || { default: "" },
+        summary: importedData.summary || "",
         experience: importedData.experience || [],
         publications: importedData.publications || [],
         skills: importedData.skills || [],
@@ -1335,7 +1335,7 @@ const tailorResume = async () => {
     if (response.success && response.data) {
       // Store original content for comparison (from existing resume data)
       originalContent.value = {
-        summary: props.resumeData.summary?.default || 'No summary available',
+        summary: typeof props.resumeData.summary === 'string' ? props.resumeData.summary : props.resumeData.summary?.default || 'No summary available',
         experience: props.resumeData.experience || [],
         skills: props.resumeData.skills || []
       }
@@ -1400,14 +1400,30 @@ const generateCurrentResumeText = () => {
   }
   
   // Add summary
-  if (data.summary && data.summary.default) {
-    text += `SUMMARY:\n${data.summary.default}\n\n`
+  if (data.summary) {
+    const summaryText = typeof data.summary === 'string' ? data.summary : data.summary.default || ''
+    if (summaryText) {
+      text += `SUMMARY:\n${summaryText}\n\n`
+    }
   }
   
-  // Add research interests (with version support)
+  // Add research interests
   if (data.researchInterests) {
-    const interests = data.researchInterests['web-version'] || data.researchInterests['default'] || data.researchInterests['data-version'] || Object.values(data.researchInterests)[0]
-    if (interests && interests.length > 0) {
+    let interests = []
+    if (Array.isArray(data.researchInterests)) {
+      interests = data.researchInterests
+    } else if (typeof data.researchInterests === 'object') {
+      // Handle object format like { default: "text" } or versioned structure
+      const defaultText = data.researchInterests.default || data.researchInterests.text || ''
+      if (defaultText.trim()) {
+        interests = [{
+          title: 'Research Interests',
+          description: defaultText
+        }]
+      }
+    }
+    
+    if (interests.length > 0) {
       text += `RESEARCH INTERESTS:\n`
       interests.forEach(interest => {
         text += `${interest.title || 'Untitled Interest'}\n`
@@ -1753,10 +1769,7 @@ const applyOptimizations = async () => {
       },
       
       // Apply AI-optimized summary
-      summary: {
-        ...(importedData.summary || currentData.summary),
-        default: optimizedContent.value.summary // Apply AI-optimized summary
-      },
+      summary: optimizedContent.value.summary, // Apply AI-optimized summary as string
       
       // Apply AI-optimized experience with proper merging
       experience: optimizedContent.value.experience.map((optimizedExp, index) => {
@@ -1773,15 +1786,37 @@ const applyOptimizations = async () => {
       
       // Preserve all other sections - keep original structure and data unless specifically improved
       researchInterests: (() => {
-        // Always preserve the original versioned structure
-        if (currentData.researchInterests && typeof currentData.researchInterests === 'object' && !Array.isArray(currentData.researchInterests)) {
-          // If original has versioned structure, keep it
-          return currentData.researchInterests
+        // Convert to array format if needed
+        if (importedData.researchInterests) {
+          if (Array.isArray(importedData.researchInterests)) {
+            return importedData.researchInterests
+          } else if (typeof importedData.researchInterests === 'object') {
+            const defaultText = importedData.researchInterests.default || importedData.researchInterests.text || ''
+            if (defaultText.trim()) {
+              return [{
+                title: 'Research Interests',
+                description: defaultText
+              }]
+            }
+          }
         }
-        // Otherwise use imported if available
-        return (importedData.researchInterests && Object.keys(importedData.researchInterests).length > 0) 
-          ? importedData.researchInterests 
-          : currentData.researchInterests
+        
+        // Fallback to current data
+        if (currentData.researchInterests) {
+          if (Array.isArray(currentData.researchInterests)) {
+            return currentData.researchInterests
+          } else if (typeof currentData.researchInterests === 'object') {
+            const defaultText = currentData.researchInterests.default || currentData.researchInterests.text || ''
+            if (defaultText.trim()) {
+              return [{
+                title: 'Research Interests',
+                description: defaultText
+              }]
+            }
+          }
+        }
+        
+        return []
       })(),
       
       education: (() => {

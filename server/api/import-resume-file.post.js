@@ -266,9 +266,7 @@ TARGET JSON STRUCTURE:
       "description": ""
     }
   ],
-  "summary": {
-    "default": "Professional summary text here"
-  },
+  "summary": "Professional summary text here",
   "experience": [
     {
       "company": "Company Name",
@@ -307,9 +305,12 @@ TARGET JSON STRUCTURE:
       "description": "Brief description of volunteer work"
     }
   ],
-  "researchInterests": {
-    "default": "Research interests and areas of focus"
-  },
+  "researchInterests": [
+    {
+      "title": "Research Interests",
+      "description": "Research interests and areas of focus"
+    }
+  ],
   "signature": {
     "name": "",
     "date": ""
@@ -360,10 +361,36 @@ IMPORTANT: Convert this resume into the JSON structure above. Extract all releva
           throw new Error('Invalid resume data structure - missing personal information')
         }
         
-        // Fix common issues in parsed data
-        if (parsedData.headerElements && parsedData.personal.dateOfBirth) {
-          parsedData.headerElements.dateOfBirth = true
+              // Fix common issues in parsed data
+      if (parsedData.headerElements && parsedData.personal.dateOfBirth) {
+        parsedData.headerElements.dateOfBirth = true
+      }
+      
+      // Ensure summary is a string
+      if (parsedData.summary && typeof parsedData.summary === 'object') {
+        parsedData.summary = parsedData.summary.default || parsedData.summary.text || ''
+      }
+      
+      // Ensure researchInterests is an array and hide section if empty
+      if (parsedData.researchInterests) {
+        if (typeof parsedData.researchInterests === 'object' && !Array.isArray(parsedData.researchInterests)) {
+          const defaultText = parsedData.researchInterests.default || parsedData.researchInterests.text || ''
+          if (defaultText.trim()) {
+            parsedData.researchInterests = [{
+              title: 'Research Interests',
+              description: defaultText
+            }]
+          } else {
+            parsedData.researchInterests = []
+            parsedData.sections.researchInterests = false
+          }
+        } else if (Array.isArray(parsedData.researchInterests) && parsedData.researchInterests.length === 0) {
+          parsedData.sections.researchInterests = false
         }
+      } else {
+        parsedData.researchInterests = []
+        parsedData.sections.researchInterests = false
+      }
         
       } catch (parseError) {
         console.error('JSON parsing error:', parseError)
