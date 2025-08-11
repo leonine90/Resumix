@@ -32,10 +32,17 @@ export default defineEventHandler(async (event) => {
 
     console.log('Initializing Google AI...')
     const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = genAI.getGenerativeModel({ 
+      model: 'gemini-1.5-flash',
+      generationConfig: {
+        temperature: 0.1, // Low temperature for more consistent results
+        topP: 0.8,
+        topK: 40
+      }
+    })
 
     // Rigorous analysis prompt for accurate scoring
-    const prompt = `You are a strict resume analyzer. Analyze this resume against the job posting with RIGOROUS standards. Be harsh but fair.
+    const prompt = `You are a precise resume analyzer. Analyze this resume against the job posting using SPECIFIC, QUANTIFIABLE criteria. You must provide consistent scores for the same resume-job combination.
 
 RESUME:
 ${currentResume.substring(0, 2500)}...
@@ -43,60 +50,91 @@ ${currentResume.substring(0, 2500)}...
 JOB POSTING:
 ${jobPost.substring(0, 2000)}...
 
-SCORING CRITERIA (BALANCED ASSESSMENT):
-- 90-100: Perfect match, candidate exceeds requirements
-- 80-89: Strong match, minor gaps only (most optimized resumes should reach here)
-- 70-79: Good match, some gaps but clearly relevant experience
-- 60-69: Moderate match, meaningful overlap but missing key areas
-- 50-59: Weak match, some relevance but major gaps
-- 0-49: Poor match, wrong field/level
+SCORING METHODOLOGY (QUANTIFIABLE CRITERIA):
 
-ANALYSIS RULES (RECOGNIZE OPTIMIZATION):
-1. Skills Match: Count skill matches AND related/transferable skills. Credit partial matches and learning ability.
-2. Experience Relevance: Consider transferable experience and how well achievements are described for target role.
-3. Keyword Alignment: Credit both exact matches AND contextually relevant terminology.
-4. Overall: Weight heavily on how well the resume demonstrates fit for THIS specific role.
-5. IMPORTANT: If resume shows clear optimization for this job, score generously (aim for 75-90% range).
+SKILLS MATCH SCORING (0-100):
+- Count exact skill matches from job posting found in resume
+- Count related/transferable skills that could apply
+- Formula: (Exact matches × 3) + (Related skills × 1) = Raw score
+- Normalize to 0-100 scale: (Raw score / Total job skills × 3) × 100
+- Cap at 100 if exceeds
+- Examples: 5 exact + 3 related = 18 raw → 90% if job has 6 skills
 
-Return exactly this JSON:
+EXPERIENCE RELEVANCE SCORING (0-100):
+- Industry match: 0-30 points (same industry = 30, related = 20, different = 0-10)
+- Role level match: 0-30 points (exact level = 30, adjacent = 20, different = 0-15)
+- Achievement quality: 0-40 points (quantified results = 40, descriptive = 25, basic = 10)
+- Total = sum of all three categories
+
+KEYWORD ALIGNMENT SCORING (0-100):
+- Extract key terms from job posting (technologies, methodologies, certifications)
+- Count exact matches in resume
+- Count contextual/synonym matches
+- Formula: (Exact matches × 2) + (Contextual matches × 1) = Raw score
+- Normalize: (Raw score / Total job keywords × 2) × 100
+- Cap at 100
+
+OVERALL COMPATIBILITY SCORING (0-100):
+- Weighted average: Skills (35%) + Experience (40%) + Keywords (25%)
+- Formula: (Skills × 0.35) + (Experience × 0.40) + (Keywords × 0.25)
+- Round to nearest whole number
+
+COMPATIBILITY LEVELS:
+- 90-100: Excellent (Perfect alignment)
+- 80-89: Strong (Minor gaps only)
+- 70-79: Good (Some gaps but relevant)
+- 60-69: Moderate (Meaningful overlap)
+- 50-59: Weak (Some relevance)
+- 0-49: Poor (Wrong field/level)
+
+ANALYSIS REQUIREMENTS:
+1. Extract ALL skills from job posting and count matches in resume
+2. Identify industry, role level, and achievement patterns
+3. List specific keywords from job posting and find matches
+4. Provide exact counts and calculations for transparency
+5. Be consistent - same resume + job should always get same score
+
+Return exactly this JSON with SPECIFIC calculations:
 {
   "metrics": {
     "skillsMatch": {
-      "score": [realistic_score_0_100],
-      "explanation": "Specific skill comparison with counts",
-      "recommendations": ["Specific actionable advice"],
-      "missingSkills": ["Exact missing requirements"],
-      "strengths": ["Exact matching skills"]
+      "score": [calculated_score_0_100],
+      "explanation": "Found X exact skill matches and Y related skills out of Z job requirements. Calculation: (X×3 + Y×1) / (Z×3) × 100 = [score]%",
+      "recommendations": ["Specific actionable advice based on missing skills"],
+      "missingSkills": ["Exact missing requirements from job posting"],
+      "strengths": ["Exact matching skills found in resume"]
     },
     "experienceRelevance": {
-      "score": [realistic_score_0_100],
-      "explanation": "Industry/role/level relevance analysis",
-      "recommendations": ["Experience-related advice"],
-      "missingSkills": ["Missing experience types"],
-      "strengths": ["Relevant experience elements"]
+      "score": [calculated_score_0_100],
+      "explanation": "Industry: X/30, Role Level: Y/30, Achievements: Z/40. Total: [score]%",
+      "recommendations": ["Experience-related advice with specific improvements"],
+      "missingSkills": ["Missing experience types or levels"],
+      "strengths": ["Relevant experience elements that match job"]
     },
     "keywordAlignment": {
-      "score": [realistic_score_0_100],
-      "explanation": "Terminology and language match",
-      "recommendations": ["Keyword optimization advice"],
-      "missingSkills": ["Missing key terms"],
-      "strengths": ["Matching terminology"]
+      "score": [calculated_score_0_100],
+      "explanation": "Found X exact keyword matches and Y contextual matches out of Z job keywords. Calculation: (X×2 + Y×1) / (Z×2) × 100 = [score]%",
+      "recommendations": ["Keyword optimization advice with specific terms"],
+      "missingSkills": ["Missing key terms from job posting"],
+      "strengths": ["Matching terminology and language"]
     },
     "overallCompatibility": {
-      "score": [realistic_score_0_100],
-      "explanation": "Holistic assessment with major factors",
-      "recommendations": ["Overall improvement strategy"],
-      "missingSkills": ["Critical gaps"],
-      "strengths": ["Key advantages"]
+      "score": [weighted_average_score_0_100],
+      "explanation": "Weighted calculation: Skills([skills_score]×0.35) + Experience([exp_score]×0.40) + Keywords([keyword_score]×0.25) = [score]%",
+      "recommendations": ["Overall improvement strategy based on lowest scoring areas"],
+      "missingSkills": ["Critical gaps affecting overall score"],
+      "strengths": ["Key advantages that boost overall score"]
     }
   },
   "summary": {
-    "compatibilityLevel": "[Poor/Weak/Moderate/Good/Strong/Excellent]",
-    "recommendation": "Honest assessment of candidacy",
-    "keyStrengths": ["Top 3 actual strengths"],
-    "keyGaps": ["Top 3 critical gaps"]
+    "compatibilityLevel": "[Poor/Weak/Moderate/Good/Strong/Excellent] based on overall score",
+    "recommendation": "Specific assessment with actionable next steps",
+    "keyStrengths": ["Top 3 specific strengths with evidence"],
+    "keyGaps": ["Top 3 specific gaps with impact on score"]
   }
-}`
+}
+
+CRITICAL: Use the exact calculation formulas provided. Be consistent and quantifiable. Same resume + job posting must always produce the same scores.`
 
     console.log('Sending request to AI model...')
     const result = await model.generateContent(prompt)
@@ -124,6 +162,32 @@ Return exactly this JSON:
         if (!analysisData.metrics[metric]) {
           throw new Error(`Missing required metric: ${metric}`)
         }
+        
+        // Validate score ranges
+        const score = analysisData.metrics[metric].score
+        if (typeof score !== 'number' || score < 0 || score > 100) {
+          throw new Error(`Invalid score for ${metric}: ${score}. Must be a number between 0-100.`)
+        }
+        
+        // Validate explanation contains calculation details
+        const explanation = analysisData.metrics[metric].explanation
+        if (!explanation || explanation.length < 20) {
+          throw new Error(`Insufficient explanation for ${metric}. Must include calculation details.`)
+        }
+      }
+      
+      // Validate overall compatibility score is reasonable
+      const skillsScore = analysisData.metrics.skillsMatch.score
+      const expScore = analysisData.metrics.experienceRelevance.score
+      const keywordScore = analysisData.metrics.keywordAlignment.score
+      const overallScore = analysisData.metrics.overallCompatibility.score
+      
+      // Calculate expected weighted average
+      const expectedOverall = Math.round((skillsScore * 0.35) + (expScore * 0.40) + (keywordScore * 0.25))
+      
+      // Allow small tolerance for rounding differences
+      if (Math.abs(overallScore - expectedOverall) > 2) {
+        console.warn(`Overall score (${overallScore}) differs significantly from calculated weighted average (${expectedOverall})`)
       }
     } catch (parseError) {
       console.error('JSON parsing error:', parseError)

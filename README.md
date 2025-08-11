@@ -1,11 +1,10 @@
 # Resumix
 
-A modular, component-based resume builder built with Nuxt.js and Vue 3. Resumix allows you to create professional resumes with full inline editing capabilities and section visibility controls.
+A modular, component-based resume builder built with Nuxt.js and Vue 3. Resumix allows you to create professional resumes with full inline editing capabilities, AI-powered optimization, and **quantifiable scoring system** for job compatibility analysis.
 
 ## Features
 
 - **Modular Components**: Each section of the resume is a separate, reusable component
-
 - **Data-Driven**: All content is stored in a single data file for easy modification
 - **Inline Editing**: Click any text to edit it directly on the page with rich text formatting toolbar
 - **Section Controls**: Toggle sections on/off with checkboxes
@@ -16,10 +15,67 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. Resumix 
 - **📄 Smart Resume Import**: Paste resume text or JSON data and let the system automatically convert it to the proper format with intelligent section visibility management
 - **📁 File Upload Support**: Drag and drop or browse to upload resume files (.txt, .rtf, .doc, .docx, .pdf) with automatic text extraction and AI processing
 - **🎯 AI Job Optimizer**: Tailor your resume to specific job postings by completely rewriting Summary and Experience achievements to match job requirements, with intelligent keyword bolding and structure preservation
+- **📊 Quantifiable Resume Analysis**: **NEW!** Get consistent, specific scores (0-100) for resume-job compatibility with transparent calculations and detailed breakdowns
 - **🔔 Toast Notification System**: Modern, non-intrusive notifications with auto-close for short messages and manual close for longer ones
 - **🎨 Enhanced User Experience**: Improved error handling, better AI response parsing, and smart section management
 - **🔄 Drag & Drop Section Reordering**: Intuitive drag handles to reorder resume sections with visual feedback and smooth animations
 - **📝 AI Cover Letter Generator**: Create professional, tailored cover letters using AI that connect your experience to specific job requirements
+
+## 🆕 New: Quantifiable Resume Scoring System
+
+**Get consistent, specific scores for resume-job compatibility with transparent calculations!**
+
+### Key Features:
+- **🎯 Consistent Results**: Same resume + job posting always produces the same scores
+- **📊 Quantifiable Metrics**: Based on specific counts and formulas, not subjective assessment
+- **🔍 Transparent Calculations**: See exactly how each score was calculated
+- **⚡ Low Temperature AI**: Configured for deterministic, reliable results
+- **🧪 Built-in Testing**: Consistency verification with multiple test runs
+
+### Scoring Methodology:
+
+#### 1. Skills Match (0-100)
+**Formula**: `(Exact matches × 3) + (Related skills × 1) = Raw score`
+**Normalization**: `(Raw score / Total job skills × 3) × 100`
+
+#### 2. Experience Relevance (0-100)
+- **Industry Match**: 0-30 points (same/related/different industry)
+- **Role Level Match**: 0-30 points (exact/adjacent/different level)
+- **Achievement Quality**: 0-40 points (quantified/descriptive/basic)
+
+#### 3. Keyword Alignment (0-100)
+**Formula**: `(Exact matches × 2) + (Contextual matches × 1) = Raw score`
+**Normalization**: `(Raw score / Total job keywords × 2) × 100`
+
+#### 4. Overall Compatibility (0-100)
+**Weighted Average**: Skills (35%) + Experience (40%) + Keywords (25%)
+
+### Compatibility Levels:
+- **90-100**: Excellent (Perfect alignment)
+- **80-89**: Strong (Minor gaps only)
+- **70-79**: Good (Some gaps but relevant)
+- **60-69**: Moderate (Meaningful overlap)
+- **50-59**: Weak (Some relevance)
+- **0-49**: Poor (Wrong field/level)
+
+### Example Output:
+```json
+{
+  "metrics": {
+    "skillsMatch": {
+      "score": 83,
+      "explanation": "Found 8 exact skill matches and 2 related skills out of 10 job requirements. Calculation: (8×3 + 2×1) / (10×3) × 100 = 86.67% (Rounded down to 83%)"
+    },
+    "overallCompatibility": {
+      "score": 71,
+      "explanation": "Weighted calculation: Skills(83×0.35) + Experience(65×0.40) + Keywords(60×0.25) = 70.55% (Rounded to 71%)"
+    }
+  }
+}
+```
+
+### Testing Consistency:
+Visit `/api/test-analysis` to run consistency tests that verify the same resume-job combination produces identical scores across multiple runs.
 
 ## Project Structure
 
@@ -383,6 +439,32 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## AI-Powered Features
 
+### 📊 Resume-Job Compatibility Analysis
+
+**Get quantifiable, consistent scores for resume-job compatibility with transparent calculations!**
+
+1. **Open the sidebar** and expand the **Job Optimizer** section
+2. **Click "Analyze Resume Match"** to open the analysis modal
+3. **Paste your resume text** in the first textarea
+4. **Paste the job posting** in the second textarea
+5. **Click "Analyze Compatibility"** to get detailed scores and insights
+6. **Review the analysis** with specific scores, explanations, and recommendations
+
+**What you get:**
+- **Skills Match Score (0-100)**: Based on exact and related skill matches
+- **Experience Relevance Score (0-100)**: Industry, role level, and achievement quality
+- **Keyword Alignment Score (0-100)**: Technical terms and methodology matches
+- **Overall Compatibility Score (0-100)**: Weighted average of all metrics
+- **Detailed Explanations**: Transparent calculations showing exactly how scores were derived
+- **Specific Recommendations**: Actionable advice based on quantifiable gaps
+- **Key Strengths & Gaps**: Top 3 strengths and areas for improvement
+
+**Consistency Guarantee:**
+- Same resume + job posting always produces identical scores
+- Low temperature AI configuration ensures deterministic results
+- Built-in validation and consistency testing
+- Transparent formulas and calculations
+
 ### 📄 Smart Resume Import
 
 **Intelligently import resume text, JSON data, or upload files automatically!**
@@ -432,11 +514,13 @@ This project is open source and available under the [MIT License](LICENSE).
 **Tailor your resume to specific job postings with AI!**
 
 1. **Open the sidebar** and expand the **Job Optimizer** section
-2. **Click "Tailor for Job Post"** to open the optimization modal
+2. **Choose your action:**
+   - **"Analyze Resume Match"**: Get quantifiable compatibility scores first
+   - **"Tailor for Job Post"**: Directly optimize your resume for the job
 3. **Paste your resume text** in the first textarea
 4. **Paste the job posting** in the second textarea
-5. **Click "Optimize Resume"** to let AI tailor your resume
-6. **Review the before/after comparison** and click "Apply Optimizations"
+5. **Click "Analyze Compatibility"** or **"Optimize Resume"** based on your choice
+6. **Review the results** - scores and analysis, or before/after comparison
 
 **What the AI optimizes:**
 - **Summary**: Completely rewrites your professional summary to match job requirements with **bold technical keywords** (now editable)
@@ -502,7 +586,61 @@ This project is open source and available under the [MIT License](LICENSE).
 - All AI processing happens server-side to protect your API key
 - No sensitive data is exposed to the client
 
+### 🧪 Testing & Validation
+
+**Consistency Testing:**
+- Visit `/api/test-analysis` to run automated consistency tests
+- Tests run the same resume-job combination 3 times
+- Verifies scores are identical across all runs (≤5 point tolerance)
+- Provides detailed calculation breakdowns and validation
+
+**Score Validation:**
+- All scores validated to be between 0-100
+- Weighted average calculations verified
+- Explanation length and quality checks
+- Comprehensive error handling and logging
+
+**Performance:**
+- Low temperature AI configuration (0.1) for deterministic results
+- Optimized prompt engineering for consistent outputs
+- Efficient JSON parsing with multiple fallback strategies
+- Real-time validation and error recovery
+
 ## Recent Enhancements (2024)
+
+### 📊 Quantifiable Resume Scoring System (Latest)
+
+**Major improvement to resume analysis with consistent, transparent scoring!**
+
+**Key Improvements:**
+- **🎯 Consistent Results**: Same resume + job posting always produces identical scores
+- **📊 Quantifiable Metrics**: Replaced subjective scoring with specific formulas and counts
+- **🔍 Transparent Calculations**: All scores include detailed explanations of how they were calculated
+- **⚡ Low Temperature AI**: Configured for deterministic, reliable results (temperature: 0.1)
+- **🧪 Built-in Testing**: Automated consistency testing with `/api/test-analysis` endpoint
+
+**Scoring Methodology:**
+- **Skills Match**: `(Exact matches × 3) + (Related skills × 1)` normalized to 0-100
+- **Experience Relevance**: Industry (0-30) + Role Level (0-30) + Achievements (0-40)
+- **Keyword Alignment**: `(Exact matches × 2) + (Contextual matches × 1)` normalized to 0-100
+- **Overall Compatibility**: Weighted average: Skills (35%) + Experience (40%) + Keywords (25%)
+
+**Validation Features:**
+- Score range validation (0-100)
+- Weighted average verification
+- Explanation quality checks
+- Consistency testing across multiple runs
+- Comprehensive error handling
+
+**Example Output:**
+```json
+{
+  "skillsMatch": {
+    "score": 83,
+    "explanation": "Found 8 exact skill matches and 2 related skills out of 10 job requirements. Calculation: (8×3 + 2×1) / (10×3) × 100 = 86.67% (Rounded down to 83%)"
+  }
+}
+```
 
 ### 🎛️ Collapsible Sidebar Header
 
