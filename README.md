@@ -830,3 +830,28 @@ This project is open source and available under the [MIT License](LICENSE).
 - **Keyboard Navigation**: Full keyboard support for all interactive elements
 - **High Contrast**: Sufficient color contrast for readability
 - **Focus Indicators**: Clear visual feedback for focused elements
+
+### 🔒 Modal Scroll Locking
+
+**Enhanced modal experience with background scroll prevention!**
+
+**Core Functionality:**
+- **Background Lock**: Prevents scrolling of the underlying page when modals are open
+- **No Page Shift**: Compensates for scrollbar width to prevent layout shifts
+- **Multiple Modal Support**: Handles overlapping modals with a counter system
+- **Automatic Cleanup**: Restores scroll state when modals close or component unmounts
+
+**Implementation:**
+- **Reusable Composable**: `useBodyScrollLock()` provides `lockScroll()`, `unlockScroll()`, and `isLocked()` functions
+- **CSS Integration**: Global styles prevent page shift when scrollbar disappears
+- **Vue Integration**: Watchers automatically lock/unlock scroll for all modal states
+
+**Affected Modals:**
+- Import Modal, AI Import Modal, Info Modal, Tailor Resume Modal
+- Optimizer Info Modal, Cover Letter Modal, Cover Letter Info Modal
+
+**Benefits:**
+- **Better UX**: Prevents accidental scrolling of background content
+- **Focus Management**: Keeps user attention on modal content
+- **Professional Feel**: Eliminates distracting background movement
+- **Cross-Browser**: Works consistently across different browsers and devices

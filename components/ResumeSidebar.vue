@@ -757,9 +757,10 @@
 
 <script setup>
 import { Icon } from '@iconify/vue'
-import { watch } from 'vue'
+import { watch, onUnmounted } from 'vue'
 import SidebarHeader from './sidebar/SidebarHeader.vue'
 import ResumeMatchAnalysis from './ResumeMatchAnalysis.vue'
+import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 
 const props = defineProps({
   headerElements: {
@@ -788,6 +789,9 @@ const emit = defineEmits(['update:headerElements', 'update:sections', 'update:co
 
 // Toast notifications
 const { showSuccess, showError, showWarning, showInfo } = useToast()
+
+// Body scroll lock for modals
+const { lockScroll, unlockScroll } = useBodyScrollLock()
 
 const isCollapsed = ref(false)
 const showImportModal = ref(false)
@@ -2082,9 +2086,10 @@ const applyOptimizations = async () => {
   }
 }
 
-// Watch for tailor modal opening to reset state
+// Watch for tailor modal opening to reset state and lock scroll
 watch(showTailorModal, (newValue) => {
   if (newValue) {
+    lockScroll()
     resetTailorModal()
     // Since useCurrentResume defaults to true, populate the field
     nextTick(() => {
@@ -2092,12 +2097,15 @@ watch(showTailorModal, (newValue) => {
         resumeTextInput.value = generateCurrentResumeText()
       }
     })
+  } else {
+    unlockScroll()
   }
 })
 
-// Watch for cover letter modal opening to reset state
+// Watch for cover letter modal opening to reset state and lock scroll
 watch(showCoverLetterModal, (newValue) => {
   if (newValue) {
+    lockScroll()
     resetCoverLetterModal()
     // Since useCurrentResumeForCoverLetter defaults to true, populate the field
     nextTick(() => {
@@ -2105,7 +2113,55 @@ watch(showCoverLetterModal, (newValue) => {
         coverLetterResumeText.value = generateCurrentResumeText()
       }
     })
+  } else {
+    unlockScroll()
   }
+})
+
+// Watch all other modal states for scroll locking
+watch(showImportModal, (newValue) => {
+  if (newValue) {
+    lockScroll()
+  } else {
+    unlockScroll()
+  }
+})
+
+watch(showAiImportModal, (newValue) => {
+  if (newValue) {
+    lockScroll()
+  } else {
+    unlockScroll()
+  }
+})
+
+watch(showInfoModal, (newValue) => {
+  if (newValue) {
+    lockScroll()
+  } else {
+    unlockScroll()
+  }
+})
+
+watch(showOptimizerInfoModal, (newValue) => {
+  if (newValue) {
+    lockScroll()
+  } else {
+    unlockScroll()
+  }
+})
+
+watch(showCoverLetterInfoModal, (newValue) => {
+  if (newValue) {
+    lockScroll()
+  } else {
+    unlockScroll()
+  }
+})
+
+// Clean up scroll lock when component unmounts
+onUnmounted(() => {
+  unlockScroll()
 })
 
 const formatElementName = (element) => {

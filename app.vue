@@ -379,4 +379,15 @@ useHead({
   .resume-section > div:last-child {
     margin-bottom: 0;
   }
+
+  /* Prevent page shift when scrollbar is hidden */
+  body.scroll-locked {
+    overflow: hidden;
+    padding-right: var(--scrollbar-width, 0px);
+  }
+
+  /* Calculate scrollbar width on page load */
+  :root {
+    --scrollbar-width: calc(100vw - 100%);
+  }
 </style>

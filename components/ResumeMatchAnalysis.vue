@@ -19,7 +19,7 @@
             <span class="score-text">{{ analysisData.metrics.overallCompatibility.score }}%</span>
           </div>
         </div>
-        <p class="metric-explanation">{{ analysisData.metrics.overallCompatibility.explanation }}</p>
+        <p class="metric-explanation">Overall assessment of how well your resume matches the job requirements based on skills, experience, and keyword alignment.</p>
         <div class="metric-details">
           <div class="strengths">
             <h5>Key Strengths:</h5>
@@ -48,7 +48,7 @@
           </div>
         </div>
         <div v-if="expanded.skillsMatch" class="collapsible-content">
-          <p class="metric-explanation">{{ analysisData.metrics.skillsMatch.explanation }}</p>
+          <p class="metric-explanation">How well your technical and soft skills align with what the job requires.</p>
           <div class="metric-details">
             <div class="strengths">
               <h5>Strengths:</h5>
@@ -78,7 +78,7 @@
           </div>
         </div>
         <div v-if="expanded.experienceRelevance" class="collapsible-content">
-          <p class="metric-explanation">{{ analysisData.metrics.experienceRelevance.explanation }}</p>
+          <p class="metric-explanation">How relevant your work experience is to the job requirements and industry.</p>
           <div class="metric-details">
             <div class="strengths">
               <h5>Strengths:</h5>
@@ -108,7 +108,7 @@
           </div>
         </div>
         <div v-if="expanded.keywordAlignment" class="collapsible-content">
-          <p class="metric-explanation">{{ analysisData.metrics.keywordAlignment.explanation }}</p>
+          <p class="metric-explanation">How well your resume uses the same terminology and keywords as the job posting.</p>
           <div class="metric-details">
             <div class="strengths">
               <h5>Strengths:</h5>

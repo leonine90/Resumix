@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "resumix",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,23 +13,12 @@
     "@google/generative-ai": "^0.24.1",
     "@iconify/vue": "^5.0.0",
     "@mdi/font": "^7.4.47",
-    "@tiptap/core": "^3.0.9",
-    "@tiptap/extension-color": "^3.0.9",
-    "@tiptap/extension-highlight": "^3.0.9",
-    "@tiptap/extension-list-item": "^3.0.9",
-    "@tiptap/extension-text-align": "^3.0.9",
-    "@tiptap/extension-text-style": "^3.0.9",
-    "@tiptap/extension-underline": "^3.0.9",
-    "@tiptap/starter-kit": "^3.0.9",
-    "@tiptap/vue-3": "^3.0.9",
     "@types/uuid": "^10.0.0",
     "mammoth": "^1.10.0",
-    "node-poppler": "^8.0.4",
     "nuxt": "^3.15.1",
     "pdf2json": "^3.2.0",
     "uuid": "^11.1.0",
     "vue": "latest",
-    "vue-router": "latest",
     "vuetify": "^3.9.0"
   },
   "devDependencies": {
