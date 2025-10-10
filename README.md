@@ -15,67 +15,20 @@ A modular, component-based resume builder built with Nuxt.js and Vue 3. Resumix 
 - **📄 Smart Resume Import**: Paste resume text or JSON data and let the system automatically convert it to the proper format with intelligent section visibility management
 - **📁 File Upload Support**: Drag and drop or browse to upload resume files (.txt, .rtf, .doc, .docx, .pdf) with automatic text extraction and AI processing
 - **🎯 AI Job Optimizer**: Tailor your resume to specific job postings by completely rewriting Summary and Experience achievements to match job requirements, with intelligent keyword bolding and structure preservation
-- **📊 Quantifiable Resume Analysis**: **NEW!** Get consistent, specific scores (0-100) for resume-job compatibility with transparent calculations and detailed breakdowns
+- **✨ AI Achievement Refinement**: **NEW!** Refine individual achievements with AI using custom prompts or quick presets (Add Metrics, More Technical, Show Leadership, Shorten) with undo functionality
+- **📊 Quantifiable Resume Analysis**: Get consistent, specific scores (0-100) for resume-job compatibility with transparent calculations and detailed breakdowns
+- **📈 Inline Analysis Panel**: **NEW!** View compatibility analysis scores directly in the refinement page for easy reference while editing
 - **🔔 Toast Notification System**: Modern, non-intrusive notifications with auto-close for short messages and manual close for longer ones
 - **🎨 Enhanced User Experience**: Improved error handling, better AI response parsing, and smart section management
 - **🔄 Drag & Drop Section Reordering**: Intuitive drag handles to reorder resume sections with visual feedback and smooth animations
 - **📝 AI Cover Letter Generator**: Create professional, tailored cover letters using AI that connect your experience to specific job requirements
 
-## 🆕 New: Quantifiable Resume Scoring System
+## Key Technologies
 
-**Get consistent, specific scores for resume-job compatibility with transparent calculations!**
-
-### Key Features:
-- **🎯 Consistent Results**: Same resume + job posting always produces the same scores
-- **📊 Quantifiable Metrics**: Based on specific counts and formulas, not subjective assessment
-- **🔍 Transparent Calculations**: See exactly how each score was calculated
-- **⚡ Low Temperature AI**: Configured for deterministic, reliable results
-- **🧪 Built-in Testing**: Consistency verification with multiple test runs
-
-### Scoring Methodology:
-
-#### 1. Skills Match (0-100)
-**Formula**: `(Exact matches × 3) + (Related skills × 1) = Raw score`
-**Normalization**: `(Raw score / Total job skills × 3) × 100`
-
-#### 2. Experience Relevance (0-100)
-- **Industry Match**: 0-30 points (same/related/different industry)
-- **Role Level Match**: 0-30 points (exact/adjacent/different level)
-- **Achievement Quality**: 0-40 points (quantified/descriptive/basic)
-
-#### 3. Keyword Alignment (0-100)
-**Formula**: `(Exact matches × 2) + (Contextual matches × 1) = Raw score`
-**Normalization**: `(Raw score / Total job keywords × 2) × 100`
-
-#### 4. Overall Compatibility (0-100)
-**Weighted Average**: Skills (35%) + Experience (40%) + Keywords (25%)
-
-### Compatibility Levels:
-- **90-100**: Excellent (Perfect alignment)
-- **80-89**: Strong (Minor gaps only)
-- **70-79**: Good (Some gaps but relevant)
-- **60-69**: Moderate (Meaningful overlap)
-- **50-59**: Weak (Some relevance)
-- **0-49**: Poor (Wrong field/level)
-
-### Example Output:
-```json
-{
-  "metrics": {
-    "skillsMatch": {
-      "score": 83,
-      "explanation": "Found 8 exact skill matches and 2 related skills out of 10 job requirements. Calculation: (8×3 + 2×1) / (10×3) × 100 = 86.67% (Rounded down to 83%)"
-    },
-    "overallCompatibility": {
-      "score": 71,
-      "explanation": "Weighted calculation: Skills(83×0.35) + Experience(65×0.40) + Keywords(60×0.25) = 70.55% (Rounded to 71%)"
-    }
-  }
-}
-```
-
-### Testing Consistency:
-Visit `/api/test-analysis` to run consistency tests that verify the same resume-job combination produces identical scores across multiple runs.
+- **Nuxt.js & Vue 3**: Modern framework for reactive components and SSR
+- **Google Gemini AI**: Advanced AI for resume analysis, optimization, and content generation
+- **Material Design Icons**: Professional iconography via Iconify
+- **PDF Generation**: Browser-based PDF export with print optimization
 
 ## Project Structure
 
@@ -99,16 +52,22 @@ Visit `/api/test-analysis` to run consistency tests that verify the same resume-
 │   ├── Signature.vue      # Signature section
 │   ├── PDFDownloader.vue # PDF download
 │   ├── ToastContainer.vue # Toast notification system
+│   ├── ResumeMatchAnalysis.vue # Resume compatibility analysis display
 │   └── FloatingToolbar.vue # Rich text editing toolbar
 ├── composables/
 │   ├── useTextCommands.js # Rich text editing commands for floating toolbar
 │   ├── useTextSelection.js # Text selection utilities for editing
+│   ├── useBodyScrollLock.js # Modal scroll locking utility
 │   └── useToast.js        # Toast notification composable
-      ├── server/
+├── server/
 │   └── api/
-│       ├── import-resume.post.js  # Enhanced AI-powered resume text to JSON conversion
-│       ├── tailor-resume.post.js  # Enhanced AI-powered resume optimization for job posts
-│       └── generate-cover-letter.post.js  # AI-powered cover letter generation
+│       ├── import-resume.post.js  # AI-powered resume text to JSON conversion
+│       ├── import-resume-file.post.js # File upload and text extraction
+│       ├── tailor-resume.post.js  # AI-powered resume optimization for job posts
+│       ├── refine-achievement.post.js # AI-powered individual achievement refinement
+│       ├── analyze-resume-match.post.js # Quantifiable resume-job compatibility analysis
+│       ├── generate-cover-letter.post.js # AI-powered cover letter generation
+│       └── test-analysis.get.js # Consistency testing endpoint
 ├── public/
 │   └── favicon.ico        # Site favicon
 ```
@@ -441,417 +400,218 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ### 📊 Resume-Job Compatibility Analysis
 
-**Get quantifiable, consistent scores for resume-job compatibility with transparent calculations!**
+**Get quantifiable, consistent scores with transparent calculations!**
 
-1. **Open the sidebar** and expand the **Job Optimizer** section
-2. **Click "Analyze Resume Match"** to open the analysis modal
-3. **Paste your resume text** in the first textarea
-4. **Paste the job posting** in the second textarea
-5. **Click "Analyze Compatibility"** to get detailed scores and insights
-6. **Review the analysis** with specific scores, explanations, and recommendations
+**How to Use:**
+1. Open the sidebar → expand **Job Optimizer** section
+2. Click **"Analyze Resume Match"**
+3. Paste your resume text and job posting
+4. Click **"Analyze Compatibility"**
 
-**What you get:**
-- **Skills Match Score (0-100)**: Based on exact and related skill matches
-- **Experience Relevance Score (0-100)**: Industry, role level, and achievement quality
-- **Keyword Alignment Score (0-100)**: Technical terms and methodology matches
-- **Overall Compatibility Score (0-100)**: Weighted average of all metrics
-- **Detailed Explanations**: Transparent calculations showing exactly how scores were derived
-- **Specific Recommendations**: Actionable advice based on quantifiable gaps
-- **Key Strengths & Gaps**: Top 3 strengths and areas for improvement
+**Scoring Methodology:**
+- **Skills Match (35%)**: `(Exact matches × 3) + (Related × 1)` normalized to 0-100
+- **Experience Relevance (40%)**: Industry (0-30) + Role Level (0-30) + Achievements (0-40)
+- **Keyword Alignment (25%)**: `(Exact × 2) + (Contextual × 1)` normalized to 0-100
+- **Overall**: Weighted average of all three metrics
 
-**Consistency Guarantee:**
-- Same resume + job posting always produces identical scores
-- Low temperature AI configuration ensures deterministic results
-- Built-in validation and consistency testing
-- Transparent formulas and calculations
+**Compatibility Levels:**
+- 90-100: Excellent | 80-89: Strong | 70-79: Good | 60-69: Moderate | 50-59: Weak | 0-49: Poor
+
+**Features:**
+- Transparent calculations with exact formulas
+- Consistent results (same inputs = same scores)
+- Detailed strengths, gaps, and recommendations
+- Test endpoint: `/api/test-analysis`
 
 ### 📄 Smart Resume Import
 
-**Intelligently import resume text, JSON data, or upload files automatically!**
+**Import resumes in any format - text, JSON, or files!**
 
-1. **Open the sidebar** and expand the **Data Management** section
-2. **Click "Import Resume"** to open the smart import modal
-3. **Choose your import method:**
-   - **File Upload**: Drag and drop or browse to upload resume files
-   - **Text Input**: Paste your content (resume text OR JSON data) into the textarea
-4. **Click "Import Resume"** to automatically process your data
-5. **Review the results** - your resume will be updated instantly
+**How to Use:**
+1. Sidebar → **Data Management** → **Import Resume**
+2. Choose method: **File Upload** (drag/drop) or **Text Input** (paste)
+3. Click **Import Resume**
 
-**Smart Detection:**
-- **JSON Input**: Automatically detects and imports valid JSON resume data instantly
-- **Text Input**: Uses AI to convert unstructured text to proper JSON format
-- **File Upload**: Extracts text from uploaded files and processes with AI
-- **Seamless Experience**: One interface handles all formats intelligently
+**Supported Formats:**
+- Text files (.txt, .rtf), Word (.doc, .docx), PDF
+- JSON data (exported or AI-generated)
+- Pasted text from any source
 
-**Supported File Formats:**
-- **Text Files (.txt)**: Plain text resumes with automatic processing
-- **Rich Text (.rtf)**: Rich text format files with text extraction
-- **Word Documents (.doc, .docx)**: Microsoft Word files (text extraction recommended)
-- **PDF Files (.pdf)**: PDF documents (text extraction recommended)
-- **JSON Data**: Valid JSON resume data (exported from Resumix or AI-generated)
-- **Any Text Format**: Copy-pasted text from any source
-
-**File Upload Features:**
-- **Drag & Drop**: Simply drag files onto the upload area
-- **Click to Browse**: Traditional file picker for easy selection
-- **Visual Feedback**: Different states for hover, drag-over, and file selected
-- **File Validation**: Automatic format checking and error handling
-- **Progress Indicators**: Loading states during file processing
-- **Easy Removal**: Remove uploaded files with a single click
-
-**What gets imported:**
-- Personal information (name, contact details, address)
-- Education history with institutions, degrees, and periods
-- Work experience with companies, positions, and achievements
-- Skills and technical competencies
-- Publications and research interests
-- Volunteering experience
-- Languages and certifications
-- All other resume sections
+**Smart Features:**
+- Auto-detects JSON vs text input
+- AI converts unstructured text to proper format
+- Extracts text from uploaded files
+- Auto-hides empty sections
+- Preserves all resume data and structure
 
 ### 🎯 AI Job Optimizer
 
-**Tailor your resume to specific job postings with AI!**
+**Completely rewrite resume content to match job requirements!**
 
-1. **Open the sidebar** and expand the **Job Optimizer** section
-2. **Choose your action:**
-   - **"Analyze Resume Match"**: Get quantifiable compatibility scores first
-   - **"Tailor for Job Post"**: Directly optimize your resume for the job
-3. **Paste your resume text** in the first textarea
-4. **Paste the job posting** in the second textarea
-5. **Click "Analyze Compatibility"** or **"Optimize Resume"** based on your choice
-6. **Review the results** - scores and analysis, or before/after comparison
+**How to Use:**
+1. Sidebar → **Job Optimizer** → **Tailor for Job Post**
+2. Paste resume text and job posting
+3. Optionally run **Analyze Compatibility** first for scores
+4. Click **Optimize Resume**
+5. Review before/after comparison and edit as needed
 
-**What the AI optimizes:**
-- **Summary**: Completely rewrites your professional summary to match job requirements with **bold technical keywords** (now editable)
-- **Experience Achievements**: Completely rewrites achievement descriptions to demonstrate job-relevant skills and technologies with **selective technical keyword bolding** (now editable)
-- **Skills**: Adapts and reorders skills list to prioritize job-specific competencies (now editable as comma-separated text)
+**What Gets Optimized:**
+- **Summary**: Completely rewritten with bold technical keywords
+- **Experience**: Achievements rewritten to highlight job-relevant skills
+- **Skills**: Reordered and adapted to prioritize job requirements
 
-**What the AI preserves:**
-- All personal information and contact details
-- Company names, positions, and employment dates
-- Education history and credentials
-- Publications and research interests
-- All other resume sections and structure
+**What Gets Preserved:**
+- Personal information and contact details
+- Company names, positions, dates, locations
+- Education, publications, volunteering, languages
+- All structural data and formatting
 
-**Smart Data Handling:**
-- When you paste a new resume, all information (personal details, education, etc.) is updated from the new text
-- AI optimizations are applied on top of the updated base resume
-- No data loss - everything is preserved and enhanced
+**Key Features:**
+- Works with any resume length (no character limits)
+- Editable results before applying
+- Technical keyword bolding with `<strong>` tags
+- Smart data merging preserves all information
+
+### ✨ AI Achievement Refinement
+
+**Refine individual achievements with AI precision after optimization!**
+
+**How to Use:**
+1. **Optimize your resume** using the AI Job Optimizer as usual
+2. **In the results page**, find the AI button (✨) next to each achievement
+3. **Click the AI button** to open the refinement toolbar
+4. **Choose your refinement method:**
+   - **Quick Presets**: Click preset buttons for common improvements
+   - **Custom Prompt**: Type your own specific instruction
+5. **Review the refined achievement** and refine again if needed
+6. **Use the undo button** (⟲) if you want to revert changes
+7. **Click the AI button again** to close the refinement toolbar
+
+**Quick Preset Buttons:**
+- **📊 Add Metrics**: Incorporates specific numbers, percentages, and quantifiable results
+- **💻 More Technical**: Adds relevant technologies, frameworks, and technical terminology
+- **👥 Show Leadership**: Emphasizes team management, decision-making, and leadership skills
+- **✂️ Shorten**: Condenses content while keeping key points and impact
+
+**Custom Prompts Examples:**
+- "focus on Python and data analysis"
+- "add cloud technologies like AWS"
+- "emphasize scalability and performance"
+- "make it sound more senior-level"
+- "add agile methodologies"
+
+**Key Features:**
+- **Contextual AI**: Uses job posting and position info for better refinements
+- **Undo Functionality**: Single-level undo to revert last AI refinement
+- **Persistent Toolbar**: Stays open for multiple refinements until you close it
+- **Iterative Refinement**: Refine the same achievement multiple times with different prompts
+- **Inline Editing**: No modals - everything happens in the same view
+- **Technical Keyword Bolding**: Automatically highlights technical terms in refined content
+
+**Benefits:**
+- **Fine-tune AI Output**: Perfect each achievement individually
+- **Maintain Control**: Guide the AI with your specific requirements
+- **Experiment Freely**: Try different approaches and undo if needed
+- **Save Time**: Quick presets for common refinement needs
+- **Professional Polish**: Add domain-specific expertise to AI-generated content
+
+### 📈 Inline Analysis Panel
+
+**View compatibility analysis directly in the refinement page!**
+
+**Overview:**
+After running the AI Job Optimizer analysis, the compatibility scores are available in a collapsible panel at the top of the optimization results page. This allows you to reference missing skills, keywords, and strengths while editing your achievements.
+
+**Features:**
+- **Compact Header**: Shows overall compatibility score and level at a glance
+- **Collapsible Design**: Click to expand/collapse full analysis details
+- **Three Key Metrics**: Skills Match, Experience Relevance, and Keyword Alignment scores
+- **Color-Coded Scores**: Green (80-100%), Amber (60-79%), Red (0-59%)
+- **Strengths & Gaps**: View top 3 strengths and missing elements for each metric
+- **Key Insights**: Overall key strengths and gaps to address
+- **Non-Intrusive**: Starts collapsed so it doesn't interrupt editing workflow
+
+**How to Use:**
+1. **Analyze your resume** before optimization to generate compatibility scores
+2. **Proceed to optimization** after reviewing the analysis
+3. **In the results page**, find the purple analysis banner at the top
+4. **Click the banner** to expand and see all details
+5. **Reference the analysis** while editing achievements to address gaps
+6. **Click again to collapse** and focus on editing
+
+**Benefits:**
+- **Informed Editing**: Know exactly which skills and keywords to emphasize
+- **Context-Aware Refinement**: Use AI refinement with knowledge of missing elements
+- **Easy Reference**: No need to switch between pages or remember analysis
+- **Goal-Oriented**: Focus on addressing specific gaps identified in the analysis
+- **Efficient Workflow**: Everything you need in one place
 
 ### 📝 AI Cover Letter Generator
 
-**Create professional, tailored cover letters with AI!**
+**Generate professional, tailored cover letters in seconds!**
 
-1. **Open the sidebar** and expand the **Cover Letter Generator** section
-2. **Click "Generate Cover Letter"** to open the cover letter modal
-3. **Paste your resume text** in the first textarea (or use current resume data)
-4. **Paste the job description** in the second textarea
-5. **Click "Generate Cover Letter"** to let AI create a tailored cover letter
-6. **Review the generated cover letter** and click "Download as PDF"
+**How to Use:**
+1. Sidebar → **Cover Letter Generator** → **Generate Cover Letter**
+2. Paste resume text (or use current data) and job description
+3. Click **Generate Cover Letter**
+4. Review and **Download as PDF**
 
-**What the AI creates:**
-- **Professional Structure**: 3-4 paragraph business letter format
-- **Tailored Content**: Connects your experience to specific job requirements
-- **Proper Formatting**: Includes date, salutation, and professional closing
-- **Compelling Narrative**: Highlights relevant achievements and skills
-- **Enthusiasm**: Shows genuine interest in the role and company
-
-**Cover Letter Best Practices:**
-- **Opening Paragraph**: Expresses interest in the specific position and company
-- **Body Paragraph(s)**: Connects relevant experience to job requirements with specific examples
-- **Closing Paragraph**: Reiterates interest and includes clear call-to-action
-- **Professional Tone**: Confident but not arrogant, specific and detailed
-- **Proper Formatting**: Business letter format with proper spacing and typography
+**What You Get:**
+- Professional 3-4 paragraph business letter format
+- Tailored content connecting experience to job requirements
+- Proper date, salutation, and closing
+- Compelling narrative with specific examples
+- One-page length optimized for ATS
 
 **Features:**
-- **Smart Resume Integration**: Use current resume data or paste new text in Resumix
-- **Job-Specific Tailoring**: AI analyzes job requirements and matches your experience
-- **Professional Formatting**: Business letter format ready for submission
-- **PDF Download**: Download cover letter as a properly formatted PDF
-- **Editable Results**: Review and edit the generated cover letter before downloading
+- Uses actual resume data (no placeholders)
+- Original, human-like language (not copy-paste from job posting)
+- Editable before download
+- Ready-to-submit PDF format
 
 ### 🔧 AI Configuration
 
-**Setup Required:**
-1. **Get a Google AI API Key** from [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. **Create a `.env` file** in the project root:
-   ```
-   GOOGLE_AI_API_KEY=your_api_key_here
-   ```
-3. **Restart the development server** after adding the API key
+**Setup:**
+1. Get API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Create `.env` file: `GOOGLE_AI_API_KEY=your_key_here`
+3. Restart dev server
 
-**Security:**
-- API keys are stored securely in `.env` files (not committed to git)
-- All AI processing happens server-side to protect your API key
-- No sensitive data is exposed to the client
+**Security:** API keys stored in `.env` (not in git), all processing server-side
 
-### 🧪 Testing & Validation
+**Testing:** Visit `/api/test-analysis` for consistency validation
 
-**Consistency Testing:**
-- Visit `/api/test-analysis` to run automated consistency tests
-- Tests run the same resume-job combination 3 times
-- Verifies scores are identical across all runs (≤5 point tolerance)
-- Provides detailed calculation breakdowns and validation
+## Quick Start Workflow
 
-**Score Validation:**
-- All scores validated to be between 0-100
-- Weighted average calculations verified
-- Explanation length and quality checks
-- Comprehensive error handling and logging
+### Typical Usage Pattern
 
-**Performance:**
-- Low temperature AI configuration (0.1) for deterministic results
-- Optimized prompt engineering for consistent outputs
-- Efficient JSON parsing with multiple fallback strategies
-- Real-time validation and error recovery
+1. **Import Your Resume** (Data Management → Import Resume)
+   - Upload file or paste text
+   - AI converts to proper format
+   
+2. **Analyze Compatibility** (Job Optimizer → Analyze Resume Match)
+   - Paste resume and job posting
+   - Get detailed compatibility scores
+   
+3. **Optimize for Job** (Job Optimizer → Tailor for Job Post)
+   - AI rewrites summary and achievements
+   - View analysis panel for missing skills
+   
+4. **Refine Achievements** (Click ✨ button on each achievement)
+   - Use quick presets or custom prompts
+   - Undo if needed
+   
+5. **Apply & Download** (Click Apply button)
+   - Apply optimizations to resume
+   - Download as PDF
 
-## Recent Enhancements (2024)
+### Best Practices
 
-### 📊 Quantifiable Resume Scoring System (Latest)
+- **Analyze before optimizing**: See what's missing in your resume
+- **Use the analysis panel**: Reference gaps while refining achievements
+- **Iterate with AI refinement**: Try different prompts for perfect results
+- **Edit before applying**: Review and tweak all AI-generated content
+- **Generate cover letter last**: Use optimized resume for better results
 
-**Major improvement to resume analysis with consistent, transparent scoring!**
+## Contributing
 
-**Key Improvements:**
-- **🎯 Consistent Results**: Same resume + job posting always produces identical scores
-- **📊 Quantifiable Metrics**: Replaced subjective scoring with specific formulas and counts
-- **🔍 Transparent Calculations**: All scores include detailed explanations of how they were calculated
-- **⚡ Low Temperature AI**: Configured for deterministic, reliable results (temperature: 0.1)
-- **🧪 Built-in Testing**: Automated consistency testing with `/api/test-analysis` endpoint
-
-**Scoring Methodology:**
-- **Skills Match**: `(Exact matches × 3) + (Related skills × 1)` normalized to 0-100
-- **Experience Relevance**: Industry (0-30) + Role Level (0-30) + Achievements (0-40)
-- **Keyword Alignment**: `(Exact matches × 2) + (Contextual matches × 1)` normalized to 0-100
-- **Overall Compatibility**: Weighted average: Skills (35%) + Experience (40%) + Keywords (25%)
-
-**Validation Features:**
-- Score range validation (0-100)
-- Weighted average verification
-- Explanation quality checks
-- Consistency testing across multiple runs
-- Comprehensive error handling
-
-**Example Output:**
-```json
-{
-  "skillsMatch": {
-    "score": 83,
-    "explanation": "Found 8 exact skill matches and 2 related skills out of 10 job requirements. Calculation: (8×3 + 2×1) / (10×3) × 100 = 86.67% (Rounded down to 83%)"
-  }
-}
-```
-
-### 🎛️ Collapsible Sidebar Header
-
-**New collapsible sidebar with improved navigation!**
-
-**Features:**
-- **Toggle Button**: Click the chevron icon to collapse/expand the sidebar
-- **Clean Header**: Professional header with Resumix branding
-- **Space Optimization**: Collapse sidebar to maximize resume viewing area
-- **Smooth Transitions**: Animated collapse/expand with smooth transitions
-- **Visual Feedback**: Clear icons indicate sidebar state (left/right chevrons)
-- **Responsive Design**: Works seamlessly across all device sizes
-
-**How to Use:**
-1. **Look for the chevron icon** in the top-left of the sidebar
-2. **Click to collapse** the sidebar and maximize resume space
-3. **Click again to expand** and access all controls
-4. **Hover effects** provide visual feedback for better UX
-
-### ✏️ Editable AI-Optimized Content
-
-**Now you can edit AI-generated content before applying it to your resume!**
-
-**New Features:**
-- **Editable Summary**: Modify AI-optimized summary text directly in textareas
-- **Editable Achievements**: Edit each experience achievement individually
-- **Editable Skills**: Modify the optimized skills list as comma-separated text
-- **Auto-Resize Textareas**: Textareas automatically adjust height to content
-- **Visual Edit Indicators**: Orange border highlights when content has been edited
-- **Smart Button Text**: Button text changes to indicate when edits are present
-
-**How It Works:**
-1. **Run AI Optimization** as usual with your resume and job posting
-2. **Review the "After" panels** - they now contain editable textareas
-3. **Make your edits** directly in the textareas
-4. **Visual feedback** shows when content has been modified
-5. **Apply your edits** - the button text changes to "Apply Your Edits & Convert to Resume"
-
-**Benefits:**
-- **Fine-tune AI Output**: Perfect the AI-generated content to your preferences
-- **Maintain Control**: Keep your voice while benefiting from AI optimization
-- **Real-time Editing**: See changes immediately as you type
-- **Professional Polish**: Add personal touches to AI-generated content
-
-### 🔧 Enhanced Import & Summary Handling
-
-**Improved resume import functionality and summary processing!**
-
-**Summary Improvements:**
-- **Better HTML Rendering**: Enhanced support for HTML tags in summary content
-- **Improved Data Preservation**: Better handling of summary content during imports
-- **Fixed Display Issues**: Resolved problems with summary text rendering
-- **Enhanced Editing**: Improved inline editing capabilities for summary section
-
-**Import Enhancements:**
-- **Robust File Processing**: Better handling of various file formats during import
-- **Improved Error Handling**: More detailed error messages and recovery options
-- **Enhanced Data Parsing**: Better extraction and processing of resume content
-- **Research Interests Support**: Improved handling of research interests section
-
-**Technical Improvements:**
-- **Better Data Validation**: Enhanced checks for data integrity during imports
-- **Improved Error Recovery**: Graceful handling of import failures
-- **Enhanced Logging**: Better debugging information for troubleshooting
-- **Performance Optimizations**: Faster processing of imported content
-
-### 🔔 Toast Notification System
-
-**Modern, non-intrusive notifications that enhance the user experience!**
-
-**Features:**
-- **Smart Auto-Close**: Short messages (≤60 characters) auto-close in 4 seconds
-- **Manual Close**: Long messages stay visible with a close button for user control
-- **Multiple Types**: Success (green), Error (red), Warning (orange), Info (blue) with appropriate icons
-- **Non-Blocking**: Notifications appear in bottom-right corner without interrupting workflow
-- **Smooth Animations**: Slide-in from right with opacity transitions
-- **Responsive Design**: Adapts to mobile screens with full-width display
-- **Accessibility**: Proper ARIA labels and keyboard navigation support
-
-**Design:**
-- **Minimal Black Theme**: Dark gray background (#1f2937) with light text
-- **Color-Coded Icons**: Material Design icons for each notification type
-- **Professional Appearance**: Subtle shadows and clean typography
-- **Print-Safe**: Hidden during printing for clean output
-
-**Replaced Alert System:**
-- All browser `alert()` dialogs have been replaced with elegant toast notifications
-- Better user experience with non-blocking notifications
-- Consistent design throughout the application
-
-### 🎯 Enhanced AI Job Optimizer
-
-**Significantly improved content optimization capabilities!**
-
-**New Content Focus:**
-- **Complete Rewriting**: AI now completely rewrites summary and experience achievements instead of just adding keywords
-- **Job Alignment**: Content is transformed to specifically match job posting requirements
-- **Technical Keyword Bolding**: Strategic use of `<strong>` tags for technical terms only (3-5 per paragraph max)
-- **Factual Accuracy**: Preserves all factual information while enhancing how it's presented
-
-**Rewriting Strategy:**
-1. **Analyze job posting** for key requirements, technologies, and responsibilities
-2. **Rewrite summary** to position candidate as ideal fit for specific requirements
-3. **Transform achievements** to highlight relevant skills and quantifiable impact
-4. **Prioritize skills** based on job posting requirements
-5. **Apply selective bolding** to technical keywords using HTML `<strong>` tags
-
-**Example Transformation:**
-- **Before**: "Developed web applications for internal teams"
-- **After**: "Architected and delivered enterprise-scale web applications using **React** and **TypeScript**, serving 10,000+ users and reducing operational overhead by 40%"
-
-### 📄 Enhanced Smart Resume Import
-
-**Improved AI parsing with robust error handling and data preservation!**
-
-**Enhanced Parsing:**
-- **Robust JSON Extraction**: Multiple fallback methods for extracting valid JSON from AI responses
-- **Markdown Cleanup**: Automatic removal of code blocks and formatting artifacts
-- **Text Preprocessing**: Normalization of whitespace, line endings, and formatting
-- **Length Validation**: 10,000 character limit to prevent token overflow
-- **Better Error Messages**: Detailed logging and user-friendly error descriptions
-
-**Smart Section Management:**
-- **Auto-Hide Empty Sections**: Sections with no content are automatically unchecked
-- **Core Sections Always Visible**: Summary, Education, Experience, Skills always remain enabled
-- **Manual Override**: Users can still enable any hidden section to add content later
-- **Intelligent Detection**: Comprehensive checks for empty arrays, objects, and strings
-
-**Data Preservation Logic:**
-- **Structure Preservation**: Maintains original resume structure and formatting
-
-- **Detailed Information**: Keeps education coursework, GPA, final projects, publication details
-- **Format Consistency**: Maintains original data formats (strings vs objects, date formats)
-
-### 🛠️ Technical Improvements
-
-**Enhanced system reliability and user experience!**
-
-**HTML Rendering Support:**
-- **Summary & Experience**: Now support HTML `<strong>` tags for keyword bolding
-- **Conditional Rendering**: Separate view and edit modes to prevent browser HTML escaping
-- **Content Preservation**: HTML tags maintained during inline editing
-- **CSS Grid Layout**: Skills section uses CSS Grid for reliable 3-column display
-
-**Error Handling:**
-- **Comprehensive Logging**: Detailed error information for troubleshooting
-- **Graceful Degradation**: System continues to work even when some features fail
-- **User-Friendly Messages**: Clear, actionable error messages with suggested solutions
-- **Fallback Mechanisms**: Multiple strategies for handling AI response parsing
-
-**Data Integrity:**
-- **Smart Merging**: Intelligent data merging that preserves existing information
-- **Fallback Logic**: Uses current data when imported data is incomplete
-- **Validation Checks**: Ensures data structure integrity throughout the import process
-- **Section Visibility**: Automatic management of section visibility based on content
-
-**Performance Optimizations:**
-- **Parallel Processing**: Toast notifications and data operations run efficiently
-- **Memory Management**: Proper cleanup of temporary data and event listeners
-- **Client-Side Validation**: Reduced server calls through smart client-side checks
-- **Responsive Loading**: Better loading states and progress indicators
-
-### 🎨 User Interface Enhancements
-
-**Improved visual design and interaction patterns!**
-
-**Toast Notifications:**
-- **Material Design Icons**: Consistent iconography across all notification types
-- **Hover States**: Interactive close buttons with smooth transitions
-- **Focus Management**: Proper keyboard navigation and accessibility
-- **Mobile Optimization**: Full-width notifications on smaller screens
-
-**Resume Content:**
-- **Technical Keyword Highlighting**: Bold formatting for technical terms in optimized content
-- **Clean Typography**: Improved readability with proper font weights
-- **Grid Layouts**: Better organization of skills and other list-based content
-- **Print Optimization**: Enhanced print styles for professional output
-
-**Data Management:**
-- **Smart Defaults**: Checkbox for using current resume data in optimizer
-- **Progress Indicators**: Clear feedback during AI processing operations
-- **Status Messages**: Informative loading and success states
-- **Error Recovery**: Clear paths for users to recover from errors
-
-**Accessibility:**
-- **ARIA Labels**: Proper labeling for screen readers
-- **Keyboard Navigation**: Full keyboard support for all interactive elements
-- **High Contrast**: Sufficient color contrast for readability
-- **Focus Indicators**: Clear visual feedback for focused elements
-
-### 🔒 Modal Scroll Locking
-
-**Enhanced modal experience with background scroll prevention!**
-
-**Core Functionality:**
-- **Background Lock**: Prevents scrolling of the underlying page when modals are open
-- **No Page Shift**: Compensates for scrollbar width to prevent layout shifts
-- **Multiple Modal Support**: Handles overlapping modals with a counter system
-- **Automatic Cleanup**: Restores scroll state when modals close or component unmounts
-
-**Implementation:**
-- **Reusable Composable**: `useBodyScrollLock()` provides `lockScroll()`, `unlockScroll()`, and `isLocked()` functions
-- **CSS Integration**: Global styles prevent page shift when scrollbar disappears
-- **Vue Integration**: Watchers automatically lock/unlock scroll for all modal states
-
-**Affected Modals:**
-- Import Modal, AI Import Modal, Info Modal, Tailor Resume Modal
-- Optimizer Info Modal, Cover Letter Modal, Cover Letter Info Modal
-
-**Benefits:**
-- **Better UX**: Prevents accidental scrolling of background content
-- **Focus Management**: Keeps user attention on modal content
-- **Professional Feel**: Eliminates distracting background movement
-- **Cross-Browser**: Works consistently across different browsers and devices
+Contributions are welcome! Please feel free to submit issues and pull requests.
