@@ -479,13 +479,80 @@
                           :key="achievementIndex"
                           class="achievement-edit-item"
                         >
-                          <textarea 
-                            v-model="editableOptimizedContent.experience[index].achievements[achievementIndex]"
-                            @input="markAsEdited; autoResizeTextarea($event)"
-                            :class="['achievement-textarea', { 'edited': hasUserEdits }]"
-                            placeholder="Edit achievement..."
-                            rows="2"
-                          ></textarea>
+                          <div class="achievement-header">
+                            <textarea 
+                              v-model="editableOptimizedContent.experience[index].achievements[achievementIndex]"
+                              @input="markAsEdited; autoResizeTextarea($event)"
+                              :class="['achievement-textarea', { 'edited': hasUserEdits }]"
+                              placeholder="Edit achievement..."
+                              rows="2"
+                            ></textarea>
+                            <button 
+                              @click="toggleAiRefinement(index, achievementIndex)"
+                              class="ai-refine-btn"
+                              :class="{ 'active': refiningAchievement.expIndex === index && refiningAchievement.achievementIndex === achievementIndex }"
+                              title="Refine with AI"
+                            >
+                              <Icon icon="material-symbols:auto-awesome" style="font-size: 16px;" />
+                            </button>
+                          </div>
+                          
+                          <!-- AI Refinement Prompt -->
+                          <div 
+                            v-if="refiningAchievement.showPrompt && refiningAchievement.expIndex === index && refiningAchievement.achievementIndex === achievementIndex"
+                            class="ai-refine-prompt"
+                          >
+                            <div class="quick-presets">
+                              <button 
+                                @click="quickRefine(index, achievementIndex, 'add specific metrics and numbers')"
+                                class="preset-btn"
+                                :disabled="refiningAchievement.isRefining"
+                              >
+                                📊 Add Metrics
+                              </button>
+                              <button 
+                                @click="quickRefine(index, achievementIndex, 'make it more technical and add relevant technologies')"
+                                class="preset-btn"
+                                :disabled="refiningAchievement.isRefining"
+                              >
+                                💻 More Technical
+                              </button>
+                              <button 
+                                @click="quickRefine(index, achievementIndex, 'emphasize leadership and team management')"
+                                class="preset-btn"
+                                :disabled="refiningAchievement.isRefining"
+                              >
+                                👥 Show Leadership
+                              </button>
+                              <button 
+                                @click="quickRefine(index, achievementIndex, 'make it more concise while keeping key points')"
+                                class="preset-btn"
+                                :disabled="refiningAchievement.isRefining"
+                              >
+                                ✂️ Shorten
+                              </button>
+                            </div>
+                            
+                            <div class="custom-prompt">
+                              <input 
+                                v-model="refiningAchievement.prompt"
+                                type="text"
+                                placeholder="Or type your own instruction (e.g., 'focus on Python and data analysis')"
+                                class="prompt-input"
+                                @keyup.enter="refineAchievementWithAI(index, achievementIndex)"
+                                :disabled="refiningAchievement.isRefining"
+                              />
+                              <button 
+                                @click="refineAchievementWithAI(index, achievementIndex)"
+                                class="refine-submit-btn"
+                                :disabled="refiningAchievement.isRefining || !refiningAchievement.prompt.trim()"
+                              >
+                                <Icon v-if="!refiningAchievement.isRefining" icon="material-symbols:auto-awesome" style="font-size: 16px; margin-right: 4px;" />
+                                <Icon v-else icon="svg-spinners:ring-resize" style="font-size: 16px; margin-right: 4px;" />
+                                {{ refiningAchievement.isRefining ? 'Refining...' : 'Refine' }}
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -848,6 +915,15 @@ const editableOptimizedContent = ref({
 
 // Track if user has made edits to the optimized content
 const hasUserEdits = ref(false)
+
+// AI refinement tracking
+const refiningAchievement = ref({
+  expIndex: null,
+  achievementIndex: null,
+  isRefining: false,
+  showPrompt: false,
+  prompt: ''
+})
 
 // Cover Letter variables
 const coverLetterResumeText = ref('')
@@ -1791,6 +1867,104 @@ const initializeTextareaHeights = () => {
       textarea.style.height = textarea.scrollHeight + 'px'
     })
   })
+}
+
+// Toggle AI refinement prompt for a specific achievement
+const toggleAiRefinement = (expIndex, achievementIndex) => {
+  if (refiningAchievement.value.showPrompt && 
+      refiningAchievement.value.expIndex === expIndex && 
+      refiningAchievement.value.achievementIndex === achievementIndex) {
+    // Close if clicking same achievement
+    refiningAchievement.value = {
+      expIndex: null,
+      achievementIndex: null,
+      isRefining: false,
+      showPrompt: false,
+      prompt: ''
+    }
+  } else {
+    // Open for this achievement
+    refiningAchievement.value = {
+      expIndex,
+      achievementIndex,
+      isRefining: false,
+      showPrompt: true,
+      prompt: ''
+    }
+  }
+}
+
+// Refine achievement with AI
+const refineAchievementWithAI = async (expIndex, achievementIndex) => {
+  const prompt = refiningAchievement.value.prompt.trim()
+  
+  if (!prompt) {
+    showWarning('Please enter a refinement instruction for the AI.')
+    return
+  }
+  
+  const achievement = editableOptimizedContent.value.experience[expIndex].achievements[achievementIndex]
+  
+  if (!achievement) {
+    showError('Achievement not found.')
+    return
+  }
+  
+  refiningAchievement.value.isRefining = true
+  
+  try {
+    const response = await $fetch('/api/refine-achievement', {
+      method: 'POST',
+      body: {
+        achievement,
+        userPrompt: prompt,
+        jobPost: jobPostText.value,
+        experienceContext: {
+          position: editableOptimizedContent.value.experience[expIndex].position,
+          company: editableOptimizedContent.value.experience[expIndex].company
+        }
+      }
+    })
+    
+    if (response.success && response.data?.refinedAchievement) {
+      // Update the achievement
+      editableOptimizedContent.value.experience[expIndex].achievements[achievementIndex] = response.data.refinedAchievement
+      hasUserEdits.value = true
+      
+      // Close the prompt
+      refiningAchievement.value = {
+        expIndex: null,
+        achievementIndex: null,
+        isRefining: false,
+        showPrompt: false,
+        prompt: ''
+      }
+      
+      showSuccess('Achievement refined successfully!')
+      
+      // Re-initialize textarea height
+      nextTick(() => {
+        const textareas = document.querySelectorAll('.achievement-textarea')
+        textareas.forEach(textarea => {
+          textarea.style.height = 'auto'
+          textarea.style.height = textarea.scrollHeight + 'px'
+        })
+      })
+    } else {
+      showError(response.error || 'Failed to refine achievement.')
+    }
+  } catch (error) {
+    console.error('AI refinement error:', error)
+    showError('An error occurred while refining the achievement.')
+  } finally {
+    refiningAchievement.value.isRefining = false
+  }
+}
+
+// Quick refinement presets
+const quickRefine = async (expIndex, achievementIndex, preset) => {
+  refiningAchievement.value.prompt = preset
+  await refineAchievementWithAI(expIndex, achievementIndex)
 }
 
 // Watch for when results section is shown to initialize textarea heights
@@ -3850,6 +4024,128 @@ const formatSectionName = (section) => {
   margin-top: 16px;
   display: flex;
   justify-content: center;
+}
+
+/* AI Achievement Refinement Styles */
+.achievement-edit-item {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.achievement-header {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.achievement-header .achievement-textarea {
+  flex: 1;
+}
+
+.ai-refine-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: #666;
+}
+
+.ai-refine-btn:hover {
+  background: #f5f5f5;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.ai-refine-btn.active {
+  background: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.ai-refine-prompt {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.quick-presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.preset-btn {
+  padding: 6px 12px;
+  border: 1px solid #dee2e6;
+  background: white;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preset-btn:hover:not(:disabled) {
+  background: #e7f3ff;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.preset-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.custom-prompt {
+  display: flex;
+  gap: 8px;
+}
+
+.prompt-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.prompt-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.refine-submit-btn {
+  padding: 8px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.refine-submit-btn:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.refine-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 @media print {
