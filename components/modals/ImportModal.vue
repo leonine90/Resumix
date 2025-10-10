@@ -143,6 +143,11 @@ const handleClose = () => {
 
 .modal-body {
   padding: 24px;
+  padding-bottom: 0;
+  overflow-y: auto;
+  max-height: calc(80vh - 80px);
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-label {
@@ -159,11 +164,11 @@ const handleClose = () => {
   padding: 14px;
   font-family: monospace;
   font-size: 13px;
-  resize: none;
+  resize: vertical;
   box-sizing: border-box;
   transition: all 0.2s ease;
   background: #ffffff;
-  flex: 1;
+  margin-bottom: 16px;
 }
 
 .modal-textarea:focus {
@@ -176,7 +181,7 @@ const handleClose = () => {
   display: flex !important;
   gap: 12px;
   justify-content: flex-end;
-  margin-top: 0;
+  margin: 0 -24px -24px -24px;
   padding: 16px 24px;
   border-top: 1px solid #e2e8f0;
   background: #f8fafc;

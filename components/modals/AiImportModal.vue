@@ -184,16 +184,16 @@ const handleClose = () => {
   justify-content: center;
   align-items: center;
   z-index: 2000;
-  padding: 24px;
+  padding: 0;
 }
 
 .fullscreen-modal-content {
   background: white;
-  border-radius: 16px;
+  border-radius: 0;
   width: 100%;
-  max-width: 1200px;
-  height: 90vh;
-  max-height: 900px;
+  max-width: 100%;
+  height: 100vh;
+  max-height: 100vh;
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
@@ -248,6 +248,7 @@ const handleClose = () => {
   flex: 1;
   overflow-y: auto;
   padding: 32px;
+  padding-bottom: 0;
   display: flex;
   flex-direction: column;
 }
@@ -413,9 +414,11 @@ const handleClose = () => {
 }
 
 .fullscreen-actions {
-  padding-top: 24px;
+  padding: 24px 32px;
   border-top: 1px solid #e2e8f0;
   margin-top: auto;
+  background: white;
+  flex-shrink: 0;
 }
 
 .action-buttons {

@@ -98,7 +98,7 @@
           Experience (Achievements Only)
         </h3>
         <div class="experience-comparison">
-          <div v-for="(exp, index) in editableOptimizedContent.experience" :key="index" class="experience-item-comparison">
+          <div v-for="(exp, index) in optimizedContent.experience" :key="index" class="experience-item-comparison">
             <div class="exp-header">
               <strong>{{ exp.position }} at {{ exp.company }}</strong>
               <span class="period">{{ exp.period }}</span>
@@ -116,7 +116,7 @@
                 <h5>Optimized Achievements (Editable)</h5>
                 <div class="achievements-editable optimized">
                   <div 
-                    v-for="(achievement, achievementIndex) in exp.achievements || []" 
+                    v-for="(achievement, achievementIndex) in editableOptimizedContent.experience[index]?.achievements || []" 
                     :key="achievementIndex"
                     class="achievement-edit-item"
                   >
@@ -266,9 +266,11 @@ const props = defineProps({
   analysisData: Object,
   showAnalysisInResults: Boolean,
   originalContent: Object,
+  optimizedContent: Object,
   editableOptimizedContent: Object,
   hasUserEdits: Boolean,
-  isApplying: Boolean
+  isApplying: Boolean,
+  jobPostText: String
 })
 
 const emit = defineEmits(['toggle-analysis', 'mark-edited', 'update-skills', 'reset', 'apply'])
@@ -302,15 +304,14 @@ const handleToggleRefinement = (expIndex, achievementIndex) => {
 }
 
 const handleRefine = async (expIndex, achievementIndex) => {
-  // Get jobPostText from parent - we'll need to pass it as a prop
-  const success = await refineAchievementWithAI(expIndex, achievementIndex, props.editableOptimizedContent, '')
+  const success = await refineAchievementWithAI(expIndex, achievementIndex, props.editableOptimizedContent, props.jobPostText || '')
   if (success) {
     emit('mark-edited')
   }
 }
 
 const handleQuickRefine = async (expIndex, achievementIndex, preset) => {
-  const success = await quickRefine(expIndex, achievementIndex, preset, props.editableOptimizedContent, '')
+  const success = await quickRefine(expIndex, achievementIndex, preset, props.editableOptimizedContent, props.jobPostText || '')
   if (success) {
     emit('mark-edited')
   }
@@ -365,6 +366,11 @@ const handleUndo = (expIndex, achievementIndex) => {
 
 .analysis-panel-header:hover {
   background: linear-gradient(135deg, #5568d3 0%, #65408b 100%);
+}
+
+.analysis-panel-header .toggle-icon {
+  color: white;
+  flex-shrink: 0;
 }
 
 .analysis-summary {
@@ -881,9 +887,11 @@ const handleUndo = (expIndex, achievementIndex) => {
 }
 
 .fullscreen-actions {
-  padding-top: 24px;
+  padding: 24px 32px;
   border-top: 1px solid #e2e8f0;
   margin-top: auto;
+  background: white;
+  flex-shrink: 0;
 }
 
 .action-buttons {

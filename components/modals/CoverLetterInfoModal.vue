@@ -141,6 +141,8 @@ defineEmits(['close'])
 
 .modal-body {
   padding: 24px;
+  overflow-y: auto;
+  max-height: calc(80vh - 80px);
 }
 
 .info-content {
