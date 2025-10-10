@@ -2175,91 +2175,98 @@ const applyOptimizations = async () => {
   isApplying.value = true
   
   try {
-    // Step 1: First convert the pasted resume text to JSON to get all the updated info
-    const baseResumeResponse = await $fetch('/api/import-resume', {
-      method: 'POST',
-      body: {
-        resumeText: resumeTextInput.value
+    // Use existing resume data directly instead of re-importing
+    // This avoids the 10,000 character limit issue and is more efficient
+    const currentData = props.resumeData
+    
+    // If user provided resume text and it's reasonable size, try to import for updated info
+    let importedData = null
+    if (resumeTextInput.value.trim() && resumeTextInput.value.length <= 10000) {
+      try {
+        const baseResumeResponse = await $fetch('/api/import-resume', {
+          method: 'POST',
+          body: {
+            resumeText: resumeTextInput.value
+          }
+        })
+        
+        if (baseResumeResponse.success && baseResumeResponse.data) {
+          importedData = baseResumeResponse.data
+        }
+      } catch (error) {
+        console.warn('Failed to import resume text, using existing data:', error)
+        // Continue with existing data
       }
-    })
-
-    if (!baseResumeResponse.success || !baseResumeResponse.data) {
-      showError(baseResumeResponse.error || 'Failed to parse the pasted resume text. Please check the format and try again.')
-      return
     }
 
-    // Step 2: Merge the converted resume data with AI optimizations
-    // This ensures all personal info, education, etc. comes from the pasted text
-    // But summary, experience achievements, and skills are AI-optimized
-    // IMPORTANT: Preserve existing sections that might be missing from the import
-    const currentData = props.resumeData
-    const importedData = baseResumeResponse.data
+    // Merge the resume data with AI optimizations
+    // If import succeeded, use imported data, otherwise use current data
     
     const updatedResumeData = {
       // Preserve current structure and merge with imported data
-      editable: importedData.editable !== undefined ? importedData.editable : currentData.editable,
-      enableVersions: importedData.enableVersions !== undefined ? importedData.enableVersions : currentData.enableVersions,
+      editable: importedData?.editable !== undefined ? importedData.editable : currentData.editable,
+      enableVersions: importedData?.enableVersions !== undefined ? importedData.enableVersions : currentData.enableVersions,
       
       // Merge header elements - use imported if available, fallback to current
       headerElements: {
         ...currentData.headerElements,
-        ...importedData.headerElements
+        ...(importedData?.headerElements || {})
       },
       
-              // Merge sections - use imported if available, fallback to current
-        // Auto-hide sections that are empty in imported data
-        sections: (() => {
-          const mergedSections = {
-            ...currentData.sections,
-            ...importedData.sections
+      // Merge sections - use imported if available, fallback to current
+      // Auto-hide sections that are empty in imported data
+      sections: (() => {
+        const mergedSections = {
+          ...currentData.sections,
+          ...(importedData?.sections || {})
+        }
+        
+        // Auto-hide sections that have no content in imported data (only if we have imported data)
+        if (importedData) {
+          // Check and auto-hide empty sections
+          if (!importedData.researchInterests || 
+              (typeof importedData.researchInterests === 'object' && 
+               Object.keys(importedData.researchInterests).length === 0) ||
+              (typeof importedData.researchInterests === 'string' && 
+               !importedData.researchInterests.trim())) {
+            mergedSections.researchInterests = false
           }
           
-          // Auto-hide sections that have no content in imported data
-          if (importedData) {
-            // Check and auto-hide empty sections
-            if (!importedData.researchInterests || 
-                (typeof importedData.researchInterests === 'object' && 
-                 Object.keys(importedData.researchInterests).length === 0) ||
-                (typeof importedData.researchInterests === 'string' && 
-                 !importedData.researchInterests.trim())) {
-              mergedSections.researchInterests = false
-            }
-            
-            if (!importedData.publications || 
-                (Array.isArray(importedData.publications) && importedData.publications.length === 0)) {
-              mergedSections.publications = false
-            }
-            
-            if (!importedData.languages || 
-                (Array.isArray(importedData.languages) && importedData.languages.length === 0)) {
-              mergedSections.languages = false
-            }
-            
-            if (!importedData.volunteering || 
-                (Array.isArray(importedData.volunteering) && importedData.volunteering.length === 0)) {
-              mergedSections.volunteering = false
-            }
-            
-            if (!importedData.signature || 
-                (typeof importedData.signature === 'object' && 
-                 !importedData.signature.name && !importedData.signature.date)) {
-              mergedSections.signature = false
-            }
-            
-            // Always show core sections even if empty (user can fill them)
-            mergedSections.summary = true
-            mergedSections.education = true
-            mergedSections.experience = true
-            mergedSections.skills = true
+          if (!importedData.publications || 
+              (Array.isArray(importedData.publications) && importedData.publications.length === 0)) {
+            mergedSections.publications = false
           }
           
-          return mergedSections
-        })(),
+          if (!importedData.languages || 
+              (Array.isArray(importedData.languages) && importedData.languages.length === 0)) {
+            mergedSections.languages = false
+          }
+          
+          if (!importedData.volunteering || 
+              (Array.isArray(importedData.volunteering) && importedData.volunteering.length === 0)) {
+            mergedSections.volunteering = false
+          }
+          
+          if (!importedData.signature || 
+              (typeof importedData.signature === 'object' && 
+               !importedData.signature.name && !importedData.signature.date)) {
+            mergedSections.signature = false
+          }
+        }
+        
+        // Always show core sections even if empty (user can fill them)
+        mergedSections.summary = true
+        mergedSections.education = true
+        mergedSections.experience = true
+        mergedSections.skills = true
+        
+        return mergedSections
+      })(),
       
       // Merge section order - preserve all sections from current data, add any new ones from imported data
       sectionOrder: (() => {
         const currentOrder = currentData.sectionOrder || []
-        const importedOrder = importedData.sectionOrder || []
+        const importedOrder = importedData?.sectionOrder || []
         
         // Start with current order to preserve all available sections
         const mergedOrder = [...currentOrder]
@@ -2277,9 +2284,9 @@ const applyOptimizations = async () => {
       // Merge personal data - use imported for specific fields, preserve original for others
       personal: {
         ...currentData.personal,
-        ...(importedData.personal || {}),
+        ...(importedData?.personal || {}),
         // Preserve critical fields from original if they exist and imported doesn't have them
-        dateOfBirth: (importedData.personal?.dateOfBirth && importedData.personal.dateOfBirth.trim()) 
+        dateOfBirth: (importedData?.personal?.dateOfBirth && importedData.personal.dateOfBirth.trim()) 
           ? importedData.personal.dateOfBirth 
           : currentData.personal?.dateOfBirth || ""
       },
@@ -2289,10 +2296,10 @@ const applyOptimizations = async () => {
       
       // Apply AI-optimized experience with proper merging (from editable content)
       experience: editableOptimizedContent.value.experience.map((optimizedExp, index) => {
-        // Keep the base experience structure from pasted resume but use AI-optimized achievements
-        const baseExp = (importedData.experience && importedData.experience[index]) || optimizedExp
+        // Keep the base experience structure from imported resume (if available) but use AI-optimized achievements
+        const baseExp = (importedData?.experience && importedData.experience[index]) || optimizedExp
         return {
-          ...baseExp, // Company, position, period, location from pasted resume
+          ...baseExp, // Company, position, period, location from imported/optimized resume
           achievements: optimizedExp.achievements // AI-optimized achievements
         }
       }),
@@ -2313,7 +2320,7 @@ const applyOptimizations = async () => {
       // Preserve all other sections - keep original structure and data unless specifically improved
       researchInterests: (() => {
         // Convert to array format if needed
-        if (importedData.researchInterests) {
+        if (importedData?.researchInterests) {
           if (Array.isArray(importedData.researchInterests)) {
             return importedData.researchInterests
           } else if (typeof importedData.researchInterests === 'object') {
@@ -2349,7 +2356,7 @@ const applyOptimizations = async () => {
         // Merge education arrays, preserving original structure when possible
         if (currentData.education && currentData.education.length > 0) {
           // If we have original education data, preserve its detailed structure
-          if (importedData.education && importedData.education.length > 0) {
+          if (importedData?.education && importedData.education.length > 0) {
             // Try to merge: use imported for basic info, preserve original details
             return currentData.education.map((originalEdu, index) => {
               const importedEdu = importedData.education[index]
@@ -2370,7 +2377,7 @@ const applyOptimizations = async () => {
           return currentData.education
         }
         // If no original education, use imported
-        return importedData.education || []
+        return importedData?.education || []
       })(),
       
       publications: (() => {
@@ -2380,7 +2387,7 @@ const applyOptimizations = async () => {
           return currentData.publications
         }
         // Otherwise use imported if available
-        return (importedData.publications && importedData.publications.length > 0) 
+        return (importedData?.publications && importedData.publications.length > 0) 
           ? importedData.publications 
           : currentData.publications || []
       })(),
@@ -2395,7 +2402,7 @@ const applyOptimizations = async () => {
           }
         }
         // Use imported if available and non-empty
-        return (importedData.languages && importedData.languages.length > 0) 
+        return (importedData?.languages && importedData.languages.length > 0) 
           ? importedData.languages 
           : currentData.languages || []
       })(),
@@ -2405,7 +2412,7 @@ const applyOptimizations = async () => {
         if (currentData.volunteering && currentData.volunteering.length > 0) {
           return currentData.volunteering
         }
-        return (importedData.volunteering && importedData.volunteering.length > 0) 
+        return (importedData?.volunteering && importedData.volunteering.length > 0) 
           ? importedData.volunteering 
           : currentData.volunteering || []
       })(),
@@ -2415,7 +2422,7 @@ const applyOptimizations = async () => {
         if (currentData.signature && (currentData.signature.name || currentData.signature.date)) {
           return currentData.signature
         }
-        return (importedData.signature && (importedData.signature.name || importedData.signature.date)) 
+        return (importedData?.signature && (importedData.signature.name || importedData.signature.date)) 
           ? importedData.signature 
           : currentData.signature || { name: "", date: "" }
       })()
