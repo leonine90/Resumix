@@ -425,6 +425,113 @@
             Resume Optimization Results
           </h2>
           
+          <!-- Collapsible Analysis Panel -->
+          <div v-if="analysisData" class="analysis-panel-compact">
+            <div class="analysis-panel-header" @click="showAnalysisInResults = !showAnalysisInResults">
+              <div class="analysis-summary">
+                <Icon icon="material-symbols:analytics" style="font-size: 20px; margin-right: 8px;" />
+                <span class="analysis-label">Compatibility Analysis:</span>
+                <div class="score-badge" :style="getCircleStyle(analysisData.metrics.overallCompatibility.score)">
+                  <span class="score-badge-text">{{ analysisData.metrics.overallCompatibility.score }}%</span>
+                </div>
+                <span class="compatibility-level">{{ analysisData.summary.compatibilityLevel }}</span>
+              </div>
+              <Icon 
+                :icon="showAnalysisInResults ? 'material-symbols:expand-less' : 'material-symbols:expand-more'" 
+                class="toggle-icon"
+                style="font-size: 24px;"
+              />
+            </div>
+            
+            <div v-if="showAnalysisInResults" class="analysis-panel-content">
+              <div class="analysis-metrics-compact">
+                <div class="metric-compact">
+                  <div class="metric-compact-header">
+                    <span class="metric-name">Skills Match</span>
+                    <div class="score-badge-small" :style="getCircleStyle(analysisData.metrics.skillsMatch.score)">
+                      <span class="score-badge-text-small">{{ analysisData.metrics.skillsMatch.score }}%</span>
+                    </div>
+                  </div>
+                  <div class="metric-lists">
+                    <div class="strengths-compact" v-if="analysisData.metrics.skillsMatch.strengths?.length">
+                      <strong>Strengths:</strong>
+                      <ul>
+                        <li v-for="strength in analysisData.metrics.skillsMatch.strengths.slice(0, 3)" :key="strength">{{ strength }}</li>
+                      </ul>
+                    </div>
+                    <div class="gaps-compact" v-if="analysisData.metrics.skillsMatch.missingSkills?.length">
+                      <strong>Missing:</strong>
+                      <ul>
+                        <li v-for="skill in analysisData.metrics.skillsMatch.missingSkills.slice(0, 3)" :key="skill">{{ skill }}</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="metric-compact">
+                  <div class="metric-compact-header">
+                    <span class="metric-name">Experience Relevance</span>
+                    <div class="score-badge-small" :style="getCircleStyle(analysisData.metrics.experienceRelevance.score)">
+                      <span class="score-badge-text-small">{{ analysisData.metrics.experienceRelevance.score }}%</span>
+                    </div>
+                  </div>
+                  <div class="metric-lists">
+                    <div class="strengths-compact" v-if="analysisData.metrics.experienceRelevance.strengths?.length">
+                      <strong>Strengths:</strong>
+                      <ul>
+                        <li v-for="strength in analysisData.metrics.experienceRelevance.strengths.slice(0, 3)" :key="strength">{{ strength }}</li>
+                      </ul>
+                    </div>
+                    <div class="gaps-compact" v-if="analysisData.metrics.experienceRelevance.missingSkills?.length">
+                      <strong>Gaps:</strong>
+                      <ul>
+                        <li v-for="skill in analysisData.metrics.experienceRelevance.missingSkills.slice(0, 3)" :key="skill">{{ skill }}</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="metric-compact">
+                  <div class="metric-compact-header">
+                    <span class="metric-name">Keyword Alignment</span>
+                    <div class="score-badge-small" :style="getCircleStyle(analysisData.metrics.keywordAlignment.score)">
+                      <span class="score-badge-text-small">{{ analysisData.metrics.keywordAlignment.score }}%</span>
+                    </div>
+                  </div>
+                  <div class="metric-lists">
+                    <div class="strengths-compact" v-if="analysisData.metrics.keywordAlignment.strengths?.length">
+                      <strong>Strengths:</strong>
+                      <ul>
+                        <li v-for="strength in analysisData.metrics.keywordAlignment.strengths.slice(0, 3)" :key="strength">{{ strength }}</li>
+                      </ul>
+                    </div>
+                    <div class="gaps-compact" v-if="analysisData.metrics.keywordAlignment.missingSkills?.length">
+                      <strong>Missing:</strong>
+                      <ul>
+                        <li v-for="skill in analysisData.metrics.keywordAlignment.missingSkills.slice(0, 3)" :key="skill">{{ skill }}</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="key-insights">
+                <div class="insights-section" v-if="analysisData.summary.keyStrengths?.length">
+                  <h4>Key Strengths:</h4>
+                  <ul>
+                    <li v-for="strength in analysisData.summary.keyStrengths" :key="strength">{{ strength }}</li>
+                  </ul>
+                </div>
+                <div class="insights-section" v-if="analysisData.summary.keyGaps?.length">
+                  <h4>Key Gaps to Address:</h4>
+                  <ul>
+                    <li v-for="gap in analysisData.summary.keyGaps" :key="gap">{{ gap }}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <div class="optimization-sections">
             <!-- Summary Section -->
             <div class="section-comparison">
@@ -924,6 +1031,9 @@ const refiningAchievement = ref({
   showPrompt: false,
   prompt: ''
 })
+
+// Analysis panel visibility in results view
+const showAnalysisInResults = ref(false)
 
 // Cover Letter variables
 const coverLetterResumeText = ref('')
@@ -1965,6 +2075,21 @@ const refineAchievementWithAI = async (expIndex, achievementIndex) => {
 const quickRefine = async (expIndex, achievementIndex, preset) => {
   refiningAchievement.value.prompt = preset
   await refineAchievementWithAI(expIndex, achievementIndex)
+}
+
+// Get circle style for analysis scores
+const getCircleStyle = (score) => {
+  const percentage = Math.max(0, Math.min(100, Number(score) || 0)) / 100
+  let color
+  if (percentage >= 0.8) color = '#16a34a' // green-600
+  else if (percentage >= 0.6) color = '#f59e0b' // amber-500
+  else color = '#dc2626' // red-600
+
+  const deg = `${percentage * 360}deg`
+  return {
+    '--deg': deg,
+    background: `conic-gradient(${color} ${deg}, #e9ecef 0deg)`
+  }
 }
 
 // Watch for when results section is shown to initialize textarea heights
@@ -4024,6 +4149,231 @@ const formatSectionName = (section) => {
   margin-top: 16px;
   display: flex;
   justify-content: center;
+}
+
+/* Compact Analysis Panel in Results View */
+.analysis-panel-compact {
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.analysis-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.analysis-panel-header:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #65408b 100%);
+}
+
+.analysis-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.analysis-label {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.score-badge {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.score-badge::before {
+  content: '';
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: white;
+}
+
+.score-badge-text {
+  position: relative;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+  z-index: 1;
+}
+
+.compatibility-level {
+  font-weight: 600;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.analysis-panel-content {
+  padding: 20px;
+  background: #f8f9fa;
+}
+
+.analysis-metrics-compact {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.metric-compact {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+}
+
+.metric-compact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.metric-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.score-badge-small {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.score-badge-small::before {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: white;
+}
+
+.score-badge-text-small {
+  position: relative;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1f2937;
+  z-index: 1;
+}
+
+.metric-lists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.strengths-compact strong,
+.gaps-compact strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.strengths-compact {
+  color: #28a745;
+}
+
+.gaps-compact {
+  color: #dc3545;
+}
+
+.strengths-compact ul,
+.gaps-compact ul {
+  margin: 0;
+  padding-left: 16px;
+  line-height: 1.5;
+}
+
+.strengths-compact li {
+  color: #28a745;
+}
+
+.gaps-compact li {
+  color: #dc3545;
+}
+
+.key-insights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+}
+
+.insights-section h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+}
+
+.insights-section ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.insights-section:first-child h4 {
+  color: #28a745;
+}
+
+.insights-section:last-child h4 {
+  color: #dc3545;
+}
+
+.insights-section:first-child li {
+  color: #28a745;
+}
+
+.insights-section:last-child li {
+  color: #dc3545;
+}
+
+@media (max-width: 768px) {
+  .analysis-metrics-compact {
+    grid-template-columns: 1fr;
+  }
+  
+  .metric-lists {
+    grid-template-columns: 1fr;
+  }
+  
+  .key-insights {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* AI Achievement Refinement Styles */
