@@ -594,14 +594,24 @@
                               placeholder="Edit achievement..."
                               rows="2"
                             ></textarea>
-                            <button 
-                              @click="toggleAiRefinement(index, achievementIndex)"
-                              class="ai-refine-btn"
-                              :class="{ 'active': refiningAchievement.expIndex === index && refiningAchievement.achievementIndex === achievementIndex }"
-                              title="Refine with AI"
-                            >
-                              <Icon icon="material-symbols:auto-awesome" style="font-size: 16px;" />
-                            </button>
+                            <div class="achievement-actions">
+                              <button 
+                                @click="toggleAiRefinement(index, achievementIndex)"
+                                class="ai-refine-btn"
+                                :class="{ 'active': refiningAchievement.expIndex === index && refiningAchievement.achievementIndex === achievementIndex }"
+                                title="Refine with AI"
+                              >
+                                <Icon icon="material-symbols:auto-awesome" style="font-size: 16px;" />
+                              </button>
+                              <button 
+                                v-if="hasUndoHistory(index, achievementIndex)"
+                                @click="undoAchievementRefinement(index, achievementIndex)"
+                                class="undo-btn"
+                                title="Undo AI refinement"
+                              >
+                                <Icon icon="material-symbols:undo" style="font-size: 16px;" />
+                              </button>
+                            </div>
                           </div>
                           
                           <!-- AI Refinement Prompt -->
@@ -1031,6 +1041,9 @@ const refiningAchievement = ref({
   showPrompt: false,
   prompt: ''
 })
+
+// Achievement history for undo functionality (key: "expIndex-achievementIndex")
+const achievementHistory = ref({})
 
 // Analysis panel visibility in results view
 const showAnalysisInResults = ref(false)
@@ -2037,20 +2050,18 @@ const refineAchievementWithAI = async (expIndex, achievementIndex) => {
     })
     
     if (response.success && response.data?.refinedAchievement) {
+      // Save current achievement to history for undo
+      const historyKey = `${expIndex}-${achievementIndex}`
+      achievementHistory.value[historyKey] = achievement
+      
       // Update the achievement
       editableOptimizedContent.value.experience[expIndex].achievements[achievementIndex] = response.data.refinedAchievement
       hasUserEdits.value = true
       
-      // Close the prompt
-      refiningAchievement.value = {
-        expIndex: null,
-        achievementIndex: null,
-        isRefining: false,
-        showPrompt: false,
-        prompt: ''
-      }
+      // Clear the prompt but keep the panel open
+      refiningAchievement.value.prompt = ''
       
-      showSuccess('Achievement refined successfully!')
+      showSuccess('Achievement refined successfully! Use undo to revert if needed.')
       
       // Re-initialize textarea height
       nextTick(() => {
@@ -2075,6 +2086,40 @@ const refineAchievementWithAI = async (expIndex, achievementIndex) => {
 const quickRefine = async (expIndex, achievementIndex, preset) => {
   refiningAchievement.value.prompt = preset
   await refineAchievementWithAI(expIndex, achievementIndex)
+}
+
+// Undo AI refinement
+const undoAchievementRefinement = (expIndex, achievementIndex) => {
+  const historyKey = `${expIndex}-${achievementIndex}`
+  const previousValue = achievementHistory.value[historyKey]
+  
+  if (previousValue) {
+    // Restore previous achievement
+    editableOptimizedContent.value.experience[expIndex].achievements[achievementIndex] = previousValue
+    
+    // Remove from history
+    delete achievementHistory.value[historyKey]
+    
+    hasUserEdits.value = true
+    showSuccess('Achievement restored to previous version.')
+    
+    // Re-initialize textarea height
+    nextTick(() => {
+      const textareas = document.querySelectorAll('.achievement-textarea')
+      textareas.forEach(textarea => {
+        textarea.style.height = 'auto'
+        textarea.style.height = textarea.scrollHeight + 'px'
+      })
+    })
+  } else {
+    showWarning('No previous version available to undo.')
+  }
+}
+
+// Check if undo is available for an achievement
+const hasUndoHistory = (expIndex, achievementIndex) => {
+  const historyKey = `${expIndex}-${achievementIndex}`
+  return !!achievementHistory.value[historyKey]
 }
 
 // Get circle style for analysis scores
@@ -2111,6 +2156,14 @@ const resetTailorModal = () => {
   editableOptimizedContent.value = { summary: '', experience: [], skills: [] }
   optimizedResumeText.value = ''
   hasUserEdits.value = false
+  achievementHistory.value = {}
+  refiningAchievement.value = {
+    expIndex: null,
+    achievementIndex: null,
+    isRefining: false,
+    showPrompt: false,
+    prompt: ''
+  }
 }
 
 const applyOptimizations = async () => {
@@ -4392,8 +4445,15 @@ const formatSectionName = (section) => {
   flex: 1;
 }
 
-.ai-refine-btn {
+.achievement-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   flex-shrink: 0;
+}
+
+.ai-refine-btn,
+.undo-btn {
   width: 36px;
   height: 36px;
   border: 1px solid #e0e0e0;
@@ -4407,7 +4467,8 @@ const formatSectionName = (section) => {
   color: #666;
 }
 
-.ai-refine-btn:hover {
+.ai-refine-btn:hover,
+.undo-btn:hover {
   background: #f5f5f5;
   border-color: #007bff;
   color: #007bff;
@@ -4417,6 +4478,16 @@ const formatSectionName = (section) => {
   background: #007bff;
   border-color: #007bff;
   color: white;
+}
+
+.undo-btn {
+  border-color: #ffc107;
+}
+
+.undo-btn:hover {
+  background: #fff8e1;
+  border-color: #ffa000;
+  color: #f57c00;
 }
 
 .ai-refine-prompt {
