@@ -434,7 +434,7 @@ const handleUndo = (expIndex, achievementIndex) => {
 
 .analysis-metrics-compact {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-bottom: 20px;
 }
@@ -949,6 +949,12 @@ const handleUndo = (expIndex, achievementIndex) => {
   opacity: 0.6;
 }
 
+@media (max-width: 1200px) {
+  .analysis-metrics-compact {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 1024px) {
   .before-after-grid {
     grid-template-columns: 1fr;
@@ -959,9 +965,14 @@ const handleUndo = (expIndex, achievementIndex) => {
     border-bottom: 1px solid #e2e8f0;
   }
   
-  .analysis-metrics-compact,
   .metric-lists,
   .key-insights {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .analysis-metrics-compact {
     grid-template-columns: 1fr;
   }
 }
