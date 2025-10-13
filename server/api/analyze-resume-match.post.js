@@ -14,13 +14,21 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    const { currentResume, jobPost, resumeData } = await readBody(event)
+    const { currentResume, jobPost, resumeData, hasConsent } = await readBody(event)
     console.log('Request data received:', { 
       hasResume: !!currentResume, 
       hasJobPost: !!jobPost, 
       resumeLength: currentResume?.length || 0,
       jobPostLength: jobPost?.length || 0
     })
+    
+    // Check for user consent
+    if (!hasConsent) {
+      return {
+        success: false,
+        error: 'AI processing requires user consent. Please enable AI features in Privacy & Data settings.'
+      }
+    }
 
     if (!currentResume || !jobPost) {
       console.error('Missing required data:', { currentResume: !!currentResume, jobPost: !!jobPost })
@@ -199,6 +207,11 @@ CRITICAL: Use the exact calculation formulas provided. Be consistent and quantif
     }
 
     console.log('Analysis successful, returning data')
+    
+    // Set data processing headers
+    event.node.res.setHeader('X-Data-Retention', 'none')
+    event.node.res.setHeader('X-Data-Storage', 'none')
+    
     return {
       success: true,
       data: analysisData

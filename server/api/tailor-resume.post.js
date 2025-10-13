@@ -13,7 +13,15 @@ export default defineEventHandler(async (event) => {
     }
 
     // Get the request data
-    const { currentResume, jobPost, resumeData } = await readBody(event)
+    const { currentResume, jobPost, resumeData, hasConsent } = await readBody(event)
+    
+    // Check for user consent
+    if (!hasConsent) {
+      return {
+        success: false,
+        error: 'AI processing requires user consent. Please enable AI features in Privacy & Data settings.'
+      }
+    }
     
     if (!currentResume || !jobPost || !resumeData) {
       return {
@@ -189,6 +197,10 @@ Generate the completely rewritten and optimized content for these 3 sections:`
       }
     }
 
+    // Set data processing headers
+    event.node.res.setHeader('X-Data-Retention', 'none')
+    event.node.res.setHeader('X-Data-Storage', 'none')
+    
     return {
       success: true,
       data: optimizedData

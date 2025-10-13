@@ -4,7 +4,12 @@ export const resumeData = {
   // Flag to enable/disable editing mode
   editable: true,
   
-
+  // User consent for data processing
+  userConsent: {
+    aiProcessing: false,
+    timestamp: null,
+    version: '1.0'
+  },
   
   // Header visibility controls
   headerElements: {

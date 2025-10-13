@@ -1,15 +1,25 @@
 import { ref, nextTick } from 'vue'
 import { useToast } from '~/composables/useToast'
 import { useResumeImport } from '~/composables/useResumeImport'
+import { useAIConsent } from '~/composables/useAIConsent'
 
 export function useJobOptimizer() {
   const { showSuccess, showError, showWarning, showInfo } = useToast()
   const { mergeImportedData } = useResumeImport()
+  const { requireAIConsent } = useAIConsent()
 
   // Analyze resume vs job description compatibility
   const analyzeResumeMatch = async (resumeTextInput, jobPostText, resumeData) => {
     if (!jobPostText.trim() || !resumeTextInput.trim()) {
       showWarning('Please enter both your resume text and a job posting to analyze.')
+      return null
+    }
+
+    // Check for AI consent before processing
+    try {
+      await requireAIConsent()
+    } catch (error) {
+      showWarning('AI consent required. Please enable AI features in Privacy & Data settings.')
       return null
     }
 
@@ -19,7 +29,8 @@ export function useJobOptimizer() {
         body: {
           currentResume: resumeTextInput,
           jobPost: jobPostText,
-          resumeData: resumeData
+          resumeData: resumeData,
+          hasConsent: true
         }
       })
 
@@ -42,13 +53,22 @@ export function useJobOptimizer() {
       return null
     }
     
+    // Check for AI consent before processing
+    try {
+      await requireAIConsent()
+    } catch (error) {
+      showWarning('AI consent required. Please enable AI features in Privacy & Data settings.')
+      return null
+    }
+    
     try {
       const response = await $fetch('/api/tailor-resume', {
         method: 'POST',
         body: {
           currentResume: resumeTextInput,
           jobPost: jobPostText,
-          resumeData: resumeData // Provide existing resume data for context
+          resumeData: resumeData, // Provide existing resume data for context
+          hasConsent: true
         }
       })
 
@@ -103,7 +123,8 @@ export function useJobOptimizer() {
           const baseResumeResponse = await $fetch('/api/import-resume', {
             method: 'POST',
             body: {
-              resumeText: resumeTextInput
+              resumeText: resumeTextInput,
+              hasConsent: true
             }
           })
           

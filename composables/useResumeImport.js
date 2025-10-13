@@ -1,8 +1,10 @@
 import { ref } from 'vue'
 import { useToast } from '~/composables/useToast'
+import { useAIConsent } from '~/composables/useAIConsent'
 
 export function useResumeImport() {
   const { showSuccess, showError, showWarning } = useToast()
+  const { requireAIConsent } = useAIConsent()
 
   const exportData = (resumeData, headerElements, sections, sectionOrder, personal) => {
     // Create the export data object
@@ -170,6 +172,14 @@ export function useResumeImport() {
       return null
     }
     
+    // Check for AI consent before processing
+    try {
+      await requireAIConsent()
+    } catch (error) {
+      showWarning('AI consent required. Please enable AI features in Privacy & Data settings.')
+      return null
+    }
+    
     try {
       let importedData = null
       
@@ -180,7 +190,10 @@ export function useResumeImport() {
         
         const response = await $fetch('/api/import-resume-file', {
           method: 'POST',
-          body: formData
+          body: formData,
+          headers: {
+            'X-Has-Consent': 'true'
+          }
         })
         
         if (response.success && response.data) {
@@ -213,7 +226,8 @@ export function useResumeImport() {
           const response = await $fetch('/api/import-resume', {
             method: 'POST',
             body: {
-              resumeText: resumeText
+              resumeText: resumeText,
+              hasConsent: true
             }
           })
           

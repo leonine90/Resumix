@@ -1,11 +1,21 @@
 import { useToast } from '~/composables/useToast'
+import { useAIConsent } from '~/composables/useAIConsent'
 
 export function useCoverLetter() {
   const { showSuccess, showError, showWarning, showInfo } = useToast()
+  const { requireAIConsent } = useAIConsent()
 
   const generateCoverLetter = async (coverLetterResumeText, coverLetterJobDescription) => {
     if (!coverLetterJobDescription.trim() || !coverLetterResumeText.trim()) {
       showWarning('Please enter both your resume text and a job description to generate a cover letter.')
+      return null
+    }
+    
+    // Check for AI consent before processing
+    try {
+      await requireAIConsent()
+    } catch (error) {
+      showWarning('AI consent required. Please enable AI features in Privacy & Data settings.')
       return null
     }
     
@@ -19,7 +29,8 @@ export function useCoverLetter() {
         method: 'POST',
         body: {
           resumeText: coverLetterResumeText,
-          jobDescription: coverLetterJobDescription
+          jobDescription: coverLetterJobDescription,
+          hasConsent: true
         }
       })
 

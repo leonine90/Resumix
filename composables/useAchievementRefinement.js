@@ -1,8 +1,10 @@
 import { ref, nextTick } from 'vue'
 import { useToast } from '~/composables/useToast'
+import { useAIConsent } from '~/composables/useAIConsent'
 
 export function useAchievementRefinement() {
   const { showSuccess, showError, showWarning } = useToast()
+  const { requireAIConsent } = useAIConsent()
   
   const refiningAchievement = ref({
     expIndex: null,
@@ -55,6 +57,14 @@ export function useAchievementRefinement() {
       return false
     }
     
+    // Check for AI consent before processing
+    try {
+      await requireAIConsent()
+    } catch (error) {
+      showWarning('AI consent required. Please enable AI features in Privacy & Data settings.')
+      return false
+    }
+    
     refiningAchievement.value.isRefining = true
     
     try {
@@ -67,7 +77,8 @@ export function useAchievementRefinement() {
           experienceContext: {
             position: editableOptimizedContent.experience[expIndex].position,
             company: editableOptimizedContent.experience[expIndex].company
-          }
+          },
+          hasConsent: true
         }
       })
       

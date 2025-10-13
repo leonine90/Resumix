@@ -12,6 +12,18 @@
           </button>
         </div>
       </div>
+      
+      <!-- Privacy Warning Banner -->
+      <div class="privacy-warning-banner">
+        <Icon icon="material-symbols:info-outline" style="font-size: 20px; margin-right: 8px; flex-shrink: 0;" />
+        <p>
+          <strong>Privacy Notice:</strong> This feature sends your resume data to Google AI for processing. 
+          Your data may be temporarily processed according to 
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's privacy policy</a>.
+          See our <a href="/privacy-policy" target="_blank">Privacy Policy</a> for details.
+        </p>
+      </div>
+      
       <div class="fullscreen-body">
         <!-- Horizontal Layout Container -->
         <div class="import-layout">
@@ -206,6 +218,34 @@ const handleClose = () => {
   padding: 24px 32px;
   flex-shrink: 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.privacy-warning-banner {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 16px 32px;
+  display: flex;
+  align-items: flex-start;
+  color: #856404;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.privacy-warning-banner p {
+  margin: 0;
+}
+
+.privacy-warning-banner strong {
+  color: #d32f2f;
+}
+
+.privacy-warning-banner a {
+  color: #2196F3;
+  text-decoration: none;
+}
+
+.privacy-warning-banner a:hover {
+  text-decoration: underline;
 }
 
 .fullscreen-header h1 {

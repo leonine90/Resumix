@@ -17,6 +17,16 @@ export default defineEventHandler(async (event) => {
       }
     }
 
+    // Check for user consent via header
+    const hasConsent = event.node.req.headers['x-has-consent'] === 'true'
+    
+    if (!hasConsent) {
+      return {
+        success: false,
+        error: 'AI processing requires user consent. Please enable AI features in Privacy & Data settings.'
+      }
+    }
+    
     // Get the uploaded file
     const formData = await readFormData(event)
     const file = formData.get('file')

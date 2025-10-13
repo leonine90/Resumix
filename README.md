@@ -612,6 +612,100 @@ After running the AI Job Optimizer analysis, the compatibility scores are availa
 - **Edit before applying**: Review and tweak all AI-generated content
 - **Generate cover letter last**: Use optimized resume for better results
 
+## Privacy & GDPR Compliance
+
+Resumix is designed with privacy and GDPR compliance in mind for commercial use.
+
+### Data Protection Features
+
+**Local-First Architecture:**
+- All resume data stored in your browser (localStorage)
+- No server-side storage of personal information
+- You maintain complete control over your data
+
+**Consent Management:**
+- First-time users see a consent modal
+- Two-tier consent: Essential (required) + AI Processing (optional)
+- AI features require explicit user consent
+- Easy consent revocation in Privacy & Data settings
+
+**User Rights:**
+- **Right to Access**: Export your data as JSON
+- **Right to Rectification**: Edit any information inline
+- **Right to Erasure**: Delete all data with one click
+- **Right to Data Portability**: Export in JSON and PDF formats
+- **Right to Withdraw Consent**: Disable AI features anytime
+
+**Privacy Controls:**
+- Privacy & Data section in sidebar
+- Toggle AI processing on/off
+- Delete all data functionality
+- Current consent status display
+- Links to Privacy Policy and Terms of Service
+
+### AI Data Processing
+
+When you enable AI features, your resume data is sent to Google AI APIs for processing:
+- **Service:** Google Generative AI (Gemini 2.5 Flash)
+- **Purpose:** Resume optimization, cover letter generation, compatibility analysis
+- **Data Sent:** Resume text, job descriptions, achievements
+- **Consent:** Required before any AI processing
+- **Warnings:** Clear notices before data is sent
+- **Control:** Can be disabled anytime
+
+**Important:** Only use AI features with data you're comfortable sharing with Google AI. Review Google's [Privacy Policy](https://policies.google.com/privacy) for details on their data handling.
+
+### Documentation
+
+- **Privacy Policy**: Comprehensive data handling disclosure at `/privacy-policy`
+- **Terms of Service**: Legal terms and AI disclaimers at `/terms-of-service`
+- **Compliance Docs**: See `PRIVACY_COMPLIANCE.md` for technical implementation details
+
+### For Commercial Deployment
+
+Before deploying for commercial use:
+
+1. **Review Legal Documents:**
+   - Customize Privacy Policy with your jurisdiction
+   - Update Terms of Service with your entity information
+   - Update contact emails (privacy@, legal@, support@)
+
+2. **Environment Configuration:**
+   - Set `GOOGLE_AI_API_KEY` in environment variables
+   - Configure contact emails for privacy inquiries
+   - Set production `APP_URL`
+
+3. **Consider Enterprise Options:**
+   - Google Vertex AI for enterprise-grade DPA
+   - Self-hosted AI models for maximum privacy
+   - Additional audit logging if required
+
+4. **Compliance Setup:**
+   - Designate someone to handle GDPR requests (30-day response time)
+   - Consider Data Protection Officer (DPO) if processing at scale
+   - Review and update policies annually
+
+### Security Best Practices
+
+- All data stored client-side (browser localStorage)
+- HTTPS encryption for all API communications
+- No persistent server-side storage
+- Consent-based third-party data sharing
+- Clear data deletion mechanisms
+
+### Testing Consent Flow
+
+To test the compliance features:
+1. Clear your browser localStorage
+2. Reload the application
+3. You should see the consent modal
+4. Test "Essential Only" vs "Accept All"
+5. Verify AI features work only with consent
+6. Test consent revocation in Privacy & Data settings
+7. Test data deletion functionality
+
+For detailed technical documentation, see `PRIVACY_COMPLIANCE.md`.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues and pull requests.

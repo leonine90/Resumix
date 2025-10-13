@@ -11,7 +11,15 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    const { achievement, userPrompt, jobPost, experienceContext } = await readBody(event)
+    const { achievement, userPrompt, jobPost, experienceContext, hasConsent } = await readBody(event)
+    
+    // Check for user consent
+    if (!hasConsent) {
+      return {
+        success: false,
+        error: 'AI processing requires user consent. Please enable AI features in Privacy & Data settings.'
+      }
+    }
     
     if (!achievement || !userPrompt) {
       return {
@@ -66,6 +74,10 @@ CRITICAL: Return ONLY the refined achievement text. No explanations, no markdown
       .replace(/^```.*\n|\n```$/g, '') // Remove code blocks
       .trim()
 
+    // Set data processing headers
+    event.node.res.setHeader('X-Data-Retention', 'none')
+    event.node.res.setHeader('X-Data-Storage', 'none')
+    
     return {
       success: true,
       data: {

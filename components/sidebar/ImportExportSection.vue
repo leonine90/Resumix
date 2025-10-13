@@ -20,17 +20,27 @@
         <Icon icon="material-symbols:file-upload" style="font-size: 14px;" />
         Import from JSON
       </button>
-      <button class="ai-import-btn" @click="$emit('show-ai-import')">
+      <button 
+        class="ai-import-btn" 
+        @click="$emit('show-ai-import')"
+        :disabled="!hasAIConsent"
+        :title="hasAIConsent ? '' : 'Enable AI Features in the footer to use this feature'"
+      >
         <Icon icon="material-symbols:file-upload" style="font-size: 14px;" />
         Import Resume
       </button>
-      <small class="export-help">Export current data or import resume from text</small>
+      <small class="export-help" v-if="!hasAIConsent" style="color: #ef4444;">
+        ⚠️ AI Import requires AI features to be enabled in the footer.
+      </small>
+      <small class="export-help" v-else>Export current data or import resume from text</small>
     </div>
   </div>
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
+import { useConsent } from '~/composables/useConsent'
 
 defineProps({
   isOpen: {
@@ -40,6 +50,12 @@ defineProps({
 })
 
 defineEmits(['export', 'show-import', 'show-ai-import', 'show-info', 'toggle-section'])
+
+const { aiConsentEnabled: hasAIConsent, initializeConsent } = useConsent()
+
+onMounted(() => {
+  initializeConsent()
+})
 </script>
 
 <style scoped>
@@ -167,8 +183,14 @@ defineEmits(['export', 'show-import', 'show-ai-import', 'show-info', 'toggle-sec
   color: white;
 }
 
-.ai-import-btn:hover {
+.ai-import-btn:hover:not(:disabled) {
   background: #7c3aed;
+}
+
+.ai-import-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .hidden-feature {

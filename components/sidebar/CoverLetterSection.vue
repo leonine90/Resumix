@@ -12,17 +12,27 @@
           <Icon icon="material-symbols:info-outline" style="font-size: 16px;" />
         </button>
       </div>
-      <button class="cover-letter-btn" @click="$emit('show-cover-letter-modal')">
+      <button 
+        class="cover-letter-btn" 
+        @click="$emit('show-cover-letter-modal')"
+        :disabled="!hasAIConsent"
+        :title="hasAIConsent ? '' : 'Enable AI Features in the footer to use this feature'"
+      >
         <Icon icon="material-symbols:description" style="font-size: 14px;" />
         Generate Cover Letter
       </button>
-      <small class="cover-letter-help">Create professional cover letters tailored to specific job postings using AI</small>
+      <small class="cover-letter-help" v-if="!hasAIConsent" style="color: #ef4444;">
+        ⚠️ AI features are disabled. Enable them in the footer to use this feature.
+      </small>
+      <small class="cover-letter-help" v-else>Create professional cover letters tailored to specific job postings using AI</small>
     </div>
   </div>
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
+import { useConsent } from '~/composables/useConsent'
 
 defineProps({
   isOpen: {
@@ -32,6 +42,12 @@ defineProps({
 })
 
 defineEmits(['show-cover-letter-modal', 'show-cover-letter-info', 'toggle-section'])
+
+const { aiConsentEnabled: hasAIConsent, initializeConsent } = useConsent()
+
+onMounted(() => {
+  initializeConsent()
+})
 </script>
 
 <style scoped>
@@ -136,8 +152,14 @@ defineEmits(['show-cover-letter-modal', 'show-cover-letter-info', 'toggle-sectio
   gap: 8px;
 }
 
-.cover-letter-btn:hover {
+.cover-letter-btn:hover:not(:disabled) {
   background: #d97706;
+}
+
+.cover-letter-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .cover-letter-help {

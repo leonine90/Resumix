@@ -12,17 +12,27 @@
           <Icon icon="material-symbols:info-outline" style="font-size: 16px;" />
         </button>
       </div>
-      <button class="tailor-btn" @click="$emit('show-tailor-modal')">
+      <button 
+        class="tailor-btn" 
+        @click="$emit('show-tailor-modal')"
+        :disabled="!hasAIConsent"
+        :title="hasAIConsent ? '' : 'Enable AI Features in the footer to use this feature'"
+      >
         <Icon icon="material-symbols:psychology" style="font-size: 14px;" />
         Tailor for Job Post
       </button>
-      <small class="tailor-help">Optimize your resume content to match specific job requirements using AI</small>
+      <small class="tailor-help" v-if="!hasAIConsent" style="color: #ef4444;">
+        ⚠️ AI features are disabled. Enable them in the footer to use this feature.
+      </small>
+      <small class="tailor-help" v-else>Optimize your resume content to match specific job requirements using AI</small>
     </div>
   </div>
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
+import { useConsent } from '~/composables/useConsent'
 
 defineProps({
   isOpen: {
@@ -32,6 +42,12 @@ defineProps({
 })
 
 defineEmits(['show-tailor-modal', 'show-optimizer-info', 'toggle-section'])
+
+const { aiConsentEnabled: hasAIConsent, initializeConsent } = useConsent()
+
+onMounted(() => {
+  initializeConsent()
+})
 </script>
 
 <style scoped>
@@ -136,8 +152,14 @@ defineEmits(['show-tailor-modal', 'show-optimizer-info', 'toggle-section'])
   gap: 8px;
 }
 
-.tailor-btn:hover {
+.tailor-btn:hover:not(:disabled) {
   background: #7c3aed;
+}
+
+.tailor-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .tailor-help {

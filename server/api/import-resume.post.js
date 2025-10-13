@@ -13,7 +13,15 @@ export default defineEventHandler(async (event) => {
     }
 
     // Get the resume text from the request body
-    const { resumeText } = await readBody(event)
+    const { resumeText, hasConsent } = await readBody(event)
+    
+    // Check for user consent
+    if (!hasConsent) {
+      return {
+        success: false,
+        error: 'AI processing requires user consent. Please enable AI features in Privacy & Data settings.'
+      }
+    }
     
     if (!resumeText || typeof resumeText !== 'string') {
       return {
@@ -246,6 +254,10 @@ IMPORTANT: Convert this resume into the JSON structure above. Extract all releva
       }
     }
 
+    // Set data processing headers
+    event.node.res.setHeader('X-Data-Retention', 'none')
+    event.node.res.setHeader('X-Data-Storage', 'none')
+    
     return {
       success: true,
       data: parsedData
