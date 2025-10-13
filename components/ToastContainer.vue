@@ -1,13 +1,22 @@
 <template>
-  <div class="toast-container">
+  <div 
+    class="toast-container" 
+    role="region" 
+    aria-label="Notifications"
+    aria-live="polite"
+    aria-atomic="false"
+  >
     <TransitionGroup name="toast" tag="div">
       <div
         v-for="toast in toasts"
         :key="toast.id"
         :class="['toast', `toast-${toast.type}`]"
+        role="alert"
+        :aria-live="toast.type === 'error' || toast.type === 'warning' ? 'assertive' : 'polite'"
+        aria-atomic="true"
       >
         <div class="toast-content">
-          <div class="toast-icon">
+          <div class="toast-icon" aria-hidden="true">
             <Icon 
               :icon="getIcon(toast.type)" 
               style="font-size: 16px;" 
@@ -20,7 +29,7 @@
             @click="removeToast(toast.id)"
             aria-label="Close notification"
           >
-            <Icon icon="material-symbols:close" style="font-size: 14px;" />
+            <Icon icon="material-symbols:close" style="font-size: 14px;" aria-hidden="true" />
           </button>
         </div>
       </div>

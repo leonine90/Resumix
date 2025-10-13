@@ -1,6 +1,10 @@
 <template>
-  <section class="resume-section" :class="{ hide: !show }" :contenteditable="editable">
-    <h2>Summary</h2>
+  <section 
+    class="resume-section" 
+    :class="{ hide: !show }" 
+    aria-labelledby="summary-heading"
+  >
+    <h2 id="summary-heading">Summary</h2>
     <p 
       v-if="!editable"
       v-html="displaySummary"
@@ -9,6 +13,10 @@
       v-else
       :class="{ editable }"
       :contenteditable="editable"
+      role="textbox"
+      aria-multiline="true"
+      aria-label="Edit professional summary"
+      :aria-readonly="!editable"
       @blur="updateSummary"
       v-html="displaySummary"
     ></p>

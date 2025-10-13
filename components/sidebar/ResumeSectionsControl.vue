@@ -1,36 +1,66 @@
 <template>
   <div class="control-section">
-    <div class="section-header" @click="$emit('toggle-section-panel')">
-      <Icon class="section-icon" icon="material-symbols:description" style="font-size: 16px;" />
+    <button 
+      class="section-header" 
+      @click="$emit('toggle-section-panel')"
+      :aria-expanded="isOpen ? 'true' : 'false'"
+      aria-controls="resume-sections-content"
+      aria-label="Toggle resume sections"
+    >
+      <Icon class="section-icon" icon="material-symbols:description" style="font-size: 16px;" aria-hidden="true" />
       <span class="section-title">Resume Sections</span>
-      <Icon class="toggle-icon" :icon="isOpen ? 'material-symbols:expand-more' : 'material-symbols:chevron-right'" style="font-size: 12px;" />
-    </div>
-    <div v-if="isOpen" class="section-content">
-      <div 
-        v-for="section in sectionOrder" 
-        :key="section" 
-        class="control-item draggable-section"
-        :draggable="section !== 'summary' && section !== 'signature'"
-        @dragstart="handleDragStart($event, section)"
-        @dragover="handleDragOver($event)"
-        @drop="handleDrop($event, section)"
-        @dragenter="handleDragEnter($event, section)"
-        @dragleave="handleDragLeave($event)"
-        :class="{ 'drag-over': dragOverSection === section }"
-      >
-        <div class="drag-handle" :class="{ 'disabled': section === 'summary' || section === 'signature' }">
-          <Icon icon="material-symbols:drag-handle" style="font-size: 16px; color: #64748b;" />
-        </div>
-        <label class="checkbox-label">
-          <input 
-            type="checkbox" 
-            :checked="sections[section]" 
-            @change="$emit('toggle-section', section, $event.target.checked)"
-            class="checkbox-input"
+      <Icon 
+        class="toggle-icon" 
+        :icon="isOpen ? 'material-symbols:expand-more' : 'material-symbols:chevron-right'" 
+        style="font-size: 12px;" 
+        aria-hidden="true"
+      />
+    </button>
+    <div 
+      v-if="isOpen" 
+      id="resume-sections-content"
+      class="section-content"
+      role="region"
+      aria-label="Resume sections controls"
+    >
+      <fieldset class="sections-fieldset">
+        <legend class="sr-only">Toggle and reorder resume sections</legend>
+        <div 
+          v-for="section in sectionOrder" 
+          :key="section" 
+          class="control-item draggable-section"
+          :draggable="section !== 'summary' && section !== 'signature'"
+          @dragstart="handleDragStart($event, section)"
+          @dragover="handleDragOver($event)"
+          @drop="handleDrop($event, section)"
+          @dragenter="handleDragEnter($event, section)"
+          @dragleave="handleDragLeave($event)"
+          :class="{ 'drag-over': dragOverSection === section }"
+          :aria-grabbed="draggedSection === section ? 'true' : 'false'"
+        >
+          <div 
+            class="drag-handle" 
+            :class="{ 'disabled': section === 'summary' || section === 'signature' }"
+            :aria-label="section !== 'summary' && section !== 'signature' ? `Drag to reorder ${formatSectionName(section)} section` : undefined"
+            :aria-hidden="section === 'summary' || section === 'signature' ? 'true' : 'false'"
+            role="button"
+            :tabindex="section !== 'summary' && section !== 'signature' ? '0' : '-1'"
           >
-          <span class="section-name">{{ formatSectionName(section) }}</span>
-        </label>
-      </div>
+            <Icon icon="material-symbols:drag-handle" style="font-size: 16px; color: #64748b;" aria-hidden="true" />
+          </div>
+          <label class="checkbox-label" :for="`section-${section}`">
+            <input 
+              type="checkbox" 
+              :id="`section-${section}`"
+              :checked="sections[section]" 
+              @change="$emit('toggle-section', section, $event.target.checked)"
+              class="checkbox-input"
+              :aria-label="`Toggle ${formatSectionName(section)} section visibility`"
+            >
+            <span class="section-name">{{ formatSectionName(section) }}</span>
+          </label>
+        </div>
+      </fieldset>
     </div>
   </div>
 </template>
@@ -141,6 +171,14 @@ const handleDragLeave = (event) => {
   user-select: none;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  text-align: left;
+}
+
+.sections-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 .section-header:hover {
@@ -154,7 +192,7 @@ const handleDragLeave = (event) => {
   margin-right: 12px;
   display: flex;
   align-items: center;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
 }
 
 .section-title {
@@ -165,7 +203,7 @@ const handleDragLeave = (event) => {
 }
 
 .toggle-icon {
-  color: #94a3b8;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
   transition: transform 0.2s ease;
 }
 

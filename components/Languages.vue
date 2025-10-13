@@ -1,10 +1,18 @@
 <template>
-  <section class="resume-section languages" :class="{ hide: !show }" :contenteditable="editable">
-    <h2>Languages</h2>
-    <ul>
+  <section 
+    class="resume-section languages" 
+    :class="{ hide: !show }" 
+    aria-labelledby="languages-heading"
+  >
+    <h2 id="languages-heading">Languages</h2>
+    <ul role="list">
       <li v-for="(language, index) in languagesData" :key="index">
         <b 
           :class="{ editable }"
+          :contenteditable="editable"
+          role="textbox"
+          :aria-label="`Edit language ${index + 1}: ${language}`"
+          :aria-readonly="!editable"
           @blur="updateLanguage(index, $event.target.textContent)"
         >{{ language }}</b>
       </li>

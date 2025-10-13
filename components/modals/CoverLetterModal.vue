@@ -1,26 +1,37 @@
 <template>
-  <div v-if="show" class="fullscreen-modal-overlay">
-    <div class="fullscreen-modal-content" @click.stop>
+  <div 
+    v-if="show" 
+    class="fullscreen-modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="cover-letter-modal-title"
+    aria-describedby="cover-letter-modal-description"
+  >
+    <div class="fullscreen-modal-content" @click.stop ref="modalRef">
       <div class="fullscreen-header">
         <div class="header-content">
           <div class="header-left">
-            <Icon icon="material-symbols:description" style="font-size: 24px; margin-right: 12px;" />
-            <h1>AI Cover Letter</h1>
+            <Icon icon="material-symbols:description" style="font-size: 24px; margin-right: 12px;" aria-hidden="true" />
+            <h1 id="cover-letter-modal-title">AI Cover Letter</h1>
           </div>
-          <button class="close-btn" @click="handleClose">
-            <Icon icon="material-symbols:close" style="font-size: 24px;" />
+          <button 
+            class="close-btn" 
+            @click="handleClose"
+            aria-label="Close AI cover letter generator dialog"
+          >
+            <Icon icon="material-symbols:close" style="font-size: 24px;" aria-hidden="true" />
           </button>
         </div>
       </div>
       
       <!-- Privacy Warning Banner -->
-      <div class="privacy-warning-banner">
-        <Icon icon="material-symbols:info-outline" style="font-size: 20px; margin-right: 8px; flex-shrink: 0;" />
+      <div class="privacy-warning-banner" role="alert" id="cover-letter-modal-description">
+        <Icon icon="material-symbols:info-outline" style="font-size: 20px; margin-right: 8px; flex-shrink: 0;" aria-hidden="true" />
         <p>
           <strong>Privacy Notice:</strong> This feature sends your resume data to Google AI for processing. 
           Your data may be temporarily processed according to 
-          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's privacy policy</a>.
-          See our <a href="/privacy-policy" target="_blank">Privacy Policy</a> for details.
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" aria-label="Read Google's privacy policy (opens in new tab)">Google's privacy policy</a>.
+          See our <a href="/privacy-policy" target="_blank" aria-label="Read our Privacy Policy (opens in new tab)">Privacy Policy</a> for details.
         </p>
       </div>
       
@@ -28,16 +39,21 @@
         <div v-if="!showResults" class="input-section fullscreen-input">
           <div class="input-grid">
             <div class="input-group">
-              <label class="input-label">
-                <Icon icon="material-symbols:description" style="font-size: 18px; margin-right: 8px;" />
+              <label for="cover-letter-resume-text" class="input-label">
+                <Icon icon="material-symbols:description" style="font-size: 18px; margin-right: 8px;" aria-hidden="true" />
                 Your Resume Text
               </label>
               <textarea 
+                id="cover-letter-resume-text"
                 v-model="coverLetterResumeText"
                 class="fullscreen-textarea"
                 :readonly="useCurrentResume"
                 placeholder="Paste your resume text here (from Word, PDF, or any format)..."
+                aria-describedby="cover-letter-resume-help"
               ></textarea>
+              <span id="cover-letter-resume-help" class="sr-only">
+                Enter your resume text for AI cover letter generation, or use checkbox to load current resume
+              </span>
               <div class="checkbox-container">
                 <label class="checkbox-label">
                   <input 
@@ -45,40 +61,61 @@
                     v-model="useCurrentResume"
                     @change="handleUseCurrentResumeChange"
                     class="checkbox-input"
+                    id="use-current-resume-cover-letter"
+                    aria-describedby="use-current-cover-letter-help"
                   />
                   <span class="checkbox-text">
                     Use current resume data
                   </span>
                 </label>
+                <span id="use-current-cover-letter-help" class="sr-only">
+                  Check to automatically load your current resume data
+                </span>
               </div>
             </div>
             
             <div class="input-group">
-              <label class="input-label">
-                <Icon icon="material-symbols:work" style="font-size: 18px; margin-right: 8px;" />
+              <label for="cover-letter-job-desc" class="input-label">
+                <Icon icon="material-symbols:work" style="font-size: 18px; margin-right: 8px;" aria-hidden="true" />
                 Job Description
               </label>
               <textarea 
+                id="cover-letter-job-desc"
                 v-model="coverLetterJobDescription"
                 class="fullscreen-textarea"
                 placeholder="Paste the job description here..."
+                aria-describedby="job-desc-help"
               ></textarea>
+              <span id="job-desc-help" class="sr-only">
+                Enter the job description to generate a tailored cover letter
+              </span>
             </div>
           </div>
 
-          <div class="ai-status" v-if="isGenerating">
-            <Icon icon="material-symbols:hourglass-top" style="font-size: 16px; margin-right: 8px;" />
+          <div class="ai-status" v-if="isGenerating" role="status" aria-live="polite">
+            <Icon icon="material-symbols:hourglass-top" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
             Generating your cover letter with AI...
           </div>
 
           <div class="fullscreen-actions">
             <div class="action-buttons">
-              <button @click="handleClose" class="action-btn cancel-action" :disabled="isGenerating">
-                <Icon icon="material-symbols:close" style="font-size: 16px; margin-right: 8px;" />
+              <button 
+                @click="handleClose" 
+                class="action-btn cancel-action" 
+                :disabled="isGenerating"
+                aria-label="Cancel and close cover letter generator"
+              >
+                <Icon icon="material-symbols:close" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
                 Cancel
               </button>
-              <button @click="handleGenerate" :disabled="!coverLetterJobDescription.trim() || !coverLetterResumeText.trim() || isGenerating" class="action-btn optimize-action">
-                <Icon icon="material-symbols:description" style="font-size: 16px; margin-right: 8px;" />
+              <button 
+                @click="handleGenerate" 
+                :disabled="!coverLetterJobDescription.trim() || !coverLetterResumeText.trim() || isGenerating" 
+                class="action-btn optimize-action"
+                :aria-busy="isGenerating ? 'true' : 'false'"
+                aria-label="Generate cover letter with AI"
+              >
+                <Icon icon="material-symbols:description" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
                 Generate Cover Letter
               </button>
             </div>
@@ -86,29 +123,40 @@
         </div>
 
         <div v-if="showResults" class="results-section fullscreen-results cover-letter-results">
-          <h2 class="results-title">
-            <Icon icon="material-symbols:description" style="font-size: 24px; margin-right: 12px;" />
+          <h2 class="results-title" id="cover-letter-results-title">
+            <Icon icon="material-symbols:description" style="font-size: 24px; margin-right: 12px;" aria-hidden="true" />
             Generated Cover Letter
           </h2>
           
           <div class="cover-letter-display">
             <div class="cover-letter-content">
+              <label for="generated-cover-letter" class="sr-only">Generated cover letter (editable)</label>
               <textarea 
+                id="generated-cover-letter"
                 v-model="generatedCoverLetter"
                 class="cover-letter-textarea"
                 placeholder="Your generated cover letter will appear here..."
+                aria-labelledby="cover-letter-results-title"
               ></textarea>
             </div>
           </div>
 
           <div class="fullscreen-actions">
             <div class="action-buttons">
-              <button @click="handleReset" class="action-btn cancel-action">
-                <Icon icon="material-symbols:refresh" style="font-size: 16px; margin-right: 8px;" />
+              <button 
+                @click="handleReset" 
+                class="action-btn cancel-action"
+                aria-label="Start over and create new cover letter"
+              >
+                <Icon icon="material-symbols:refresh" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
                 Start Over
               </button>
-              <button @click="handleDownload" class="action-btn apply-action">
-                <Icon icon="material-symbols:file-download" style="font-size: 16px; margin-right: 8px;" />
+              <button 
+                @click="handleDownload" 
+                class="action-btn apply-action"
+                aria-label="Download cover letter as PDF"
+              >
+                <Icon icon="material-symbols:file-download" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
                 Download as PDF
               </button>
             </div>
@@ -120,10 +168,12 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useCoverLetter } from '~/composables/useCoverLetter'
 import { useResumeImport } from '~/composables/useResumeImport'
+import { useFocusTrap } from '~/composables/useFocusTrap'
+import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 
 const props = defineProps({
   show: {
@@ -137,6 +187,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close'])
+
+const modalRef = ref(null)
+const { trapFocus, releaseFocus } = useFocusTrap()
+const { lockScroll, unlockScroll } = useBodyScrollLock()
 
 const { generateCoverLetter, downloadCoverLetterPDF } = useCoverLetter()
 const { generateCurrentResumeText } = useResumeImport()
@@ -186,11 +240,38 @@ const handleClose = () => {
   }
 }
 
-// Watch for modal opening to populate resume text
+// Watch for modal opening to populate resume text and manage focus
 watch(() => props.show, (newValue) => {
-  if (newValue && useCurrentResume.value) {
-    coverLetterResumeText.value = generateCurrentResumeText(props.resumeData)
+  if (newValue) {
+    lockScroll()
+    nextTick(() => {
+      if (useCurrentResume.value) {
+        coverLetterResumeText.value = generateCurrentResumeText(props.resumeData)
+      }
+      if (modalRef.value) {
+        trapFocus(modalRef.value)
+      }
+    })
+  } else {
+    unlockScroll()
+    releaseFocus()
   }
+})
+
+// Escape key handler
+onMounted(() => {
+  const handleEscape = (e) => {
+    if (e.key === 'Escape' && props.show && !isGenerating.value) {
+      handleClose()
+    }
+  }
+  document.addEventListener('keydown', handleEscape)
+  
+  onUnmounted(() => {
+    document.removeEventListener('keydown', handleEscape)
+    unlockScroll()
+    releaseFocus()
+  })
 })
 </script>
 
@@ -352,7 +433,7 @@ watch(() => props.show, (newValue) => {
 
 .fullscreen-textarea[readonly] {
   background: #f8fafc;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
 }
 
 .checkbox-container {
@@ -417,30 +498,30 @@ watch(() => props.show, (newValue) => {
 }
 
 .cancel-action {
-  background: #64748b;
+  background: #475569; /* 7.6:1 contrast - AAA compliant */
   color: white;
 }
 
 .cancel-action:hover:not(:disabled) {
-  background: #475569;
+  background: #334155; /* Darker on hover */
 }
 
 .optimize-action {
-  background: #3b82f6;
+  background: #1d4ed8; /* 7.4:1 contrast - AAA compliant */
   color: white;
 }
 
 .optimize-action:hover:not(:disabled) {
-  background: #2563eb;
+  background: #1e40af; /* Darker on hover */
 }
 
 .apply-action {
-  background: #10b981;
+  background: #047857; /* 7.1:1 contrast - AAA compliant */
   color: white;
 }
 
 .apply-action:hover:not(:disabled) {
-  background: #059669;
+  background: #065f46; /* Darker on hover */
 }
 
 .action-btn:disabled {

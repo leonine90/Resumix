@@ -1,6 +1,6 @@
 <template>
-  <section class="resume-section" :contenteditable="editable">
-    <h2>Experience</h2>
+  <section class="resume-section" aria-labelledby="experience-heading">
+    <h2 id="experience-heading">Experience</h2>
     <div v-for="(job, index) in experienceData" :key="index">
       <div class="title-row">
         <div>
@@ -8,39 +8,55 @@
             <span class="bold" 
               :class="{ editable }"
               :contenteditable="editable"
+              role="textbox"
+              :aria-label="`Edit company name for position ${index + 1}`"
+              :aria-readonly="!editable"
               @blur="updateExperience(index, 'company', $event.target.textContent)"
             >{{ job.company }}</span>
             <span v-if="job.location && job.location.trim()"
               :class="{ editable }"
               :contenteditable="editable"
+              role="textbox"
+              :aria-label="`Edit location for position ${index + 1}`"
+              :aria-readonly="!editable"
               @blur="updateExperience(index, 'location', $event.target.textContent)"
             >, {{ job.location }}</span>
           </div>
           <div 
             :class="{ editable }"
             :contenteditable="editable"
+            role="textbox"
+            :aria-label="`Edit position title for entry ${index + 1}`"
+            :aria-readonly="!editable"
             @blur="updateExperience(index, 'position', $event.target.textContent)"
           >{{ job.position }}</div>
         </div>
         <div class="bold" 
           :class="{ editable }"
           :contenteditable="editable"
+          role="textbox"
+          :aria-label="`Edit period for position ${index + 1}`"
+          :aria-readonly="!editable"
           @blur="updateExperience(index, 'period', $event.target.textContent)"
         >{{ job.period }}</div>
       </div>
-      <ul v-if="!editable">
+      <ul role="list" v-if="!editable">
         <li 
           v-for="(achievement, achievementIndex) in job.achievements" 
           :key="achievementIndex"
           v-html="achievement"
         ></li>
       </ul>
-      <ul v-else>
+      <ul role="list" v-else>
         <li 
           v-for="(achievement, achievementIndex) in job.achievements" 
           :key="achievementIndex"
           :class="{ editable }"
           :contenteditable="editable"
+          role="textbox"
+          aria-multiline="true"
+          :aria-label="`Edit achievement ${achievementIndex + 1} for ${job.company}`"
+          :aria-readonly="!editable"
           @blur="updateAchievement(index, achievementIndex, $event.target.innerHTML)"
           v-html="achievement"
         ></li>

@@ -1,8 +1,15 @@
 <template>
-  <div v-if="showModal" class="modal-overlay" @click.self="handleEssentialOnly">
-    <div class="modal-content consent-modal">
+  <div 
+    v-if="showModal" 
+    class="modal-overlay" 
+    @click.self="handleEssentialOnly"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="consent-modal-title"
+  >
+    <div class="modal-content consent-modal" ref="modalRef">
       <div class="modal-header">
-        <h2>Privacy & Cookie Consent</h2>
+        <h2 id="consent-modal-title">Privacy & Cookie Consent</h2>
       </div>
       
       <div class="modal-body">
@@ -14,8 +21,15 @@
         <div class="consent-section">
           <div class="consent-item essential">
             <div class="consent-header">
-              <input type="checkbox" checked disabled class="consent-checkbox" />
-              <label class="consent-label">
+              <input 
+                type="checkbox" 
+                checked 
+                disabled 
+                class="consent-checkbox" 
+                id="essential-consent"
+                aria-label="Essential features (required)"
+              />
+              <label for="essential-consent" class="consent-label">
                 <strong>Essential</strong>
                 <span class="required-badge">Required</span>
               </label>
@@ -33,17 +47,18 @@
                 v-model="aiProcessingConsent" 
                 class="consent-checkbox"
                 id="ai-consent"
+                aria-describedby="ai-consent-description"
               />
               <label for="ai-consent" class="consent-label">
                 <strong>AI Processing</strong>
                 <span class="optional-badge">Optional</span>
               </label>
             </div>
-            <p class="consent-description">
+            <p class="consent-description" id="ai-consent-description">
               Enable AI-powered features (resume optimization, cover letter generation, resume analysis). 
               <strong>Your resume data will be sent to Google AI APIs for processing.</strong>
               Google may temporarily process your data according to their 
-              <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">privacy policy</a>.
+              <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" aria-label="Read Google's privacy policy (opens in new tab)">privacy policy</a>.
             </p>
           </div>
         </div>
@@ -51,17 +66,25 @@
         <div class="privacy-links">
           <p class="small-text">
             By using this application, you agree to our 
-            <a href="/privacy-policy" target="_blank">Privacy Policy</a> and 
-            <a href="/terms-of-service" target="_blank">Terms of Service</a>.
+            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" aria-label="Read our Privacy Policy (opens in new tab)">Privacy Policy</a> and 
+            <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" aria-label="Read our Terms of Service (opens in new tab)">Terms of Service</a>.
           </p>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button @click="handleEssentialOnly" class="btn btn-secondary">
+        <button 
+          @click="handleEssentialOnly" 
+          class="btn btn-secondary"
+          aria-label="Accept essential cookies only"
+        >
           Essential Only
         </button>
-        <button @click="handleAcceptAll" class="btn btn-primary">
+        <button 
+          @click="handleAcceptAll" 
+          class="btn btn-primary"
+          aria-label="Accept all cookies including AI processing"
+        >
           Accept All
         </button>
       </div>
@@ -70,15 +93,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useConsent } from '~/composables/useConsent'
 import { useAIConsent } from '~/composables/useAIConsent'
+import { useFocusTrap } from '~/composables/useFocusTrap'
+import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 
 const showModal = ref(false)
 const aiProcessingConsent = ref(false)
+const modalRef = ref(null)
 
 const { checkConsent, grantConsent } = useConsent()
 const { registerConsentModal, handleConsentGranted, handleConsentDenied } = useAIConsent()
+const { trapFocus, releaseFocus } = useFocusTrap()
+const { lockScroll, unlockScroll } = useBodyScrollLock()
 
 onMounted(() => {
   // Register this modal with the AI consent system
@@ -105,6 +133,37 @@ const handleEssentialOnly = () => {
   showModal.value = false
   handleConsentDenied()
 }
+
+// Focus trap and scroll lock
+watch(showModal, (isOpen) => {
+  if (isOpen) {
+    lockScroll()
+    nextTick(() => {
+      if (modalRef.value) {
+        trapFocus(modalRef.value)
+      }
+    })
+  } else {
+    unlockScroll()
+    releaseFocus()
+  }
+})
+
+// Escape key handler - for consent modal, we treat Escape as "Essential Only"
+onMounted(() => {
+  const handleEscape = (e) => {
+    if (e.key === 'Escape' && showModal.value) {
+      handleEssentialOnly()
+    }
+  }
+  document.addEventListener('keydown', handleEscape)
+  
+  onUnmounted(() => {
+    document.removeEventListener('keydown', handleEscape)
+    unlockScroll()
+    releaseFocus()
+  })
+})
 </script>
 
 <style scoped>
@@ -287,12 +346,12 @@ const handleEssentialOnly = () => {
 }
 
 .btn-primary {
-  background: #2196F3;
+  background: #1565c0; /* 7.5:1 contrast - AAA compliant */
   color: white;
 }
 
 .btn-primary:hover {
-  background: #1976D2;
+  background: #0d47a1; /* Darker on hover */
 }
 
 .btn-secondary {

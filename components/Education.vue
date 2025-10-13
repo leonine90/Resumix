@@ -1,6 +1,6 @@
 <template>
-  <section class="resume-section" :contenteditable="editable">
-    <h2>Education</h2>
+  <section class="resume-section" aria-labelledby="education-heading">
+    <h2 id="education-heading">Education</h2>
     <div v-for="(education, index) in educationData" :key="index">
       <div class="title-row">
         <div>
@@ -8,27 +8,39 @@
             <span class="bold" 
               :class="{ editable }"
               :contenteditable="editable"
+              role="textbox"
+              :aria-label="`Edit institution for education entry ${index + 1}`"
+              :aria-readonly="!editable"
               @blur="updateEducation(index, 'institution', $event.target.textContent)"
             >{{ education.institution }}</span>
             <span v-if="education.location && education.location.trim()"
               :class="{ editable }"
               :contenteditable="editable"
+              role="textbox"
+              :aria-label="`Edit location for education entry ${index + 1}`"
+              :aria-readonly="!editable"
               @blur="updateEducation(index, 'location', $event.target.textContent)"
             >, {{ education.location }}</span>
           </div>          
           <div 
             :class="{ editable }"
             :contenteditable="editable"
+            role="textbox"
+            :aria-label="`Edit degree for education entry ${index + 1}`"
+            :aria-readonly="!editable"
             @blur="updateEducation(index, 'degree', $event.target.textContent)"
           >{{ education.degree }}</div>
         </div>
         <div class="bold" 
           :class="{ editable }"
           :contenteditable="editable"
+          role="textbox"
+          :aria-label="`Edit period for education entry ${index + 1}`"
+          :aria-readonly="!editable"
           @blur="updateEducation(index, 'period', $event.target.textContent)"
         >{{ education.period }}</div>
       </div>
-      <ul>
+      <ul role="list">
         <li v-if="education.coursework && education.coursework.length > 0">
           <strong>Key Coursework</strong>
           <ul>

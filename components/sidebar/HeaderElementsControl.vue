@@ -1,38 +1,68 @@
 <template>
   <div class="control-section">
-    <div class="section-header" @click="$emit('toggle-section')">
-      <Icon class="section-icon" icon="material-symbols:person" style="font-size: 16px;" />
+    <button 
+      class="section-header" 
+      @click="$emit('toggle-section')"
+      :aria-expanded="isOpen ? 'true' : 'false'"
+      aria-controls="header-elements-content"
+      aria-label="Toggle header elements section"
+    >
+      <Icon class="section-icon" icon="material-symbols:person" style="font-size: 16px;" aria-hidden="true" />
       <span class="section-title">Header Elements</span>
-      <Icon class="toggle-icon" :icon="isOpen ? 'material-symbols:expand-more' : 'material-symbols:chevron-right'" style="font-size: 12px;" />
-    </div>
-    <div v-if="isOpen" class="section-content">
-      <label v-for="(visible, element) in headerElements" :key="element" class="control-item">
-        <input 
-          type="checkbox" 
-          :checked="visible" 
-          @change="$emit('toggle-element', element, $event.target.checked)"
-          class="checkbox-input"
+      <Icon 
+        class="toggle-icon" 
+        :icon="isOpen ? 'material-symbols:expand-more' : 'material-symbols:chevron-right'" 
+        style="font-size: 12px;" 
+        aria-hidden="true"
+      />
+    </button>
+    <div 
+      v-if="isOpen" 
+      id="header-elements-content"
+      class="section-content"
+      role="region"
+      aria-label="Header elements controls"
+    >
+      <fieldset class="elements-fieldset">
+        <legend class="sr-only">Toggle header elements visibility</legend>
+        <label 
+          v-for="(visible, element) in headerElements" 
+          :key="element" 
+          class="control-item"
+          :for="`header-element-${element}`"
         >
-        <span class="element-name">{{ formatElementName(element) }}</span>
-      </label>
-      <div class="control-item disabled">
+          <input 
+            type="checkbox" 
+            :id="`header-element-${element}`"
+            :checked="visible" 
+            @change="$emit('toggle-element', element, $event.target.checked)"
+            class="checkbox-input"
+            :aria-label="`Toggle ${formatElementName(element)}`"
+          >
+          <span class="element-name">{{ formatElementName(element) }}</span>
+        </label>
+      </fieldset>
+      
+      <div class="control-item disabled" role="status" aria-label="Name is always visible">
         <span class="element-name">Name (Always Visible)</span>
       </div>
-      <div class="control-item disabled">
+      <div class="control-item disabled" role="status" aria-label="Title is always visible">
         <span class="element-name">Title (Always Visible)</span>
       </div>
       
       <!-- Headshot URL Input -->
       <div v-if="headerElements.headshot" class="headshot-input">
-        <label class="input-label">Headshot URL:</label>
+        <label for="headshot-url-input" class="input-label">Headshot URL:</label>
         <input 
+          id="headshot-url-input"
           type="url" 
           :value="personal?.headshot || ''" 
           @input="$emit('update-headshot', $event)"
           placeholder="https://example.com/image.jpg"
           class="url-input"
+          aria-describedby="headshot-help-text"
         >
-        <small class="input-help">Paste an image URL to display your headshot</small>
+        <small id="headshot-help-text" class="input-help">Paste an image URL to display your headshot</small>
       </div>
     </div>
   </div>
@@ -81,6 +111,14 @@ const formatElementName = (element) => {
   user-select: none;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  text-align: left;
+}
+
+.elements-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 .section-header:hover {
@@ -94,7 +132,7 @@ const formatElementName = (element) => {
   margin-right: 12px;
   display: flex;
   align-items: center;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
 }
 
 .section-title {
@@ -105,7 +143,7 @@ const formatElementName = (element) => {
 }
 
 .toggle-icon {
-  color: #94a3b8;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
   transition: transform 0.2s ease;
 }
 
@@ -184,7 +222,7 @@ const formatElementName = (element) => {
 .input-help {
   display: block;
   font-size: 11px;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
   margin-top: 4px;
 }
 </style>

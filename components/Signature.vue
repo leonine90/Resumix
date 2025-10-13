@@ -1,18 +1,29 @@
 <template>
-  <div class="signature" :class="{ hide: !show }">
+  <section 
+    class="signature" 
+    :class="{ hide: !show }"
+    aria-labelledby="signature-heading"
+  >
+    <h2 id="signature-heading" class="sr-only">Signature</h2>
     <div>
       <div 
         :contenteditable="editable" 
         :class="{ editable }"
+        role="textbox"
+        aria-label="Edit signature name"
+        :aria-readonly="!editable"
         @blur="updateSignature('name', $event.target.textContent)"
       >{{ displayName }}</div>
       <div 
         :contenteditable="editable" 
         :class="{ editable }"
+        role="textbox"
+        aria-label="Edit signature date"
+        :aria-readonly="!editable"
         @blur="updateSignature('date', $event.target.textContent)"
       >{{ displayDate }}</div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>

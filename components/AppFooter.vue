@@ -1,11 +1,11 @@
 <template>
-  <footer class="app-footer" :style="{ paddingLeft: footerPaddingLeft }">
+  <footer class="app-footer" role="contentinfo" :style="{ paddingLeft: footerPaddingLeft }">
     <div class="footer-content">
       <!-- Privacy Controls Section -->
-      <div class="privacy-controls">
+      <div class="privacy-controls" role="region" aria-label="Privacy and data controls">
         <div class="control-group">
-          <div class="consent-status">
-            <Icon icon="material-symbols:shield-lock-outline" class="shield-icon" />
+          <div class="consent-status" role="status" aria-live="polite">
+            <Icon icon="material-symbols:shield-lock-outline" class="shield-icon" aria-hidden="true" />
             <span class="status-text">AI Processing: </span>
             <span :class="['status-badge', consentStatus.class]">
               {{ consentStatus.text }}
@@ -20,16 +20,23 @@
                 v-model="aiConsentEnabled" 
                 @change="handleConsentChange"
                 class="switch-input"
+                role="switch"
+                :aria-checked="aiConsentEnabled ? 'true' : 'false'"
+                aria-label="Toggle AI processing features"
               />
-              <span class="switch-slider"></span>
+              <span class="switch-slider" aria-hidden="true"></span>
             </div>
           </label>
         </div>
         
         <div class="footer-actions">
-          <button @click="handleDeleteData" class="footer-btn delete-btn">
-            <Icon icon="material-symbols:delete-outline" style="font-size: 16px;" />
-            Delete All Data
+          <button 
+            @click="handleDeleteData" 
+            class="footer-btn delete-btn"
+            aria-label="Delete all resume data and reset application"
+          >
+            <Icon icon="material-symbols:delete-outline" style="font-size: 16px;" aria-hidden="true" />
+            <span>Delete All Data</span>
           </button>
         </div>
       </div>
@@ -38,36 +45,54 @@
       <div class="footer-divider"></div>
       
       <!-- Legal Links & Info -->
-      <div class="footer-info">
+      <nav class="footer-info" aria-label="Legal links and contact information">
         <div class="footer-links">
-          <a href="/privacy-policy" target="_blank" class="footer-link">Privacy Policy</a>
-          <span class="separator">•</span>
-          <a href="/terms-of-service" target="_blank" class="footer-link">Terms of Service</a>
+          <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" class="footer-link">Privacy Policy</a>
+          <span class="separator" aria-hidden="true">•</span>
+          <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" class="footer-link">Terms of Service</a>
         </div>
         <p class="copyright">© {{ currentYear }} Resumix. All rights reserved.</p>
-        <p class="contact">Privacy inquiries: <a href="mailto:privacy@resumix.app">privacy@resumix.app</a></p>
-      </div>
+        <p class="contact">Privacy inquiries: <a href="mailto:privacy@resumix.app" aria-label="Contact us via email at privacy@resumix.app">privacy@resumix.app</a></p>
+      </nav>
     </div>
     
     <!-- Confirmation Dialog -->
-    <div v-if="showDeleteConfirm" class="confirm-overlay" @click.self="showDeleteConfirm = false">
+    <div 
+      v-if="showDeleteConfirm" 
+      class="confirm-overlay" 
+      @click.self="showDeleteConfirm = false"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-dialog-title"
+      aria-describedby="delete-dialog-description"
+    >
       <div class="confirm-dialog">
-        <h3>Delete All Data?</h3>
-        <p>This will permanently delete:</p>
-        <ul>
-          <li>All resume content and sections</li>
-          <li>Your preferences and settings</li>
-          <li>AI consent and privacy choices</li>
-          <li>All locally stored data</li>
-        </ul>
-        <p class="warning-text">
-          <strong>This action cannot be undone.</strong> The page will reload with default data.
-        </p>
+        <h3 id="delete-dialog-title">Delete All Data?</h3>
+        <div id="delete-dialog-description">
+          <p>This will permanently delete:</p>
+          <ul>
+            <li>All resume content and sections</li>
+            <li>Your preferences and settings</li>
+            <li>AI consent and privacy choices</li>
+            <li>All locally stored data</li>
+          </ul>
+          <p class="warning-text">
+            <strong>This action cannot be undone.</strong> The page will reload with default data.
+          </p>
+        </div>
         <div class="confirm-actions">
-          <button @click="showDeleteConfirm = false" class="btn-cancel">
+          <button 
+            @click="showDeleteConfirm = false" 
+            class="btn-cancel"
+            aria-label="Cancel deletion and close dialog"
+          >
             Cancel
           </button>
-          <button @click="confirmDelete" class="btn-confirm-delete">
+          <button 
+            @click="confirmDelete" 
+            class="btn-confirm-delete"
+            aria-label="Confirm and delete all data"
+          >
             Yes, Delete Everything
           </button>
         </div>
@@ -77,11 +102,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useConsent } from '~/composables/useConsent'
 import { useDataDeletion } from '~/composables/useDataDeletion'
 import { useToast } from '~/composables/useToast'
+import { useFocusTrap } from '~/composables/useFocusTrap'
+import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 
 const props = defineProps({
   sidebarCollapsed: {
@@ -96,8 +123,11 @@ const footerPaddingLeft = computed(() => {
   return props.sidebarCollapsed ? '70px' : '300px'
 })
 const showDeleteConfirm = ref(false)
+const deleteDialogRef = ref(null)
 
 const { aiConsentEnabled, updateAIConsent, initializeConsent } = useConsent()
+const { trapFocus, releaseFocus } = useFocusTrap()
+const { lockScroll, unlockScroll } = useBodyScrollLock()
 const { deleteAndReset } = useDataDeletion()
 const { showToast } = useToast()
 
@@ -136,6 +166,38 @@ const confirmDelete = async () => {
   showDeleteConfirm.value = false
   await deleteAndReset()
 }
+
+// Focus trap and keyboard handling for delete confirmation dialog
+watch(showDeleteConfirm, (isOpen) => {
+  if (isOpen) {
+    lockScroll()
+    nextTick(() => {
+      const dialog = document.querySelector('.confirm-dialog')
+      if (dialog) {
+        trapFocus(dialog)
+      }
+    })
+  } else {
+    unlockScroll()
+    releaseFocus()
+  }
+})
+
+// Escape key to close dialog
+onMounted(() => {
+  const handleEscape = (e) => {
+    if (e.key === 'Escape' && showDeleteConfirm.value) {
+      showDeleteConfirm.value = false
+    }
+  }
+  document.addEventListener('keydown', handleEscape)
+  
+  onUnmounted(() => {
+    document.removeEventListener('keydown', handleEscape)
+    unlockScroll()
+    releaseFocus()
+  })
+})
 </script>
 
 <style scoped>

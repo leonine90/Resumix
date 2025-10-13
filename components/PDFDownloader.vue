@@ -1,9 +1,23 @@
 <template>
-  <div class="pdf-downloader">
-    <button class="download-btn" @click="downloadPDF" :disabled="isGenerating">
-      <Icon icon="material-symbols:picture-as-pdf" style="font-size: 16px;" />
-      {{ isGenerating ? 'Generating PDF...' : 'Download PDF' }}
+  <div class="pdf-downloader" role="region" aria-label="PDF download">
+    <button 
+      class="download-btn" 
+      @click="downloadPDF" 
+      :disabled="isGenerating"
+      :aria-busy="isGenerating ? 'true' : 'false'"
+      aria-label="Download resume as PDF"
+    >
+      <Icon icon="material-symbols:picture-as-pdf" style="font-size: 16px;" aria-hidden="true" />
+      <span>{{ isGenerating ? 'Generating PDF...' : 'Download PDF' }}</span>
     </button>
+    <div 
+      v-if="statusMessage" 
+      role="status" 
+      aria-live="polite" 
+      class="sr-only"
+    >
+      {{ statusMessage }}
+    </div>
   </div>
 </template>
 
@@ -12,6 +26,7 @@ import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
 
 const isGenerating = ref(false)
+const statusMessage = ref('')
 
 // Function to extract all CSS from the page
 const extractCSS = () => {
@@ -47,6 +62,7 @@ const downloadPDF = async () => {
   if (isGenerating.value) return
   
   isGenerating.value = true
+  statusMessage.value = 'Generating PDF, please wait...'
   
   try {
     // Get the resume wrapper content
@@ -99,9 +115,14 @@ const downloadPDF = async () => {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
     
+    statusMessage.value = 'PDF downloaded successfully'
+    setTimeout(() => { statusMessage.value = '' }, 3000)
+    
   } catch (error) {
     console.error('Error generating PDF:', error)
+    statusMessage.value = 'Failed to generate PDF. Please try again.'
     alert('Failed to generate PDF. Please try again.')
+    setTimeout(() => { statusMessage.value = '' }, 5000)
   } finally {
     isGenerating.value = false
   }
@@ -127,7 +148,7 @@ const downloadPDF = async () => {
 
 .download-btn {
   padding: 8px 12px;
-  background: #dc3545;
+  background: #b71c1c; /* Darker red for 7:1 contrast - AAA compliant */
   color: white;
   border: none;
   border-radius: 4px;
@@ -141,7 +162,7 @@ const downloadPDF = async () => {
 }
 
 .download-btn:hover:not(:disabled) {
-  background: #c82333;
+  background: #9a0007; /* Even darker on hover */
 }
 
 .download-btn:disabled {

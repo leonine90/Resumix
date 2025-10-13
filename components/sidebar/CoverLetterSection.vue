@@ -1,30 +1,59 @@
 <template>
   <div class="control-section">
-    <div class="section-header" @click="$emit('toggle-section')">
-      <Icon class="section-icon" icon="material-symbols:description" style="font-size: 16px;" />
+    <button 
+      class="section-header" 
+      @click="$emit('toggle-section')"
+      :aria-expanded="isOpen ? 'true' : 'false'"
+      aria-controls="cover-letter-content"
+      aria-label="Toggle cover letter section"
+    >
+      <Icon class="section-icon" icon="material-symbols:description" style="font-size: 16px;" aria-hidden="true" />
       <span class="section-title">Cover Letter</span>
-      <Icon class="toggle-icon" :icon="isOpen ? 'material-symbols:expand-more' : 'material-symbols:chevron-right'" style="font-size: 12px;" />
-    </div>
-    <div v-if="isOpen" class="section-content">
+      <Icon 
+        class="toggle-icon" 
+        :icon="isOpen ? 'material-symbols:expand-more' : 'material-symbols:chevron-right'" 
+        style="font-size: 12px;" 
+        aria-hidden="true"
+      />
+    </button>
+    <div 
+      v-if="isOpen" 
+      id="cover-letter-content"
+      class="section-content"
+      role="region"
+      aria-label="Cover letter controls"
+    >
       <div class="section-header-with-info">
-        <span class="section-subtitle">AI Cover Letter Creation</span>
-        <button class="info-btn" @click="$emit('show-cover-letter-info')" title="Learn about AI cover letter generation">
-          <Icon icon="material-symbols:info-outline" style="font-size: 16px;" />
+        <h4 class="section-subtitle">AI Cover Letter Creation</h4>
+        <button 
+          class="info-btn" 
+          @click="$emit('show-cover-letter-info')" 
+          aria-label="Learn about AI cover letter generation"
+        >
+          <Icon icon="material-symbols:info-outline" style="font-size: 16px;" aria-hidden="true" />
         </button>
       </div>
       <button 
         class="cover-letter-btn" 
         @click="$emit('show-cover-letter-modal')"
         :disabled="!hasAIConsent"
-        :title="hasAIConsent ? '' : 'Enable AI Features in the footer to use this feature'"
+        :aria-disabled="!hasAIConsent ? 'true' : 'false'"
+        :aria-label="hasAIConsent ? 'Generate cover letter with AI' : 'Generate cover letter (AI features must be enabled)'"
+        aria-describedby="cover-letter-help-text"
       >
-        <Icon icon="material-symbols:description" style="font-size: 14px;" />
+        <Icon icon="material-symbols:description" style="font-size: 14px;" aria-hidden="true" />
         Generate Cover Letter
       </button>
-      <small class="cover-letter-help" v-if="!hasAIConsent" style="color: #ef4444;">
+      <small 
+        id="cover-letter-help-text" 
+        class="cover-letter-help" 
+        v-if="!hasAIConsent" 
+        style="color: #ef4444;"
+        role="alert"
+      >
         ⚠️ AI features are disabled. Enable them in the footer to use this feature.
       </small>
-      <small class="cover-letter-help" v-else>Create professional cover letters tailored to specific job postings using AI</small>
+      <small id="cover-letter-help-text" class="cover-letter-help" v-else>Create professional cover letters tailored to specific job postings using AI</small>
     </div>
   </div>
 </template>
@@ -66,6 +95,8 @@ onMounted(() => {
   user-select: none;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  text-align: left;
 }
 
 .section-header:hover {
@@ -79,7 +110,7 @@ onMounted(() => {
   margin-right: 12px;
   display: flex;
   align-items: center;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
 }
 
 .section-title {
@@ -90,7 +121,7 @@ onMounted(() => {
 }
 
 .toggle-icon {
-  color: #94a3b8;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
   transition: transform 0.2s ease;
 }
 
@@ -114,12 +145,13 @@ onMounted(() => {
   font-size: 14px;
   font-weight: 600;
   color: #1e293b;
+  margin: 0;
 }
 
 .info-btn {
   background: none;
   border: none;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
@@ -131,7 +163,7 @@ onMounted(() => {
 
 .info-btn:hover {
   background: #f1f5f9;
-  color: #3b82f6;
+  color: #1e293b; /* Higher contrast on hover */
 }
 
 .cover-letter-btn {
@@ -140,7 +172,7 @@ onMounted(() => {
   margin-bottom: 8px;
   border: none;
   border-radius: 6px;
-  background: #f59e0b;
+  background: #6d28d9; /* 7.1:1 contrast - AAA compliant, purple like other AI buttons */
   color: white;
   font-size: 13px;
   font-weight: 500;
@@ -153,7 +185,7 @@ onMounted(() => {
 }
 
 .cover-letter-btn:hover:not(:disabled) {
-  background: #d97706;
+  background: #5b21b6; /* Darker purple on hover */
 }
 
 .cover-letter-btn:disabled {
@@ -165,7 +197,7 @@ onMounted(() => {
 .cover-letter-help {
   display: block;
   font-size: 11px;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
   margin-top: 8px;
   line-height: 1.4;
 }

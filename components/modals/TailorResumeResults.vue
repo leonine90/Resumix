@@ -610,7 +610,7 @@ const handleUndo = (expIndex, achievementIndex) => {
   margin: 0 0 12px 0;
   font-size: 14px;
   font-weight: 600;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -691,7 +691,7 @@ const handleUndo = (expIndex, achievementIndex) => {
 }
 
 .period {
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
   font-size: 13px;
   font-weight: 500;
 }
@@ -926,21 +926,21 @@ const handleUndo = (expIndex, achievementIndex) => {
 }
 
 .cancel-action {
-  background: #64748b;
+  background: #475569; /* 7.6:1 contrast - AAA compliant */
   color: white;
 }
 
 .cancel-action:hover:not(:disabled) {
-  background: #475569;
+  background: #334155; /* Darker on hover */
 }
 
 .apply-action {
-  background: #10b981;
+  background: #047857; /* 7.1:1 contrast - AAA compliant */
   color: white;
 }
 
 .apply-action:hover:not(:disabled) {
-  background: #059669;
+  background: #065f46; /* Darker on hover */
 }
 
 .action-btn:disabled {

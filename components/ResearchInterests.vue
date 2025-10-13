@@ -1,15 +1,28 @@
 <template>
-  <section class="resume-section" :class="{ hide: !show }" :contenteditable="editable" >
-    <h2>Research/Academic Interests</h2>
+  <section 
+    class="resume-section" 
+    :class="{ hide: !show }" 
+    aria-labelledby="research-interests-heading"
+  >
+    <h2 id="research-interests-heading">Research/Academic Interests</h2>
     <div>
-      <ul>
+      <ul role="list">
         <li v-for="(interest, index) in displayResearchInterests" :key="index">
           <strong 
             :class="{ editable }"
+            :contenteditable="editable"
+            role="textbox"
+            :aria-label="`Edit title for research interest ${index + 1}`"
+            :aria-readonly="!editable"
             @blur="updateInterest(index, 'title', $event.target.textContent)"
           >{{ interest.title }}</strong>
           <p 
             :class="{ editable }"
+            :contenteditable="editable"
+            role="textbox"
+            aria-multiline="true"
+            :aria-label="`Edit description for research interest ${index + 1}`"
+            :aria-readonly="!editable"
             @blur="updateInterest(index, 'description', $event.target.textContent)"
           >{{ interest.description }}</p>
         </li>

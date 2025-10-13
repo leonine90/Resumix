@@ -1,6 +1,11 @@
 <template>
-  <div class="resume-wrapper" :style="{ marginLeft: wrapperMargin }">
-    <ResumeSidebar 
+  <div>
+    <!-- Skip Navigation Links -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#sidebar-nav" class="skip-link">Skip to navigation</a>
+    
+    <div class="resume-wrapper" :style="{ marginLeft: wrapperMargin }">
+      <ResumeSidebar 
       :header-elements="reactiveResumeData.headerElements"
       :sections="reactiveResumeData.sections"
       :personal="reactiveResumeData.personal"
@@ -16,7 +21,8 @@
     
     <PDFDownloader />
     
-    <ResumeHeader 
+    <main id="main-content" role="main" aria-label="Resume content">
+      <ResumeHeader 
       :personal="reactiveResumeData.personal" 
       :editable="reactiveResumeData.editable"
       :header-elements="reactiveResumeData.headerElements"
@@ -121,16 +127,22 @@
     
     <!-- Consent Modal -->
     <ConsentModal />
+    
+    <!-- Keyboard Shortcuts -->
+    <KeyboardShortcuts />
+    </main>
   </div>
   
   <!-- App Footer (outside resume wrapper) -->
   <AppFooter :sidebar-collapsed="sidebarCollapsed" />
+  </div>
 </template>
 
 <script setup>
 import { resumeData } from '~/data/resume.js'
 import AppFooter from '~/components/AppFooter.vue'
 import ConsentModal from '~/components/modals/ConsentModal.vue'
+import KeyboardShortcuts from '~/components/KeyboardShortcuts.vue'
 
 const sidebarCollapsed = ref(false)
 
@@ -396,6 +408,213 @@ useHead({
   /* Calculate scrollbar width on page load */
   :root {
     --scrollbar-width: calc(100vw - 100%);
+  }
+
+  /* ===== ACCESSIBILITY STYLES ===== */
+  
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .sr-only-focusable:active,
+  .sr-only-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* Skip navigation links */
+  .skip-link {
+    position: fixed;
+    top: -100px;
+    left: 0;
+    background: #000000;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 0 0 0.25rem 0;
+    z-index: 100000;
+    font-weight: 600;
+    font-size: 0.875rem;
+    opacity: 0;
+    transition: top 0.3s ease, opacity 0.3s ease;
+  }
+
+  .skip-link:focus {
+    top: 0;
+    opacity: 1;
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+  }
+
+  /* Enhanced focus indicators (WCAG AAA: 3:1 contrast minimum) */
+  *:focus {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+  }
+
+  button:focus,
+  a:focus,
+  input:focus,
+  textarea:focus,
+  select:focus,
+  [contenteditable]:focus {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+  }
+
+  /* Focus visible for keyboard navigation */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  *:focus-visible {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+  }
+
+  /* Minimum touch target size: 44x44px (WCAG AAA) */
+  /* Apply only to primary action buttons (not inline or nested buttons) */
+  .download-btn,
+  .action-btn,
+  .export-btn,
+  .import-btn,
+  .ai-import-btn,
+  .tailor-btn,
+  .cover-letter-btn,
+  .toggle-btn,
+  .footer-btn,
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Checkboxes remain their normal size */
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Exception: All inline elements keep natural sizing */
+  p a,
+  li a,
+  span a,
+  aside a,
+  header a,
+  .editable,
+  label,
+  .control-item,
+  .toolbar-btn,
+  .modal-close,
+  .info-btn,
+  .close-btn {
+    min-height: auto !important;
+    min-width: auto !important;
+  }
+
+  /* High contrast link styles (distinguishable without color) */
+  a {
+    text-decoration: underline;
+    text-underline-offset: 0.125rem;
+  }
+
+  a:hover {
+    text-decoration-thickness: 0.125rem;
+  }
+
+  /* Reduced motion support (WCAG AAA) */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    * {
+      border-color: currentColor !important;
+    }
+    
+    button,
+    a {
+      outline: 2px solid currentColor;
+    }
+  }
+
+  /* Ensure readable text at 200% zoom */
+  html {
+    font-size: 16px; /* Base font size */
+  }
+
+  @media (max-width: 768px) {
+    html {
+      font-size: 14px;
+    }
+  }
+
+  /* Convert static px to rem for scalability */
+  .resume-wrapper {
+    font-size: 0.75rem; /* 12px at base 16px */
+    line-height: 1.5;
+  }
+
+  .resume-section h2 {
+    font-size: 1.125rem; /* 18px at base 16px */
+  }
+
+  /* Improved color contrast for WCAG AAA (7:1 ratio) */
+  body {
+    color: #1a1a1a; /* Dark text on white: 16.5:1 ratio */
+  }
+
+  /* Error states with high contrast */
+  .error,
+  [aria-invalid="true"] {
+    color: #b71c1c; /* High contrast red */
+    border-color: #b71c1c;
+  }
+
+  /* Success states with high contrast */
+  .success {
+    color: #2e7d32; /* High contrast green */
+  }
+
+  /* Warning states with high contrast */
+  .warning {
+    color: #e65100; /* High contrast orange */
+  }
+
+  /* Info states with high contrast */
+  .info {
+    color: #01579b; /* High contrast blue */
+  }
+
+  /* Improve interactive element contrast */
+  button {
+    border: 1px solid currentColor;
+  }
+
+  /* Ensure icons don't interfere with text contrast */
+  [aria-hidden="true"] {
+    pointer-events: none;
   }
 </style>
 

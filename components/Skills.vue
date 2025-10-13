@@ -1,11 +1,15 @@
 <template>
-  <section class="resume-section skills" :contenteditable="editable">
-    <h2>Skills</h2>
-    <div>
+  <section class="resume-section skills" aria-labelledby="skills-heading">
+    <h2 id="skills-heading">Skills</h2>
+    <div role="list" aria-label="List of skills">
       <span 
         v-for="(skill, index) in skillsData" 
         :key="index"
         :class="{ editable }"
+        :contenteditable="editable"
+        role="textbox"
+        :aria-label="`Edit skill ${index + 1}: ${skill}`"
+        :aria-readonly="!editable"
         @blur="updateSkill(index, $event.target.textContent)"
       >{{ skill }}</span>
     </div>
@@ -40,10 +44,6 @@ const updateSkill = (index, value) => {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-}
-
-.skills div span {
-  /* Grid items automatically fill the columns */
 }
 
 /* Editable styles */

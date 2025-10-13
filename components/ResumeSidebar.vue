@@ -1,12 +1,18 @@
 <template>
   <div>
-    <div class="resume-sidebar" :class="{ collapsed: isCollapsed }">
+    <aside 
+      id="sidebar-nav"
+      class="resume-sidebar" 
+      :class="{ collapsed: isCollapsed }"
+      role="complementary"
+      aria-label="Resume controls and settings"
+    >
       <SidebarHeader 
         :is-collapsed="isCollapsed" 
         @toggle-sidebar="toggleSidebar" 
       />
       
-      <div v-if="!isCollapsed" class="sidebar-content">
+      <nav v-if="!isCollapsed" class="sidebar-content" aria-label="Resume editing options">
         <!-- Header Elements Control -->
         <HeaderElementsControl
           :header-elements="headerElements"
@@ -52,8 +58,8 @@
           @show-cover-letter-info="showCoverLetterInfoModal = true"
           @toggle-section="toggleCoverLetterSection"
         />
-      </div>
-    </div>
+      </nav>
+    </aside>
 
     <!-- Modals -->
     <AiImportModal
@@ -299,6 +305,7 @@ onUnmounted(() => {
   transition: width 0.3s ease;
   width: 280px;
   overflow-y: auto;
+  overflow-x: hidden; /* Prevent toggle button from overflowing */
 }
 
 .resume-sidebar.collapsed {

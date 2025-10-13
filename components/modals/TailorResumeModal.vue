@@ -1,26 +1,37 @@
 <template>
-  <div v-if="show" class="fullscreen-modal-overlay">
-    <div class="fullscreen-modal-content" @click.stop>
+  <div 
+    v-if="show" 
+    class="fullscreen-modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="tailor-modal-title"
+    aria-describedby="tailor-modal-description"
+  >
+    <div class="fullscreen-modal-content" @click.stop ref="modalRef">
       <div class="fullscreen-header">
         <div class="header-content">
           <div class="header-left">
-            <Icon icon="material-symbols:psychology" style="font-size: 24px; margin-right: 12px;" />
-            <h1>AI Resume Optimizer</h1>
+            <Icon icon="material-symbols:psychology" style="font-size: 24px; margin-right: 12px;" aria-hidden="true" />
+            <h1 id="tailor-modal-title">AI Resume Optimizer</h1>
           </div>
-          <button class="close-btn" @click="handleClose">
-            <Icon icon="material-symbols:close" style="font-size: 24px;" />
+          <button 
+            class="close-btn" 
+            @click="handleClose"
+            aria-label="Close AI resume optimizer dialog"
+          >
+            <Icon icon="material-symbols:close" style="font-size: 24px;" aria-hidden="true" />
           </button>
         </div>
       </div>
       
       <!-- Privacy Warning Banner -->
-      <div class="privacy-warning-banner">
-        <Icon icon="material-symbols:info-outline" style="font-size: 20px; margin-right: 8px; flex-shrink: 0;" />
+      <div class="privacy-warning-banner" role="alert" id="tailor-modal-description">
+        <Icon icon="material-symbols:info-outline" style="font-size: 20px; margin-right: 8px; flex-shrink: 0;" aria-hidden="true" />
         <p>
           <strong>Privacy Notice:</strong> This feature sends your resume data to Google AI for processing. 
           Your data may be temporarily processed according to 
-          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's privacy policy</a>.
-          See our <a href="/privacy-policy" target="_blank">Privacy Policy</a> for details.
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" aria-label="Read Google's privacy policy (opens in new tab)">Google's privacy policy</a>.
+          See our <a href="/privacy-policy" target="_blank" aria-label="Read our Privacy Policy (opens in new tab)">Privacy Policy</a> for details.
         </p>
       </div>
       
@@ -29,16 +40,21 @@
         <div v-if="!showAnalysis && !showResults" class="input-section fullscreen-input">
           <div class="input-grid">
             <div class="input-group">
-              <label class="input-label">
-                <Icon icon="material-symbols:description" style="font-size: 18px; margin-right: 8px;" />
+              <label for="tailor-resume-text" class="input-label">
+                <Icon icon="material-symbols:description" style="font-size: 18px; margin-right: 8px;" aria-hidden="true" />
                 Your Resume Text
               </label>
               <textarea 
+                id="tailor-resume-text"
                 v-model="resumeTextInput"
                 class="fullscreen-textarea"
                 :readonly="useCurrentResume"
                 placeholder="Paste your resume text here (from Word, PDF, or any format)..."
+                aria-describedby="resume-text-help"
               ></textarea>
+              <span id="resume-text-help" class="sr-only">
+                Enter your resume text for AI optimization, or use checkbox to load current resume
+              </span>
               <div class="checkbox-container">
                 <label class="checkbox-label">
                   <input 
@@ -46,40 +62,61 @@
                     v-model="useCurrentResume"
                     @change="handleUseCurrentResumeChange"
                     class="checkbox-input"
+                    id="use-current-resume-checkbox"
+                    aria-describedby="use-current-help"
                   />
                   <span class="checkbox-text">
                     Use current resume data
                   </span>
                 </label>
+                <span id="use-current-help" class="sr-only">
+                  Check to automatically load your current resume data
+                </span>
               </div>
             </div>
             
             <div class="input-group">
-              <label class="input-label">
-                <Icon icon="material-symbols:work" style="font-size: 18px; margin-right: 8px;" />
+              <label for="tailor-job-post" class="input-label">
+                <Icon icon="material-symbols:work" style="font-size: 18px; margin-right: 8px;" aria-hidden="true" />
                 Job Posting
               </label>
               <textarea 
+                id="tailor-job-post"
                 v-model="jobPostText"
                 class="fullscreen-textarea"
                 placeholder="Paste the job posting here..."
+                aria-describedby="job-post-help"
               ></textarea>
+              <span id="job-post-help" class="sr-only">
+                Enter the job posting or description you want to tailor your resume for
+              </span>
             </div>
           </div>
 
-          <div class="ai-status" v-if="isAnalyzing">
-            <Icon icon="material-symbols:analytics" style="font-size: 16px; margin-right: 8px;" />
+          <div class="ai-status" v-if="isAnalyzing" role="status" aria-live="polite">
+            <Icon icon="material-symbols:analytics" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
             Analyzing resume-job compatibility...
           </div>
 
           <div class="fullscreen-actions">
             <div class="action-buttons">
-              <button @click="handleClose" class="action-btn cancel-action" :disabled="isAnalyzing">
-                <Icon icon="material-symbols:close" style="font-size: 16px; margin-right: 8px;" />
+              <button 
+                @click="handleClose" 
+                class="action-btn cancel-action" 
+                :disabled="isAnalyzing"
+                aria-label="Cancel and close optimizer"
+              >
+                <Icon icon="material-symbols:close" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
                 Cancel
               </button>
-              <button @click="handleAnalyze" :disabled="!jobPostText.trim() || !resumeTextInput.trim() || isAnalyzing" class="action-btn analyze-action">
-                <Icon icon="material-symbols:analytics" style="font-size: 16px; margin-right: 8px;" />
+              <button 
+                @click="handleAnalyze" 
+                :disabled="!jobPostText.trim() || !resumeTextInput.trim() || isAnalyzing" 
+                class="action-btn analyze-action"
+                :aria-busy="isAnalyzing ? 'true' : 'false'"
+                aria-label="Analyze resume compatibility with job posting"
+              >
+                <Icon icon="material-symbols:analytics" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
                 Analyze Compatibility
               </button>
             </div>
@@ -95,8 +132,8 @@
             @revise="handleReviseResume"
             :is-optimizing="isTailoring"
           />
-          <div class="ai-status" v-if="isTailoring">
-            <Icon icon="material-symbols:hourglass-top" style="font-size: 16px; margin-right: 8px;" />
+          <div class="ai-status" v-if="isTailoring" role="status" aria-live="polite">
+            <Icon icon="material-symbols:hourglass-top" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
             Optimizing your resume with AI...
           </div>
         </div>
@@ -124,13 +161,15 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import ResumeMatchAnalysis from '../ResumeMatchAnalysis.vue'
 import TailorResumeResults from './TailorResumeResults.vue'
 import { useJobOptimizer } from '~/composables/useJobOptimizer'
 import { useResumeImport } from '~/composables/useResumeImport'
 import { useToast } from '~/composables/useToast'
+import { useFocusTrap } from '~/composables/useFocusTrap'
+import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 
 const props = defineProps({
   show: {
@@ -144,6 +183,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'apply-optimizations'])
+
+const modalRef = ref(null)
+const { trapFocus, releaseFocus } = useFocusTrap()
+const { lockScroll, unlockScroll } = useBodyScrollLock()
 
 const { analyzeResumeMatch, tailorResume, applyOptimizations, initializeTextareaHeights } = useJobOptimizer()
 const { generateCurrentResumeText } = useResumeImport()
@@ -304,12 +347,35 @@ const handleClose = () => {
 watch(() => props.show, (newValue) => {
   if (newValue) {
     handleReset()
+    lockScroll()
     nextTick(() => {
       if (useCurrentResume.value) {
         resumeTextInput.value = generateCurrentResumeText(props.resumeData)
       }
+      if (modalRef.value) {
+        trapFocus(modalRef.value)
+      }
     })
+  } else {
+    unlockScroll()
+    releaseFocus()
   }
+})
+
+// Escape key handler
+onMounted(() => {
+  const handleEscape = (e) => {
+    if (e.key === 'Escape' && props.show && !isAnalyzing.value && !isTailoring.value && !isApplying.value) {
+      handleClose()
+    }
+  }
+  document.addEventListener('keydown', handleEscape)
+  
+  onUnmounted(() => {
+    document.removeEventListener('keydown', handleEscape)
+    unlockScroll()
+    releaseFocus()
+  })
 })
 </script>
 
@@ -471,7 +537,7 @@ watch(() => props.show, (newValue) => {
 
 .fullscreen-textarea[readonly] {
   background: #f8fafc;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
 }
 
 .checkbox-container {
@@ -536,21 +602,21 @@ watch(() => props.show, (newValue) => {
 }
 
 .cancel-action {
-  background: #64748b;
+  background: #475569; /* 7.6:1 contrast - AAA compliant */
   color: white;
 }
 
 .cancel-action:hover:not(:disabled) {
-  background: #475569;
+  background: #334155; /* Darker on hover */
 }
 
 .analyze-action {
-  background: #8b5cf6;
+  background: #6d28d9; /* 7.1:1 contrast - AAA compliant */
   color: white;
 }
 
 .analyze-action:hover:not(:disabled) {
-  background: #7c3aed;
+  background: #5b21b6; /* Darker on hover */
 }
 
 .action-btn:disabled {

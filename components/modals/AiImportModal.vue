@@ -1,26 +1,37 @@
 <template>
-  <div v-if="show" class="fullscreen-modal-overlay">
-    <div class="fullscreen-modal-content" @click.stop>
+  <div 
+    v-if="show" 
+    class="fullscreen-modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="ai-import-modal-title"
+    aria-describedby="ai-import-modal-description"
+  >
+    <div class="fullscreen-modal-content" @click.stop ref="modalRef">
       <div class="fullscreen-header">
         <div class="header-content">
           <div class="header-left">
-            <Icon icon="material-symbols:upload-file" style="font-size: 24px; margin-right: 12px;" />
-            <h1>Import Resume</h1>
+            <Icon icon="material-symbols:upload-file" style="font-size: 24px; margin-right: 12px;" aria-hidden="true" />
+            <h1 id="ai-import-modal-title">Import Resume</h1>
           </div>
-          <button class="close-btn" @click="handleClose">
-            <Icon icon="material-symbols:close" style="font-size: 24px;" />
+          <button 
+            class="close-btn" 
+            @click="handleClose"
+            aria-label="Close import resume dialog"
+          >
+            <Icon icon="material-symbols:close" style="font-size: 24px;" aria-hidden="true" />
           </button>
         </div>
       </div>
       
       <!-- Privacy Warning Banner -->
-      <div class="privacy-warning-banner">
-        <Icon icon="material-symbols:info-outline" style="font-size: 20px; margin-right: 8px; flex-shrink: 0;" />
+      <div class="privacy-warning-banner" role="alert" id="ai-import-modal-description">
+        <Icon icon="material-symbols:info-outline" style="font-size: 20px; margin-right: 8px; flex-shrink: 0;" aria-hidden="true" />
         <p>
           <strong>Privacy Notice:</strong> This feature sends your resume data to Google AI for processing. 
           Your data may be temporarily processed according to 
-          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's privacy policy</a>.
-          See our <a href="/privacy-policy" target="_blank">Privacy Policy</a> for details.
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" aria-label="Read Google's privacy policy (opens in new tab)">Google's privacy policy</a>.
+          See our <a href="/privacy-policy" target="_blank" aria-label="Read our Privacy Policy (opens in new tab)">Privacy Policy</a> for details.
         </p>
       </div>
       
@@ -29,7 +40,7 @@
         <div class="import-layout">
           <!-- File Upload Section -->
           <div class="upload-section">
-            <label class="modal-label">Upload Resume File:</label>
+            <label for="file-upload-input" class="modal-label">Upload Resume File:</label>
             <div 
               class="file-upload-area"
               :class="{ 'drag-over': isDragOver, 'has-file': uploadedFile }"
@@ -37,23 +48,35 @@
               @dragover.prevent="isDragOver = true"
               @dragleave.prevent="isDragOver = false"
               @click="triggerFileInput"
+              role="button"
+              tabindex="0"
+              :aria-label="uploadedFile ? `Selected file: ${uploadedFile.name}. Press Enter to change file or Delete to remove` : 'Upload resume file. Drag and drop or press Enter to browse'"
+              @keydown.enter="triggerFileInput"
+              @keydown.delete="uploadedFile && removeFile($event)"
             >
               <input 
                 ref="fileInput"
+                id="file-upload-input"
                 type="file" 
                 accept=".txt,.rtf,.doc,.docx,.pdf"
                 @change="handleFileSelect"
                 style="display: none;"
+                aria-label="Choose resume file to upload"
               />
               <div class="upload-content">
-                <Icon icon="material-symbols:cloud-upload" style="font-size: 48px; color: #666; margin-bottom: 16px;" />
+                <Icon icon="material-symbols:cloud-upload" style="font-size: 48px; color: #666; margin-bottom: 16px;" aria-hidden="true" />
                 <p class="upload-text">
                   <span v-if="!uploadedFile">Drag and drop your resume file here, or click to browse</span>
                   <span v-else class="file-name">{{ uploadedFile.name }}</span>
                 </p>
                 <p class="upload-hint">Supported formats: .txt, .rtf, .doc, .docx, .pdf</p>
-                <button v-if="uploadedFile" class="remove-file-btn" @click.stop="removeFile">
-                  <Icon icon="material-symbols:delete" style="font-size: 16px;" />
+                <button 
+                  v-if="uploadedFile" 
+                  class="remove-file-btn" 
+                  @click.stop="removeFile"
+                  aria-label="Remove uploaded file"
+                >
+                  <Icon icon="material-symbols:delete" style="font-size: 16px;" aria-hidden="true" />
                   Remove File
                 </button>
               </div>
@@ -61,35 +84,51 @@
           </div>
 
           <!-- Divider -->
-          <div class="modal-divider">
+          <div class="modal-divider" aria-hidden="true">
             <span>or</span>
           </div>
 
           <!-- Text Input Section -->
           <div class="text-section">
-            <label class="modal-label">Paste your resume text or JSON:</label>
+            <label for="resume-text-input" class="modal-label">Paste your resume text or JSON:</label>
             <textarea 
+              id="resume-text-input"
               v-model="resumeText"
               class="modal-textarea"
               placeholder="Paste your resume text (from Word, PDF, etc.) or valid JSON resume data here..."
               rows="8"
+              aria-describedby="resume-text-help"
             ></textarea>
+            <span id="resume-text-help" class="sr-only">
+              Paste your resume in plain text format or as JSON data for import and AI processing
+            </span>
           </div>
         </div>
 
-        <div class="ai-status" v-if="isProcessing">
-          <Icon icon="material-symbols:hourglass-top" style="font-size: 16px; margin-right: 8px;" />
+        <div class="ai-status" v-if="isProcessing" role="status" aria-live="polite">
+          <Icon icon="material-symbols:hourglass-top" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
           Processing...
         </div>
         
         <div class="fullscreen-actions">
           <div class="action-buttons">
-            <button @click="handleClose" class="action-btn cancel-action" :disabled="isProcessing">
-              <Icon icon="material-symbols:close" style="font-size: 16px; margin-right: 8px;" />
+            <button 
+              @click="handleClose" 
+              class="action-btn cancel-action" 
+              :disabled="isProcessing"
+              aria-label="Cancel import and close dialog"
+            >
+              <Icon icon="material-symbols:close" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
               Cancel
             </button>
-            <button @click="handleProcess" :disabled="(!resumeText.trim() && !uploadedFile) || isProcessing" class="action-btn optimize-action">
-              <Icon icon="material-symbols:upload" style="font-size: 16px; margin-right: 8px;" />
+            <button 
+              @click="handleProcess" 
+              :disabled="(!resumeText.trim() && !uploadedFile) || isProcessing" 
+              class="action-btn optimize-action"
+              :aria-busy="isProcessing ? 'true' : 'false'"
+              aria-label="Import and process resume with AI"
+            >
+              <Icon icon="material-symbols:upload" style="font-size: 16px; margin-right: 8px;" aria-hidden="true" />
               Import Resume
             </button>
           </div>
@@ -100,9 +139,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useResumeImport } from '~/composables/useResumeImport'
+import { useFocusTrap } from '~/composables/useFocusTrap'
+import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 
 const props = defineProps({
   show: {
@@ -116,6 +157,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'import-success'])
+
+const modalRef = ref(null)
+const { trapFocus, releaseFocus } = useFocusTrap()
+const { lockScroll, unlockScroll } = useBodyScrollLock()
 
 const { processWithAI } = useResumeImport()
 
@@ -181,6 +226,37 @@ const handleClose = () => {
     emit('close')
   }
 }
+
+// Focus trap and scroll lock
+watch(() => props.show, (isOpen) => {
+  if (isOpen) {
+    lockScroll()
+    nextTick(() => {
+      if (modalRef.value) {
+        trapFocus(modalRef.value)
+      }
+    })
+  } else {
+    unlockScroll()
+    releaseFocus()
+  }
+})
+
+// Escape key handler
+onMounted(() => {
+  const handleEscape = (e) => {
+    if (e.key === 'Escape' && props.show && !isProcessing.value) {
+      handleClose()
+    }
+  }
+  document.addEventListener('keydown', handleEscape)
+  
+  onUnmounted(() => {
+    document.removeEventListener('keydown', handleEscape)
+    unlockScroll()
+    releaseFocus()
+  })
+})
 </script>
 
 <style scoped>
@@ -320,7 +396,7 @@ const handleClose = () => {
   display: flex;
   align-items: center;
   margin: 0 16px;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
   font-size: 13px;
   flex-shrink: 0;
 }
@@ -397,7 +473,7 @@ const handleClose = () => {
 
 .upload-hint {
   margin: 0;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
   font-size: 12px;
   line-height: 1.4;
 }
@@ -481,21 +557,21 @@ const handleClose = () => {
 }
 
 .cancel-action {
-  background: #64748b;
+  background: #475569; /* 7.6:1 contrast - AAA compliant */
   color: white;
 }
 
 .cancel-action:hover:not(:disabled) {
-  background: #475569;
+  background: #334155; /* Darker on hover */
 }
 
 .optimize-action {
-  background: #3b82f6;
+  background: #1d4ed8; /* 7.4:1 contrast - AAA compliant */
   color: white;
 }
 
 .optimize-action:hover:not(:disabled) {
-  background: #2563eb;
+  background: #1e40af; /* Darker on hover */
 }
 
 .action-btn:disabled {

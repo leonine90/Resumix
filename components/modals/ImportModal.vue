@@ -1,28 +1,61 @@
 <template>
-  <div v-if="show" class="modal-overlay" @click="handleClose">
-    <div class="modal-content" @click.stop>
+  <div 
+    v-if="show" 
+    class="modal-overlay" 
+    @click="handleClose"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="import-modal-title"
+    aria-describedby="import-modal-description"
+  >
+    <div class="modal-content" @click.stop ref="modalRef">
       <div class="modal-header">
         <div class="header-content">
           <div class="header-left">
-            <Icon icon="material-symbols:code" style="font-size: 20px; margin-right: 8px;" />
-            <h3>Import Resume Data</h3>
+            <Icon icon="material-symbols:code" style="font-size: 20px; margin-right: 8px;" aria-hidden="true" />
+            <h3 id="import-modal-title">Import Resume Data</h3>
           </div>
-          <button class="modal-close" @click="handleClose">
-            <Icon icon="material-symbols:close" style="font-size: 20px;" />
+          <button 
+            class="modal-close" 
+            @click="handleClose"
+            aria-label="Close import dialog"
+          >
+            <Icon icon="material-symbols:close" style="font-size: 20px;" aria-hidden="true" />
           </button>
         </div>
       </div>
       <div class="modal-body">
-        <label class="modal-label">Paste JSON data:</label>
+        <label for="import-textarea" class="modal-label" id="import-modal-description">
+          Paste JSON data:
+        </label>
         <textarea 
+          id="import-textarea"
           v-model="importJsonText"
           class="modal-textarea"
           placeholder="Paste your JSON data here..."
           rows="15"
+          aria-describedby="import-help-text"
         ></textarea>
+        <span id="import-help-text" class="help-text sr-only">
+          Paste your resume data in JSON format to import it into the application
+        </span>
         <div class="modal-actions">
-          <button @click="handleClose" class="cancel-btn">Cancel</button>
-          <button @click="handleImport" :disabled="!importJsonText.trim()" class="submit-btn">Import Data</button>
+          <button 
+            @click="handleClose" 
+            class="cancel-btn"
+            aria-label="Cancel import and close dialog"
+          >
+            Cancel
+          </button>
+          <button 
+            @click="handleImport" 
+            :disabled="!importJsonText.trim()" 
+            class="submit-btn"
+            aria-label="Import resume data"
+            :aria-disabled="!importJsonText.trim() ? 'true' : 'false'"
+          >
+            Import Data
+          </button>
         </div>
       </div>
     </div>
@@ -30,9 +63,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useResumeImport } from '~/composables/useResumeImport'
+import { useFocusTrap } from '~/composables/useFocusTrap'
+import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 
 const props = defineProps({
   show: {
@@ -48,6 +83,9 @@ const props = defineProps({
 const emit = defineEmits(['close', 'import-success'])
 
 const { importData } = useResumeImport()
+const modalRef = ref(null)
+const { trapFocus, releaseFocus } = useFocusTrap()
+const { lockScroll, unlockScroll } = useBodyScrollLock()
 
 const importJsonText = ref('')
 
@@ -64,6 +102,37 @@ const handleClose = () => {
   importJsonText.value = ''
   emit('close')
 }
+
+// Focus trap and scroll lock
+watch(() => props.show, (isOpen) => {
+  if (isOpen) {
+    lockScroll()
+    nextTick(() => {
+      if (modalRef.value) {
+        trapFocus(modalRef.value)
+      }
+    })
+  } else {
+    unlockScroll()
+    releaseFocus()
+  }
+})
+
+// Escape key handler
+onMounted(() => {
+  const handleEscape = (e) => {
+    if (e.key === 'Escape' && props.show) {
+      handleClose()
+    }
+  }
+  document.addEventListener('keydown', handleEscape)
+  
+  onUnmounted(() => {
+    document.removeEventListener('keydown', handleEscape)
+    unlockScroll()
+    releaseFocus()
+  })
+})
 </script>
 
 <style scoped>
@@ -125,7 +194,7 @@ const handleClose = () => {
   border: none;
   font-size: 20px;
   cursor: pointer;
-  color: #64748b;
+  color: #475569; /* 7.6:1 contrast - AAA compliant */
   padding: 6px;
   width: 32px;
   height: 32px;
@@ -138,7 +207,7 @@ const handleClose = () => {
 
 .modal-close:hover {
   background: #f1f5f9;
-  color: #334155;
+  color: #1e293b; /* Higher contrast on hover */
 }
 
 .modal-body {
@@ -192,7 +261,7 @@ const handleClose = () => {
 
 .cancel-btn {
   padding: 10px 20px;
-  background: #64748b;
+  background: #475569; /* 7.6:1 contrast - AAA compliant */
   color: white;
   border: none;
   border-radius: 6px;
@@ -204,12 +273,12 @@ const handleClose = () => {
 }
 
 .cancel-btn:hover {
-  background: #475569;
+  background: #334155; /* Darker on hover */
 }
 
 .submit-btn {
   padding: 10px 20px;
-  background: #3b82f6;
+  background: #1d4ed8; /* 7.4:1 contrast - AAA compliant */
   color: white;
   border: none;
   border-radius: 6px;
@@ -220,7 +289,7 @@ const handleClose = () => {
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #2563eb;
+  background: #1e40af; /* Darker on hover */
 }
 
 .submit-btn:disabled {

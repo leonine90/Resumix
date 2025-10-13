@@ -3,18 +3,22 @@
     <div
       v-if="isSelectionActive && editable"
       class="floating-toolbar"
+      role="toolbar"
+      aria-label="Text formatting options"
       :style="toolbarPosition"
       @mousedown.prevent
     >
-      <div class="toolbar-content">
+      <div class="toolbar-content" role="group" aria-label="Formatting controls">
         <!-- Bold -->
         <button
           class="toolbar-btn"
           :class="{ active: isBoldActive() }"
           @click="handleCommand('bold')"
           title="Bold (Ctrl+B)"
+          aria-label="Bold text"
+          :aria-pressed="isBoldActive() ? 'true' : 'false'"
         >
-          <Icon icon="mdi:format-bold" />
+          <Icon icon="mdi:format-bold" aria-hidden="true" />
         </button>
 
         <!-- Italic -->
@@ -23,19 +27,22 @@
           :class="{ active: isItalicActive() }"
           @click="handleCommand('italic')"
           title="Italic (Ctrl+I)"
+          aria-label="Italic text"
+          :aria-pressed="isItalicActive() ? 'true' : 'false'"
         >
-          <Icon icon="mdi:format-italic" />
+          <Icon icon="mdi:format-italic" aria-hidden="true" />
         </button>
 
-        <div class="toolbar-divider"></div>
+        <div class="toolbar-divider" role="separator" aria-hidden="true"></div>
 
         <!-- Bullet List -->
         <button
           class="toolbar-btn"
           @click="handleCommand('bulletList')"
           title="Bullet List"
+          aria-label="Insert bullet list"
         >
-          <Icon icon="mdi:format-list-bulleted" />
+          <Icon icon="mdi:format-list-bulleted" aria-hidden="true" />
         </button>
 
         <!-- Numbered List -->
@@ -43,30 +50,33 @@
           class="toolbar-btn"
           @click="handleCommand('numberedList')"
           title="Numbered List"
+          aria-label="Insert numbered list"
         >
-          <Icon icon="mdi:format-list-numbered" />
+          <Icon icon="mdi:format-list-numbered" aria-hidden="true" />
         </button>
 
-        <div class="toolbar-divider"></div>
+        <div class="toolbar-divider" role="separator" aria-hidden="true"></div>
 
         <!-- Insert Link -->
         <button
           class="toolbar-btn"
           @click="handleCommand('insertLink')"
           title="Insert Link"
+          aria-label="Insert hyperlink"
         >
-          <Icon icon="mdi:link" />
+          <Icon icon="mdi:link" aria-hidden="true" />
         </button>
 
-        <div class="toolbar-divider"></div>
+        <div class="toolbar-divider" role="separator" aria-hidden="true"></div>
 
         <!-- Remove Format -->
         <button
           class="toolbar-btn"
           @click="handleCommand('removeFormat')"
           title="Remove Formatting"
+          aria-label="Remove text formatting"
         >
-          <Icon icon="mdi:format-clear" />
+          <Icon icon="mdi:format-clear" aria-hidden="true" />
         </button>
       </div>
     </div>

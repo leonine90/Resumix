@@ -1,32 +1,53 @@
 <template>
-  <section class="resume-section" :contenteditable="editable">
-    <h2>Volunteering & Community Involvement</h2>
+  <section class="resume-section" aria-labelledby="volunteering-heading">
+    <h2 id="volunteering-heading">Volunteering & Community Involvement</h2>
     <div v-for="(volunteer, index) in volunteeringData" :key="index">
       <div class="title-row">
         <div>
           <div>
             <span class="bold" 
               :class="{ editable }"
+              :contenteditable="editable"
+              role="textbox"
+              :aria-label="`Edit organization for volunteer entry ${index + 1}`"
+              :aria-readonly="!editable"
               @blur="updateVolunteer(index, 'organization', $event.target.textContent)"
             >{{ volunteer.organization }}</span>
             <span v-if="volunteer.location && volunteer.location.trim()"
               :class="{ editable }"
+              :contenteditable="editable"
+              role="textbox"
+              :aria-label="`Edit location for volunteer entry ${index + 1}`"
+              :aria-readonly="!editable"
               @blur="updateVolunteer(index, 'location', $event.target.textContent)"
             >, {{ volunteer.location }}</span>
           </div>
           <div 
             :class="{ editable }"
+            :contenteditable="editable"
+            role="textbox"
+            :aria-label="`Edit role for volunteer entry ${index + 1}`"
+            :aria-readonly="!editable"
             @blur="updateVolunteer(index, 'role', $event.target.textContent)"
           >{{ volunteer.role }}</div>
         </div>
         <div class="bold" 
           :class="{ editable }"
+          :contenteditable="editable"
+          role="textbox"
+          :aria-label="`Edit period for volunteer entry ${index + 1}`"
+          :aria-readonly="!editable"
           @blur="updateVolunteer(index, 'period', $event.target.textContent)"
         >{{ volunteer.period }}</div>
       </div>
-      <ul>
+      <ul role="list">
         <li 
           :class="{ editable }"
+          :contenteditable="editable"
+          role="textbox"
+          aria-multiline="true"
+          :aria-label="`Edit description for ${volunteer.organization}`"
+          :aria-readonly="!editable"
           @blur="updateVolunteer(index, 'description', $event.target.textContent)"
         >{{ volunteer.description }}</li>
       </ul>

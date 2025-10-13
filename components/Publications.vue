@@ -1,17 +1,31 @@
 <template>
-  <section class="resume-section" :contenteditable="editable">
-    <h2>Publications</h2>
+  <section class="resume-section" aria-labelledby="publications-heading">
+    <h2 id="publications-heading">Publications</h2>
     <div>
-      <ul>
+      <ul role="list">
         <li v-for="(publication, index) in publicationsData" :key="index">
-          <a target="_blank" :href="publication.url">
+          <a 
+            target="_blank" 
+            rel="noopener noreferrer"
+            :href="publication.url"
+            :aria-label="`Read publication: ${publication.title} (opens in new tab)`"
+          >
             <strong 
               :class="{ editable }"
+              :contenteditable="editable"
+              role="textbox"
+              :aria-label="`Edit title for publication ${index + 1}`"
+              :aria-readonly="!editable"
               @blur="updatePublication(index, 'title', $event.target.textContent)"
             >{{ publication.title }}</strong>
           </a>
           <p 
             :class="{ editable }"
+            :contenteditable="editable"
+            role="textbox"
+            aria-multiline="true"
+            :aria-label="`Edit description for publication ${index + 1}`"
+            :aria-readonly="!editable"
             @blur="updatePublication(index, 'description', $event.target.textContent)"
           >{{ publication.description }}</p>
         </li>
