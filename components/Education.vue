@@ -5,7 +5,7 @@
       <div class="title-row">
         <div>
           <div>
-            <span class="bold" 
+            <span class="bold"
               :class="{ editable }"
               :contenteditable="editable"
               role="textbox"
@@ -13,16 +13,16 @@
               :aria-readonly="!editable"
               @blur="updateEducation(index, 'institution', $event.target.textContent)"
             >{{ education.institution }}</span>
-            <span v-if="education.location && education.location.trim()"
+            <template v-if="education.location && education.location.trim()">, <span
               :class="{ editable }"
               :contenteditable="editable"
               role="textbox"
               :aria-label="`Edit location for education entry ${index + 1}`"
               :aria-readonly="!editable"
               @blur="updateEducation(index, 'location', $event.target.textContent)"
-            >, {{ education.location }}</span>
-          </div>          
-          <div 
+            >{{ education.location }}</span></template>
+          </div>
+          <div
             :class="{ editable }"
             :contenteditable="editable"
             role="textbox"
@@ -31,7 +31,7 @@
             @blur="updateEducation(index, 'degree', $event.target.textContent)"
           >{{ education.degree }}</div>
         </div>
-        <div class="bold" 
+        <div class="bold"
           :class="{ editable }"
           :contenteditable="editable"
           role="textbox"
@@ -44,51 +44,79 @@
         <li v-if="education.coursework && education.coursework.length > 0">
           <strong>Key Coursework</strong>
           <ul>
-            <li 
-              v-for="(course, courseIndex) in education.coursework" 
+            <li
+              v-for="(course, courseIndex) in education.coursework"
               :key="courseIndex"
               :class="{ editable }"
+              :contenteditable="editable"
+              role="textbox"
+              :aria-label="`Edit coursework item ${courseIndex + 1} for education entry ${index + 1}`"
+              :aria-readonly="!editable"
               @blur="updateCoursework(index, courseIndex, $event.target.textContent)"
             >{{ course }}</li>
           </ul>
         </li>
         <li v-if="education.finalProject">
-<strong>Final Year Project:</strong> 
-          <span 
+          <strong>Final Year Project:</strong>
+          <span
             :class="{ editable }"
+            :contenteditable="editable"
+            role="textbox"
+            :aria-label="`Edit final project title for education entry ${index + 1}`"
+            :aria-readonly="!editable"
             @blur="updateFinalProject(index, 'title', $event.target.textContent)"
           >{{ education.finalProject.title }}</span>
           <ul>
-            <li><strong>Objective:</strong> 
-              <span 
+            <li><strong>Objective:</strong>
+              <span
                 :class="{ editable }"
+                :contenteditable="editable"
+                role="textbox"
+                :aria-label="`Edit final project objective for education entry ${index + 1}`"
+                :aria-readonly="!editable"
                 @blur="updateFinalProject(index, 'objective', $event.target.textContent)"
               >{{ education.finalProject.objective }}</span>
             </li>
-            <li><strong>Key Topics:</strong> 
-              <span 
+            <li><strong>Key Topics:</strong>
+              <span
                 :class="{ editable }"
+                :contenteditable="editable"
+                role="textbox"
+                :aria-label="`Edit final project key topics for education entry ${index + 1}`"
+                :aria-readonly="!editable"
                 @blur="updateFinalProject(index, 'keyTopics', $event.target.textContent)"
               >{{ education.finalProject.keyTopics }}</span>
             </li>
-            <li><strong>Outcome:</strong> 
-              <span 
+            <li><strong>Outcome:</strong>
+              <span
                 :class="{ editable }"
+                :contenteditable="editable"
+                role="textbox"
+                :aria-label="`Edit final project outcome for education entry ${index + 1}`"
+                :aria-readonly="!editable"
                 @blur="updateFinalProject(index, 'outcome', $event.target.textContent)"
               >{{ education.finalProject.outcome }}</span>
             </li>
           </ul>
         </li>
         <li v-if="education.gpa">
-          <strong>Overall GPA:</strong> 
-          <span 
+          <strong>Overall GPA:</strong>
+          <span
             :class="{ editable }"
+            :contenteditable="editable"
+            role="textbox"
+            :aria-label="`Edit GPA for education entry ${index + 1}`"
+            :aria-readonly="!editable"
             @blur="updateEducation(index, 'gpa', $event.target.textContent)"
           >{{ education.gpa }}</span>
         </li>
-        <li 
+        <li
           v-if="education.description"
           :class="{ editable }"
+          :contenteditable="editable"
+          role="textbox"
+          :aria-label="`Edit description for education entry ${index + 1}`"
+          :aria-readonly="!editable"
           @blur="updateEducation(index, 'description', $event.target.textContent)"
         >{{ education.description }}</li>
       </ul>
@@ -178,14 +206,14 @@ li span.editable {
 }
 
 .editable:hover {
-  background-color: rgba(0, 123, 255, 0.05);
+  background-color: rgba(21, 101, 192, 0.06);
   border-radius: 2px;
 }
 
 .editable:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid #1565C0;
   border-radius: 2px;
-  background-color: rgba(0, 123, 255, 0.1);
+  background-color: rgba(21, 101, 192, 0.1);
 }
 
 @media print {

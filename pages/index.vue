@@ -29,8 +29,6 @@
       @update:personal="updatePersonal"
     />
     
-    <hr/>
-    
     <template v-for="section in reactiveResumeData.sectionOrder">
       <!-- Summary Section -->
       <Summary 
@@ -115,8 +113,6 @@
         @update:signature-data="updateSignature"
       />
       
-      <!-- HR separator -->
-      <hr v-if="reactiveResumeData.sections[section] && hasNextSection(section)" :key="`hr-${section}`"/>
     </template>
     
     <!-- Floating Toolbar -->
@@ -160,22 +156,6 @@ const wrapperMargin = computed(() => {
 })
 
 // Check if there's a next section after the current one
-const hasNextSection = (currentSection) => {
-  const sections = reactiveResumeData.value.sections
-  const sectionOrder = reactiveResumeData.value.sectionOrder
-  
-  const currentIndex = sectionOrder.indexOf(currentSection)
-  if (currentIndex === -1) return false
-  
-  // Check if any section after the current one is enabled
-  for (let i = currentIndex + 1; i < sectionOrder.length; i++) {
-    if (sections[sectionOrder[i]]) {
-      return true
-    }
-  }
-  return false
-}
-
 // Update functions for each section
 const updatePersonal = (newPersonal) => {
   reactiveResumeData.value.personal = newPersonal
@@ -264,116 +244,51 @@ useHead({
 </script>
 
 <style>
+  /* ===== PRINT ===== */
   @page {
     size: A4;
     margin: 0;
     padding: 15mm 10mm;
   }
-  @page :first {
-    padding-top: 10mm;
+  @page :first { padding-top: 10mm; }
+
+  /* ===== BASE ===== */
+  html {
+    font-size: 16px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
   }
 
   html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: Helvetica, Aril, sans-serif;
-    font-size: 12px;
-    line-height: 1.5;
+    color: #1C1B1F;
   }
 
   body {
     display: flex;
     justify-content: center;
     width: 100vw;
+    background: #FAFAFA;
   }
 
-  /* Material Design Theme Colors */
-  :root {
-    --md-sys-color-primary: #007bff;
-    --md-sys-color-on-primary: #ffffff;
-    --md-sys-color-primary-container: #e3f2fd;
-    --md-sys-color-on-primary-container: #001d36;
-    --md-sys-color-secondary: #28a745;
-    --md-sys-color-on-secondary: #ffffff;
-    --md-sys-color-secondary-container: #e8f5e8;
-    --md-sys-color-on-secondary-container: #002105;
-    --md-sys-color-error: #dc3545;
-    --md-sys-color-on-error: #ffffff;
-    --md-sys-color-surface: #ffffff;
-    --md-sys-color-on-surface: #1c1b1f;
-    --md-sys-color-surface-variant: #f8f9fa;
-    --md-sys-color-on-surface-variant: #49454f;
+  /* Scrollbar shift prevention */
+  :root { --scrollbar-width: calc(100vw - 100%); }
+  body.scroll-locked {
+    overflow: hidden;
+    padding-right: var(--scrollbar-width, 0px);
   }
 
+  /* ===== RESUME CANVAS ===== */
   .resume-wrapper {
     width: 794px;
     height: auto;
     padding: 75.6px;
-    background: white;
+    background: #FFFFFF;
     box-sizing: border-box;
     transition: margin-left 0.3s ease;
-  }
-
-  @media print {
-    .resume-wrapper {
-      border: none;
-      width: 210mm;
-      height: auto;
-      box-shadow: none;
-      page-break-inside: avoid;
-    }
-  }
-
-  .resume-section {
-    margin-bottom: 20px;
-  }
-
-  .resume-section h2 {
-    margin: 8px 0;
-    font-size: 18px;
-    font-weight: bold;
-  }
-
-  .resume-section ul {
-    margin: 0;
-    padding-left: 20px;
-  }
-
-  .resume-section li {
-    margin-bottom: 8px;
-  }
-
-  .resume-section p {
-    margin: 5px 0;
-  }
-
-  .hide {
-    display: none;
-  }
-
-  /* Editable styles */
-  .editable {
-    position: relative;
-  }
-
-  .editable:hover {
-    background-color: rgba(0, 123, 255, 0.05);
-    border-radius: 2px;
-  }
-
-  .editable:focus {
-    outline: 2px solid #007bff;
-    border-radius: 2px;
-    background-color: rgba(0, 123, 255, 0.1);
-  }
-
-  @media print {
-    .editable:hover,
-    .editable:focus {
-      background-color: transparent;
-      outline: none;
-    }
+    font-size: 0.75rem;
+    line-height: 1.6;
   }
 
   @media (max-width: 768px) {
@@ -384,35 +299,81 @@ useHead({
     }
   }
 
-  /* Global title-row spacing */
-  .title-row {
-    margin-bottom: 8px;
+  @media print {
+    .resume-wrapper {
+      width: 210mm;
+      height: auto;
+      border: none;
+      box-shadow: none;
+      page-break-inside: avoid;
+    }
   }
 
-  /* Parent of title-row spacing - target the v-for divs in resume sections */
+  /* ===== RESUME SECTIONS ===== */
+  .resume-section {
+    margin-bottom: 20px;
+  }
+
+  .resume-section h2 {
+    margin: 8px 0 6px;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1565C0;
+    border-bottom: 2px solid #1565C0;
+    padding-bottom: 4px;
+    letter-spacing: 0.01em;
+  }
+
+  .resume-section ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .resume-section li {
+    margin-bottom: 6px;
+  }
+
+  .resume-section p {
+    margin: 4px 0;
+  }
+
   .resume-section > div {
     margin-bottom: 16px;
   }
 
-  /* Remove margin from the last child to avoid extra spacing */
   .resume-section > div:last-child {
     margin-bottom: 0;
   }
 
-  /* Prevent page shift when scrollbar is hidden */
-  body.scroll-locked {
-    overflow: hidden;
-    padding-right: var(--scrollbar-width, 0px);
+  .title-row { margin-bottom: 6px; }
+
+  .hide { display: none; }
+
+  /* ===== EDITABLE ===== */
+  .editable {
+    position: relative;
+    min-width: 1em;
   }
 
-  /* Calculate scrollbar width on page load */
-  :root {
-    --scrollbar-width: calc(100vw - 100%);
+  .editable:hover {
+    background-color: rgba(21, 101, 192, 0.06);
+    border-radius: 4px;
   }
 
-  /* ===== ACCESSIBILITY STYLES ===== */
-  
-  /* Screen reader only content */
+  .editable:focus {
+    outline: 2px solid #1565C0;
+    border-radius: 4px;
+    background-color: rgba(21, 101, 192, 0.08);
+  }
+
+  @media print {
+    .editable:hover, .editable:focus {
+      background-color: transparent;
+      outline: none;
+    }
+  }
+
+  /* ===== ACCESSIBILITY ===== */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -425,17 +386,6 @@ useHead({
     border: 0;
   }
 
-  .sr-only-focusable:active,
-  .sr-only-focusable:focus {
-    position: static;
-    width: auto;
-    height: auto;
-    overflow: visible;
-    clip: auto;
-    white-space: normal;
-  }
-
-  /* Skip navigation links */
   .skip-link {
     position: fixed;
     top: -100px;
@@ -444,7 +394,7 @@ useHead({
     color: #ffffff;
     padding: 0.75rem 1.5rem;
     text-decoration: none;
-    border-radius: 0 0 0.25rem 0;
+    border-radius: 0 0 4px 0;
     z-index: 100000;
     font-weight: 600;
     font-size: 0.875rem;
@@ -459,87 +409,24 @@ useHead({
     outline-offset: 2px;
   }
 
-  /* Enhanced focus indicators (WCAG AAA: 3:1 contrast minimum) */
-  *:focus {
-    outline: 2px solid #0066cc;
-    outline-offset: 2px;
-  }
-
-  button:focus,
-  a:focus,
-  input:focus,
-  textarea:focus,
-  select:focus,
-  [contenteditable]:focus {
-    outline: 2px solid #0066cc;
-    outline-offset: 2px;
-  }
-
-  /* Focus visible for keyboard navigation */
-  *:focus:not(:focus-visible) {
-    outline: none;
-  }
-
   *:focus-visible {
-    outline: 2px solid #0066cc;
+    outline: 2px solid #1565C0;
     outline-offset: 2px;
   }
 
-  /* Minimum touch target size: 44x44px (WCAG AAA) */
-  /* Apply only to primary action buttons (not inline or nested buttons) */
-  .download-btn,
-  .action-btn,
-  .export-btn,
-  .import-btn,
-  .ai-import-btn,
-  .tailor-btn,
-  .cover-letter-btn,
-  .toggle-btn,
-  .footer-btn,
-  .btn {
-    min-height: 44px;
-    min-width: 44px;
-  }
+  *:focus:not(:focus-visible) { outline: none; }
 
-  /* Checkboxes remain their normal size */
-  input[type="checkbox"],
-  input[type="radio"] {
-    width: 16px;
-    height: 16px;
-  }
-
-  /* Exception: All inline elements keep natural sizing */
-  p a,
-  li a,
-  span a,
-  aside a,
-  header a,
-  .editable,
-  label,
-  .control-item,
-  .toolbar-btn,
-  .modal-close,
-  .info-btn,
-  .close-btn {
-    min-height: auto !important;
-    min-width: auto !important;
-  }
-
-  /* High contrast link styles (distinguishable without color) */
   a {
     text-decoration: underline;
     text-underline-offset: 0.125rem;
   }
 
-  a:hover {
-    text-decoration-thickness: 0.125rem;
-  }
+  a:hover { text-decoration-thickness: 2px; }
 
-  /* Reduced motion support (WCAG AAA) */
+  [aria-hidden="true"] { pointer-events: none; }
+
   @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
@@ -547,74 +434,19 @@ useHead({
     }
   }
 
-  /* High contrast mode support */
   @media (prefers-contrast: high) {
-    * {
-      border-color: currentColor !important;
-    }
-    
-    button,
-    a {
-      outline: 2px solid currentColor;
-    }
-  }
-
-  /* Ensure readable text at 200% zoom */
-  html {
-    font-size: 16px; /* Base font size */
+    * { border-color: currentColor !important; }
+    button, a { outline: 2px solid currentColor; }
   }
 
   @media (max-width: 768px) {
-    html {
-      font-size: 14px;
-    }
+    html { font-size: 14px; }
   }
 
-  /* Convert static px to rem for scalability */
-  .resume-wrapper {
-    font-size: 0.75rem; /* 12px at base 16px */
-    line-height: 1.5;
-  }
-
-  .resume-section h2 {
-    font-size: 1.125rem; /* 18px at base 16px */
-  }
-
-  /* Improved color contrast for WCAG AAA (7:1 ratio) */
-  body {
-    color: #1a1a1a; /* Dark text on white: 16.5:1 ratio */
-  }
-
-  /* Error states with high contrast */
-  .error,
-  [aria-invalid="true"] {
-    color: #b71c1c; /* High contrast red */
-    border-color: #b71c1c;
-  }
-
-  /* Success states with high contrast */
-  .success {
-    color: #2e7d32; /* High contrast green */
-  }
-
-  /* Warning states with high contrast */
-  .warning {
-    color: #e65100; /* High contrast orange */
-  }
-
-  /* Info states with high contrast */
-  .info {
-    color: #01579b; /* High contrast blue */
-  }
-
-  /* Improve interactive element contrast */
-  button {
-    border: 1px solid currentColor;
-  }
-
-  /* Ensure icons don't interfere with text contrast */
-  [aria-hidden="true"] {
-    pointer-events: none;
-  }
+  /* ===== STATE COLORS ===== */
+  .error, [aria-invalid="true"] { color: #C62828; border-color: #C62828; }
+  .success { color: #2E7D32; }
+  .warning { color: #E65100; }
+  .info { color: #01579B; }
 </style>
 

@@ -100,8 +100,13 @@ const updateSignature = (field, value) => {
 .signature {
   display: flex;
   justify-content: flex-end;
-  padding: 0 32px;
+  padding: 20px 32px 0;
   margin-top: 20px;
+  border-top: 1px solid #ccc;
+}
+
+.hide {
+  display: none;
 }
 
 .signature > div {
@@ -109,10 +114,6 @@ const updateSignature = (field, value) => {
   flex-direction: column;
   align-items: center;
   padding: 0 32px;
-}
-
-.hide {
-  display: none;
 }
 
 /* Editable styles */
@@ -123,14 +124,14 @@ const updateSignature = (field, value) => {
 }
 
 .editable:hover {
-  background-color: rgba(0, 123, 255, 0.05);
+  background-color: rgba(21, 101, 192, 0.06);
   border-radius: 2px;
 }
 
 .editable:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid #1565C0;
   border-radius: 2px;
-  background-color: rgba(0, 123, 255, 0.1);
+  background-color: rgba(21, 101, 192, 0.1);
 }
 
 @media print {

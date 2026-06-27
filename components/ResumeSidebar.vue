@@ -1,65 +1,114 @@
 <template>
   <div>
-    <aside 
+    <v-navigation-drawer
       id="sidebar-nav"
-      class="resume-sidebar" 
-      :class="{ collapsed: isCollapsed }"
+      permanent
+      :rail="isCollapsed"
+      :rail-width="50"
+      :width="280"
+      color="surface-variant"
+      border="end"
       role="complementary"
       aria-label="Resume controls and settings"
     >
-      <SidebarHeader 
-        :is-collapsed="isCollapsed" 
-        @toggle-sidebar="toggleSidebar" 
-      />
-      
+      <!-- Header: toggle button + brand -->
+      <div class="sidebar-header-bar" :class="{ 'collapsed': isCollapsed }">
+        <v-btn
+          icon
+          size="small"
+          variant="text"
+          :aria-label="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+          :aria-expanded="String(!isCollapsed)"
+          @click="toggleSidebar"
+        >
+          <v-icon>{{ isCollapsed ? 'mdi-chevron-right' : 'mdi-chevron-left' }}</v-icon>
+        </v-btn>
+        <span v-if="!isCollapsed" class="sidebar-brand">Resumix</span>
+      </div>
+
+      <v-divider />
+
+      <!-- Content: only shown when expanded -->
       <nav v-if="!isCollapsed" class="sidebar-content" aria-label="Resume editing options">
-        <!-- Header Elements Control -->
-        <HeaderElementsControl
-          :header-elements="headerElements"
-          :personal="personal"
-          :is-open="headerSectionOpen"
-          @toggle-element="toggleHeaderElement"
-          @update-headshot="updateHeadshotUrl"
-          @toggle-section="toggleHeaderSection"
-        />
+        <v-expansion-panels v-model="openPanels" multiple variant="accordion" class="pa-2">
+          <!-- Header Elements -->
+          <v-expansion-panel value="header" class="mb-1">
+            <v-expansion-panel-title class="panel-title" min-height="44">
+              <v-icon size="18" class="mr-2">mdi-account</v-icon>
+              <span class="text-body-2 font-weight-medium">Header Elements</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <HeaderElementsControl
+                :header-elements="headerElements"
+                :personal="personal"
+                @toggle-element="toggleHeaderElement"
+                @update-headshot="updateHeadshotUrl"
+              />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
 
-        <!-- Resume Sections Control -->
-        <ResumeSectionsControl
-          :sections="sections"
-          :section-order="sectionOrder"
-          :is-open="sectionsSectionOpen"
-          @toggle-section="toggleSection"
-          @update-order="updateSectionOrder"
-          @toggle-section-panel="toggleSectionsSection"
-        />
+          <!-- Resume Sections -->
+          <v-expansion-panel value="sections" class="mb-1">
+            <v-expansion-panel-title class="panel-title" min-height="44">
+              <v-icon size="18" class="mr-2">mdi-view-list</v-icon>
+              <span class="text-body-2 font-weight-medium">Resume Sections</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <ResumeSectionsControl
+                :sections="sections"
+                :section-order="sectionOrder"
+                @toggle-section="toggleSection"
+                @update-order="updateSectionOrder"
+              />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
 
-        <!-- Import & Export Section -->
-        <ImportExportSection
-          :is-open="importExportSectionOpen"
-          @export="handleExport"
-          @show-import="showImportModal = true"
-          @show-ai-import="showAiImportModal = true"
-          @show-info="showInfoModal = true"
-          @toggle-section="toggleImportExportSection"
-        />
+          <!-- Import & Export -->
+          <v-expansion-panel value="importExport" class="mb-1">
+            <v-expansion-panel-title class="panel-title" min-height="44">
+              <v-icon size="18" class="mr-2">mdi-swap-horizontal</v-icon>
+              <span class="text-body-2 font-weight-medium">Import &amp; Export</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <ImportExportSection
+                @export="handleExport"
+                @show-import="showImportModal = true"
+                @show-ai-import="showAiImportModal = true"
+                @show-info="showInfoModal = true"
+              />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
 
-        <!-- Job Optimizer Section -->
-        <JobOptimizerSection
-          :is-open="jobOptimizerSectionOpen"
-          @show-tailor-modal="showTailorModal = true"
-          @show-optimizer-info="showOptimizerInfoModal = true"
-          @toggle-section="toggleJobOptimizerSection"
-        />
+          <!-- Job Optimizer -->
+          <v-expansion-panel value="optimizer" class="mb-1">
+            <v-expansion-panel-title class="panel-title" min-height="44">
+              <v-icon size="18" class="mr-2">mdi-briefcase-search</v-icon>
+              <span class="text-body-2 font-weight-medium">Job Optimizer</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <JobOptimizerSection
+                @show-tailor-modal="showTailorModal = true"
+                @show-optimizer-info="showOptimizerInfoModal = true"
+              />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
 
-        <!-- Cover Letter Section -->
-        <CoverLetterSection
-          :is-open="coverLetterSectionOpen"
-          @show-cover-letter-modal="showCoverLetterModal = true"
-          @show-cover-letter-info="showCoverLetterInfoModal = true"
-          @toggle-section="toggleCoverLetterSection"
-        />
+          <!-- Cover Letter -->
+          <v-expansion-panel value="coverLetter">
+            <v-expansion-panel-title class="panel-title" min-height="44">
+              <v-icon size="18" class="mr-2">mdi-file-document-edit</v-icon>
+              <span class="text-body-2 font-weight-medium">Cover Letter</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <CoverLetterSection
+                @show-cover-letter-modal="showCoverLetterModal = true"
+                @show-cover-letter-info="showCoverLetterInfoModal = true"
+              />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </nav>
-    </aside>
+    </v-navigation-drawer>
 
     <!-- Modals -->
     <AiImportModal
@@ -68,37 +117,31 @@
       @close="showAiImportModal = false"
       @import-success="handleImportSuccess"
     />
-
     <ImportModal
       :show="showImportModal"
       :resume-data="resumeData"
       @close="showImportModal = false"
       @import-success="handleImportSuccess"
     />
-
     <InfoModal
       :show="showInfoModal"
       @close="showInfoModal = false"
     />
-
     <TailorResumeModal
       :show="showTailorModal"
       :resume-data="resumeData"
       @close="showTailorModal = false"
       @apply-optimizations="handleApplyOptimizations"
     />
-
     <OptimizerInfoModal
       :show="showOptimizerInfoModal"
       @close="showOptimizerInfoModal = false"
     />
-
     <CoverLetterModal
       :show="showCoverLetterModal"
       :resume-data="resumeData"
       @close="showCoverLetterModal = false"
     />
-
     <CoverLetterInfoModal
       :show="showCoverLetterInfoModal"
       @close="showCoverLetterInfoModal = false"
@@ -107,8 +150,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onUnmounted } from 'vue'
-import SidebarHeader from './sidebar/SidebarHeader.vue'
+import { ref } from 'vue'
 import HeaderElementsControl from './sidebar/HeaderElementsControl.vue'
 import ResumeSectionsControl from './sidebar/ResumeSectionsControl.vue'
 import ImportExportSection from './sidebar/ImportExportSection.vue'
@@ -121,58 +163,31 @@ import TailorResumeModal from './modals/TailorResumeModal.vue'
 import OptimizerInfoModal from './modals/OptimizerInfoModal.vue'
 import CoverLetterModal from './modals/CoverLetterModal.vue'
 import CoverLetterInfoModal from './modals/CoverLetterInfoModal.vue'
-import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 import { useResumeImport } from '~/composables/useResumeImport'
 
 const props = defineProps({
-  headerElements: {
-    type: Object,
-    required: true
-  },
-  sections: {
-    type: Object,
-    required: true
-  },
-  personal: {
-    type: Object,
-    required: true
-  },
-  sectionOrder: {
-    type: Array,
-    required: true
-  },
-  resumeData: {
-    type: Object,
-    required: true
-  }
+  headerElements: { type: Object, required: true },
+  sections: { type: Object, required: true },
+  personal: { type: Object, required: true },
+  sectionOrder: { type: Array, required: true },
+  resumeData: { type: Object, required: true },
 })
 
 const emit = defineEmits([
-  'update:headerElements', 
-  'update:sections', 
-  'update:collapsed', 
-  'update:personal', 
-  'update:sectionOrder', 
-  'update:resumeData'
+  'update:headerElements',
+  'update:sections',
+  'update:collapsed',
+  'update:personal',
+  'update:sectionOrder',
+  'update:resumeData',
 ])
 
-// Body scroll lock for modals
-const { lockScroll, unlockScroll } = useBodyScrollLock()
-
-// Import/export composable
 const { exportData } = useResumeImport()
 
-// Sidebar state
 const isCollapsed = ref(false)
+const openPanels = ref(['importExport'])
 
-// Section open/close state
-const headerSectionOpen = ref(false)
-const sectionsSectionOpen = ref(false)
-const importExportSectionOpen = ref(true)
-const jobOptimizerSectionOpen = ref(false)
-const coverLetterSectionOpen = ref(false)
-
-// Modal visibility state
+// Modal visibility
 const showImportModal = ref(false)
 const showAiImportModal = ref(false)
 const showInfoModal = ref(false)
@@ -181,63 +196,29 @@ const showOptimizerInfoModal = ref(false)
 const showCoverLetterModal = ref(false)
 const showCoverLetterInfoModal = ref(false)
 
-// Sidebar toggle
 const toggleSidebar = () => {
   isCollapsed.value = !isCollapsed.value
   emit('update:collapsed', isCollapsed.value)
 }
 
-// Section toggle functions
-const toggleHeaderSection = () => {
-  headerSectionOpen.value = !headerSectionOpen.value
-}
-
-const toggleSectionsSection = () => {
-  sectionsSectionOpen.value = !sectionsSectionOpen.value
-}
-
-const toggleImportExportSection = () => {
-  importExportSectionOpen.value = !importExportSectionOpen.value
-}
-
-const toggleJobOptimizerSection = () => {
-  jobOptimizerSectionOpen.value = !jobOptimizerSectionOpen.value
-}
-
-const toggleCoverLetterSection = () => {
-  coverLetterSectionOpen.value = !coverLetterSectionOpen.value
-}
-
-// Header elements handlers
 const toggleHeaderElement = (element, visible) => {
-  const updatedHeaderElements = { ...props.headerElements, [element]: visible }
-  emit('update:headerElements', updatedHeaderElements)
+  emit('update:headerElements', { ...props.headerElements, [element]: visible })
 }
 
-const updateHeadshotUrl = (event) => {
-  const newPersonal = { ...props.personal, headshot: event.target.value }
-  emit('update:personal', newPersonal)
+const updateHeadshotUrl = (value) => {
+  emit('update:personal', { ...props.personal, headshot: value })
 }
 
-// Section handlers
 const toggleSection = (section, visible) => {
-  const updatedSections = { ...props.sections, [section]: visible }
-  emit('update:sections', updatedSections)
+  emit('update:sections', { ...props.sections, [section]: visible })
 }
 
 const updateSectionOrder = (newOrder) => {
   emit('update:sectionOrder', newOrder)
 }
 
-// Import/Export handlers
 const handleExport = () => {
-  exportData(
-    props.resumeData,
-    props.headerElements,
-    props.sections,
-    props.sectionOrder,
-    props.personal
-  )
+  exportData(props.resumeData, props.headerElements, props.sections, props.sectionOrder, props.personal)
 }
 
 const handleImportSuccess = (mergedData) => {
@@ -250,89 +231,67 @@ const handleApplyOptimizations = (updatedData) => {
   emit('update:resumeData', updatedData)
 }
 
-// Watch for modal states to lock/unlock scroll
-watch(showImportModal, (newValue) => {
-  if (newValue) lockScroll()
-  else unlockScroll()
-})
-
-watch(showAiImportModal, (newValue) => {
-  if (newValue) lockScroll()
-  else unlockScroll()
-})
-
-watch(showInfoModal, (newValue) => {
-  if (newValue) lockScroll()
-  else unlockScroll()
-})
-
-watch(showTailorModal, (newValue) => {
-  if (newValue) lockScroll()
-  else unlockScroll()
-})
-
-watch(showOptimizerInfoModal, (newValue) => {
-  if (newValue) lockScroll()
-  else unlockScroll()
-})
-
-watch(showCoverLetterModal, (newValue) => {
-  if (newValue) lockScroll()
-  else unlockScroll()
-})
-
-watch(showCoverLetterInfoModal, (newValue) => {
-  if (newValue) lockScroll()
-  else unlockScroll()
-})
-
-// Clean up scroll lock when component unmounts
-onUnmounted(() => {
-  unlockScroll()
-})
 </script>
 
 <style scoped>
-.resume-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  background: #fafafa;
-  border-right: 1px solid #e1e5e9;
-  box-shadow: none;
-  z-index: 1000;
-  transition: width 0.3s ease;
-  width: 280px;
-  overflow-y: auto;
-  overflow-x: hidden; /* Prevent toggle button from overflowing */
+.sidebar-header-bar {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  min-height: 52px;
 }
 
-.resume-sidebar.collapsed {
-  width: 50px;
+.sidebar-header-bar.collapsed {
+  justify-content: center;
+  padding: 8px;
+}
+
+.sidebar-brand {
+  font-size: 15px;
+  font-weight: 700;
+  color: rgb(var(--v-theme-on-surface));
+  margin-left: 8px;
+  flex: 1;
 }
 
 .sidebar-content {
-  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.panel-title {
+  font-size: 13px !important;
+}
+
+:deep(.v-expansion-panel-text__wrapper) {
+  padding: 8px 12px 12px;
+}
+
+:deep(.v-expansion-panel-title) {
+  padding: 0 12px;
+}
+
+:deep(.v-expansion-panel) {
+  border-radius: 8px !important;
+}
+
+:deep(.v-expansion-panel--active > .v-expansion-panel-title) {
+  min-height: 44px;
 }
 
 @media print {
-  .resume-sidebar {
-    display: none;
+  :deep(.v-navigation-drawer) {
+    display: none !important;
   }
 }
 
 @media (max-width: 768px) {
-  .resume-sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    border-right: none;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  
-  .resume-sidebar.collapsed {
-    width: 100%;
+  :deep(.v-navigation-drawer) {
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgb(var(--v-theme-outline)) !important;
   }
 }
 </style>

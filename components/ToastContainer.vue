@@ -1,57 +1,61 @@
 <template>
-  <div 
-    class="toast-container" 
-    role="region" 
+  <div
+    class="toast-container"
+    role="region"
     aria-label="Notifications"
     aria-live="polite"
     aria-atomic="false"
   >
     <TransitionGroup name="toast" tag="div">
-      <div
+      <v-card
         v-for="toast in toasts"
         :key="toast.id"
-        :class="['toast', `toast-${toast.type}`]"
+        class="toast-card mb-3"
+        :color="cardColor(toast.type)"
+        rounded="sm"
+        elevation="3"
         role="alert"
         :aria-live="toast.type === 'error' || toast.type === 'warning' ? 'assertive' : 'polite'"
         aria-atomic="true"
       >
-        <div class="toast-content">
-          <div class="toast-icon" aria-hidden="true">
-            <Icon 
-              :icon="getIcon(toast.type)" 
-              style="font-size: 16px;" 
-            />
-          </div>
-          <div class="toast-message">{{ toast.message }}</div>
-          <button
+        <div class="toast-inner">
+          <v-icon size="18" class="toast-icon" aria-hidden="true">{{ getIcon(toast.type) }}</v-icon>
+          <span class="toast-message text-body-2">{{ toast.message }}</span>
+          <v-btn
             v-if="toast.autoClose === 0"
-            class="toast-close"
-            @click="removeToast(toast.id)"
+            icon
+            size="x-small"
+            variant="text"
             aria-label="Close notification"
+            class="ml-1"
+            @click="removeToast(toast.id)"
           >
-            <Icon icon="material-symbols:close" style="font-size: 14px;" aria-hidden="true" />
-          </button>
+            <v-icon size="14">mdi-close</v-icon>
+          </v-btn>
         </div>
-      </div>
+      </v-card>
     </TransitionGroup>
   </div>
 </template>
 
 <script setup>
 import { useToast } from '~/composables/useToast'
-import { Icon } from '@iconify/vue'
 
 const { toasts, removeToast } = useToast()
 
-const getIcon = (type) => {
-  const icons = {
-    success: 'material-symbols:check-circle',
-    error: 'material-symbols:error',
-    warning: 'material-symbols:warning',
-    info: 'material-symbols:info'
-  }
-  return icons[type] || icons.info
-}
+const cardColor = (type) => ({
+  success: 'secondary',
+  error: 'error',
+  warning: '#E65100',
+  info: 'primary',
+}[type] || 'primary')
+
+const getIcon = (type) => ({
+  success: 'mdi-check-circle',
+  error: 'mdi-alert-circle',
+  warning: 'mdi-alert',
+  info: 'mdi-information',
+}[type] || 'mdi-information')
 </script>
 
 <style scoped>
@@ -64,131 +68,38 @@ const getIcon = (type) => {
   max-width: 400px;
 }
 
-.toast {
+.toast-card {
   pointer-events: auto;
-  margin-bottom: 12px;
-  background: #1f2937;
-  border: 1px solid #374151;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  max-width: 100%;
 }
 
-.toast-content {
-  display: flex;
-  align-items: flex-start;
-  padding: 12px 16px;
-  gap: 12px;
-}
-
-.toast-icon {
-  color: #9ca3af;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.toast-success .toast-icon {
-  color: #10b981;
-}
-
-.toast-error .toast-icon {
-  color: #ef4444;
-}
-
-.toast-warning .toast-icon {
-  color: #f59e0b;
-}
-
-.toast-info .toast-icon {
-  color: #3b82f6;
-}
-
-.toast-message {
-  color: #f9fafb;
-  font-size: 14px;
-  line-height: 1.4;
-  flex: 1;
-  word-wrap: break-word;
-}
-
-.toast-close {
-  background: none;
-  border: none;
-  color: #d1d5db;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 8px;
-  flex-shrink: 0;
+.toast-inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  padding: 10px 14px;
+  gap: 10px;
+  color: #fff;
 }
 
-.toast-close:hover {
-  background: #374151;
-  color: #ffffff;
+.toast-icon { flex-shrink: 0; }
+
+.toast-message {
+  flex: 1;
+  word-wrap: break-word;
+  color: #fff;
 }
 
-.toast-close:focus {
-  outline: 2px solid #60a5fa;
-  outline-offset: 1px;
-}
+/* Transition */
+.toast-enter-active { transition: all 0.25s ease; }
+.toast-leave-active { transition: all 0.2s ease; }
+.toast-enter-from { opacity: 0; transform: translateX(60px); }
+.toast-leave-to   { opacity: 0; transform: translateX(60px); }
+.toast-move       { transition: transform 0.25s ease; }
 
-/* Toast animations */
-.toast-enter-active {
-  transition: all 0.3s ease;
-}
-
-.toast-leave-active {
-  transition: all 0.2s ease;
-}
-
-.toast-enter-from {
-  opacity: 0;
-  transform: translateX(100%);
-}
-
-.toast-leave-to {
-  opacity: 0;
-  transform: translateX(100%);
-}
-
-.toast-move {
-  transition: transform 0.3s ease;
-}
-
-/* Responsive design */
 @media (max-width: 480px) {
-  .toast-container {
-    left: 20px;
-    right: 20px;
-    bottom: 20px;
-    max-width: none;
-  }
-  
-  .toast {
-    margin-bottom: 8px;
-  }
-  
-  .toast-content {
-    padding: 10px 12px;
-    gap: 10px;
-  }
-  
-  .toast-message {
-    font-size: 13px;
-  }
+  .toast-container { left: 16px; right: 16px; max-width: none; }
 }
 
-/* Print styles */
 @media print {
-  .toast-container {
-    display: none;
-  }
+  .toast-container { display: none; }
 }
 </style>

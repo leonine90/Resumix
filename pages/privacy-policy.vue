@@ -1,10 +1,18 @@
 <template>
-  <div class="legal-page">
+  <div>
+    <v-app-bar color="primary" density="compact" elevation="2">
+      <v-btn icon variant="text" style="color:#fff" aria-label="Back to Resume Builder" href="/">
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+      <v-app-bar-title class="text-subtitle-1 font-weight-semibold" style="color:#fff">Privacy Policy</v-app-bar-title>
+    </v-app-bar>
+
+    <v-main>
+    <div class="legal-page">
     <div class="legal-container">
       <div class="legal-header">
         <h1>Privacy Policy</h1>
         <p class="last-updated">Last Updated: October 12, 2025</p>
-        <a href="/" class="back-link">← Back to Resume Builder</a>
       </div>
 
       <div class="legal-content">
@@ -227,12 +235,16 @@
       </div>
 
       <div class="legal-footer">
-        <a href="/" class="back-link">← Back to Resume Builder</a>
+        <v-btn variant="text" color="primary" prepend-icon="mdi-arrow-left" href="/">
+          Back to Resume Builder
+        </v-btn>
         <p class="footer-note">
           By using Resumix, you acknowledge that you have read and understood this Privacy Policy.
         </p>
       </div>
     </div>
+    </div>
+    </v-main>
   </div>
 </template>
 

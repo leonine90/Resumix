@@ -13,14 +13,14 @@
               :aria-readonly="!editable"
               @blur="updateExperience(index, 'company', $event.target.textContent)"
             >{{ job.company }}</span>
-            <span v-if="job.location && job.location.trim()"
+            <template v-if="job.location && job.location.trim()">, <span
               :class="{ editable }"
               :contenteditable="editable"
               role="textbox"
               :aria-label="`Edit location for position ${index + 1}`"
               :aria-readonly="!editable"
               @blur="updateExperience(index, 'location', $event.target.textContent)"
-            >, {{ job.location }}</span>
+            >{{ job.location }}</span></template>
           </div>
           <div 
             :class="{ editable }"
@@ -133,14 +133,14 @@ ul li {
 }
 
 .editable:hover {
-  background-color: rgba(0, 123, 255, 0.05);
+  background-color: rgba(21, 101, 192, 0.06);
   border-radius: 2px;
 }
 
 .editable:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid #1565C0;
   border-radius: 2px;
-  background-color: rgba(0, 123, 255, 0.1);
+  background-color: rgba(21, 101, 192, 0.1);
 }
 
 @media print {

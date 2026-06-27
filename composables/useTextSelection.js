@@ -21,14 +21,14 @@ export function useTextSelection() {
     // Get the bounding rect of the clicked element
     const rect = editableElement.getBoundingClientRect()
     
-    // Store click position info
+    // Store viewport-relative coords so they match position:fixed in the toolbar
     const clickRectData = {
-      top: rect.top + window.scrollY,
-      left: rect.left + window.scrollX,
+      top: rect.top,
+      left: rect.left,
       width: rect.width,
       height: rect.height,
-      bottom: rect.bottom + window.scrollY,
-      right: rect.right + window.scrollX
+      bottom: rect.bottom,
+      right: rect.right
     }
     
     isSelectionActive.value = true

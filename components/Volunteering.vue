@@ -13,14 +13,14 @@
               :aria-readonly="!editable"
               @blur="updateVolunteer(index, 'organization', $event.target.textContent)"
             >{{ volunteer.organization }}</span>
-            <span v-if="volunteer.location && volunteer.location.trim()"
+            <template v-if="volunteer.location && volunteer.location.trim()">, <span
               :class="{ editable }"
               :contenteditable="editable"
               role="textbox"
               :aria-label="`Edit location for volunteer entry ${index + 1}`"
               :aria-readonly="!editable"
               @blur="updateVolunteer(index, 'location', $event.target.textContent)"
-            >, {{ volunteer.location }}</span>
+            >{{ volunteer.location }}</span></template>
           </div>
           <div 
             :class="{ editable }"
@@ -115,14 +115,14 @@ ul li {
 }
 
 .editable:hover {
-  background-color: rgba(0, 123, 255, 0.05);
+  background-color: rgba(21, 101, 192, 0.06);
   border-radius: 2px;
 }
 
 .editable:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid #1565C0;
   border-radius: 2px;
-  background-color: rgba(0, 123, 255, 0.1);
+  background-color: rgba(21, 101, 192, 0.1);
 }
 
 @media print {

@@ -1,7 +1,7 @@
 <template>
   <div class="results-section fullscreen-results">
     <h2 class="results-title">
-      <Icon icon="material-symbols:compare-arrows" style="font-size: 24px; margin-right: 12px;" />
+      <v-icon size="24" class="mr-3" color="secondary">mdi-compare-horizontal</v-icon>
       Resume Optimization Results
     </h2>
     
@@ -9,18 +9,19 @@
     <div v-if="analysisData" class="analysis-panel-compact">
       <div class="analysis-panel-header" @click="$emit('toggle-analysis')">
         <div class="analysis-summary">
-          <Icon icon="material-symbols:analytics" style="font-size: 20px; margin-right: 8px;" />
+          <v-icon size="20" class="mr-2">mdi-chart-line</v-icon>
           <span class="analysis-label">Compatibility Analysis:</span>
-          <div class="score-badge" :style="getCircleStyle(analysisData.metrics.overallCompatibility.score)">
-            <span class="score-badge-text">{{ analysisData.metrics.overallCompatibility.score }}%</span>
-          </div>
+          <v-progress-circular
+            :model-value="analysisData.metrics.overallCompatibility.score"
+            :size="48"
+            :width="5"
+            :color="scoreColor(analysisData.metrics.overallCompatibility.score)"
+          >
+            <span style="font-size:11px;font-weight:700;color:#1f2937">{{ analysisData.metrics.overallCompatibility.score }}%</span>
+          </v-progress-circular>
           <span class="compatibility-level">{{ analysisData.summary.compatibilityLevel }}</span>
         </div>
-        <Icon 
-          :icon="showAnalysisInResults ? 'material-symbols:expand-less' : 'material-symbols:expand-more'" 
-          class="toggle-icon"
-          style="font-size: 24px;"
-        />
+        <v-icon size="24" class="toggle-icon">{{ showAnalysisInResults ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
       </div>
       
       <div v-if="showAnalysisInResults" class="analysis-panel-content">
@@ -28,9 +29,14 @@
           <div v-for="metric in ['skillsMatch', 'experienceRelevance', 'keywordAlignment']" :key="metric" class="metric-compact">
             <div class="metric-compact-header">
               <span class="metric-name">{{ formatMetricName(metric) }}</span>
-              <div class="score-badge-small" :style="getCircleStyle(analysisData.metrics[metric].score)">
-                <span class="score-badge-text-small">{{ analysisData.metrics[metric].score }}%</span>
-              </div>
+              <v-progress-circular
+                :model-value="analysisData.metrics[metric].score"
+                :size="40"
+                :width="4"
+                :color="scoreColor(analysisData.metrics[metric].score)"
+              >
+                <span style="font-size:10px;font-weight:700;color:#1f2937">{{ analysisData.metrics[metric].score }}%</span>
+              </v-progress-circular>
             </div>
             <div class="metric-lists">
               <div class="strengths-compact" v-if="analysisData.metrics[metric].strengths?.length">
@@ -70,7 +76,7 @@
       <!-- Summary Section -->
       <div class="section-comparison">
         <h3 class="section-title">
-          <Icon icon="material-symbols:summarize" style="font-size: 20px; margin-right: 8px;" />
+          <v-icon size="20" class="mr-2">mdi-text-box-outline</v-icon>
           Professional Summary
         </h3>
         <div class="before-after-grid">
@@ -94,7 +100,7 @@
       <!-- Experience Section -->
       <div class="section-comparison">
         <h3 class="section-title">
-          <Icon icon="material-symbols:work" style="font-size: 20px; margin-right: 8px;" />
+          <v-icon size="20" class="mr-2">mdi-briefcase-outline</v-icon>
           Experience (Achievements Only)
         </h3>
         <div class="experience-comparison">
@@ -129,22 +135,27 @@
                         rows="2"
                       ></textarea>
                       <div class="achievement-actions">
-                        <button 
-                          @click="handleToggleRefinement(index, achievementIndex)"
-                          class="ai-refine-btn"
-                          :class="{ 'active': refiningAchievement.expIndex === index && refiningAchievement.achievementIndex === achievementIndex }"
+                        <v-btn
+                          icon
+                          size="x-small"
+                          :variant="refiningAchievement.expIndex === index && refiningAchievement.achievementIndex === achievementIndex ? 'elevated' : 'outlined'"
+                          :color="refiningAchievement.expIndex === index && refiningAchievement.achievementIndex === achievementIndex ? 'primary' : 'default'"
                           title="Refine with AI"
+                          @click="handleToggleRefinement(index, achievementIndex)"
                         >
-                          <Icon icon="material-symbols:auto-awesome" style="font-size: 16px;" />
-                        </button>
-                        <button 
+                          <v-icon size="16">mdi-auto-fix</v-icon>
+                        </v-btn>
+                        <v-btn
                           v-if="hasUndoHistory(index, achievementIndex)"
-                          @click="handleUndo(index, achievementIndex)"
-                          class="undo-btn"
+                          icon
+                          size="x-small"
+                          variant="outlined"
+                          color="warning"
                           title="Undo AI refinement"
+                          @click="handleUndo(index, achievementIndex)"
                         >
-                          <Icon icon="material-symbols:undo" style="font-size: 16px;" />
-                        </button>
+                          <v-icon size="16">mdi-undo</v-icon>
+                        </v-btn>
                       </div>
                     </div>
                     
@@ -193,15 +204,17 @@
                           @keyup.enter="handleRefine(index, achievementIndex)"
                           :disabled="refiningAchievement.isRefining"
                         />
-                        <button 
-                          @click="handleRefine(index, achievementIndex)"
-                          class="refine-submit-btn"
+                        <v-btn
+                          color="primary"
+                          variant="elevated"
+                          size="small"
+                          :loading="refiningAchievement.isRefining"
                           :disabled="refiningAchievement.isRefining || !refiningAchievement.prompt.trim()"
+                          prepend-icon="mdi-auto-fix"
+                          @click="handleRefine(index, achievementIndex)"
                         >
-                          <Icon v-if="!refiningAchievement.isRefining" icon="material-symbols:auto-awesome" style="font-size: 16px; margin-right: 4px;" />
-                          <Icon v-else icon="svg-spinners:ring-resize" style="font-size: 16px; margin-right: 4px;" />
-                          {{ refiningAchievement.isRefining ? 'Refining...' : 'Refine' }}
-                        </button>
+                          Refine
+                        </v-btn>
                       </div>
                     </div>
                   </div>
@@ -215,7 +228,7 @@
       <!-- Skills Section -->
       <div class="section-comparison">
         <h3 class="section-title">
-          <Icon icon="material-symbols:psychology" style="font-size: 20px; margin-right: 8px;" />
+          <v-icon size="20" class="mr-2">mdi-brain</v-icon>
           Skills (Reordered & Enhanced)
         </h3>
         <div class="before-after-grid">
@@ -236,29 +249,32 @@
         </div>
       </div>
 
-      <div class="preservation-notice">
-        <Icon icon="material-symbols:shield" style="font-size: 20px; margin-right: 8px;" />
+      <v-alert type="info" variant="tonal" density="compact" icon="mdi-shield-check" class="mt-4">
         <strong>All other sections preserved:</strong> Personal information, education, publications, volunteering, and all structural data remain unchanged.
-      </div>
+      </v-alert>
     </div>
 
     <div class="fullscreen-actions">
       <div class="action-buttons">
-        <button @click="$emit('reset')" class="action-btn cancel-action">
-          <Icon icon="material-symbols:refresh" style="font-size: 16px; margin-right: 8px;" />
+        <v-btn variant="outlined" prepend-icon="mdi-refresh" @click="$emit('reset')">
           Start Over
-        </button>
-        <button @click="$emit('apply')" class="action-btn apply-action" :disabled="isApplying">
-          <Icon icon="material-symbols:check" style="font-size: 16px; margin-right: 8px;" />
-          {{ isApplying ? 'Converting to Resume...' : (hasUserEdits ? 'Apply Your Edits & Convert to Resume' : 'Apply & Convert to Resume') }}
-        </button>
+        </v-btn>
+        <v-btn
+          color="secondary"
+          variant="elevated"
+          prepend-icon="mdi-check"
+          :loading="isApplying"
+          :disabled="isApplying"
+          @click="$emit('apply')"
+        >
+          {{ isApplying ? 'Converting to Resume…' : (hasUserEdits ? 'Apply Your Edits & Convert to Resume' : 'Apply & Convert to Resume') }}
+        </v-btn>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { Icon } from '@iconify/vue'
 import { useJobOptimizer } from '~/composables/useJobOptimizer'
 import { useAchievementRefinement } from '~/composables/useAchievementRefinement'
 
@@ -275,7 +291,13 @@ const props = defineProps({
 
 const emit = defineEmits(['toggle-analysis', 'mark-edited', 'update-skills', 'reset', 'apply'])
 
-const { getCircleStyle, autoResizeTextarea } = useJobOptimizer()
+const { autoResizeTextarea } = useJobOptimizer()
+
+const scoreColor = (score) => {
+  if (score >= 80) return 'success'
+  if (score >= 60) return 'warning'
+  return 'error'
+}
 const { 
   refiningAchievement, 
   toggleAiRefinement, 
@@ -385,39 +407,6 @@ const handleUndo = (expIndex, achievementIndex) => {
   font-size: 15px;
 }
 
-.score-badge {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  min-height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  aspect-ratio: 1/1;
-}
-
-.score-badge::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: white;
-}
-
-.score-badge-text {
-  position: relative;
-  font-size: 13px;
-  font-weight: 700;
-  color: #1f2937;
-  z-index: 1;
-}
 
 .compatibility-level {
   font-weight: 600;
@@ -461,39 +450,6 @@ const handleUndo = (expIndex, achievementIndex) => {
   color: #2c3e50;
 }
 
-.score-badge-small {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  min-height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  aspect-ratio: 1/1;
-}
-
-.score-badge-small::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: white;
-}
-
-.score-badge-text-small {
-  position: relative;
-  font-size: 11px;
-  font-weight: 700;
-  color: #1f2937;
-  z-index: 1;
-}
 
 .metric-lists {
   display: grid;
@@ -769,43 +725,7 @@ const handleUndo = (expIndex, achievementIndex) => {
   flex-shrink: 0;
 }
 
-.ai-refine-btn,
-.undo-btn {
-  width: 36px;
-  height: 36px;
-  border: 1px solid #e0e0e0;
-  background: white;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  color: #666;
-}
 
-.ai-refine-btn:hover,
-.undo-btn:hover {
-  background: #f5f5f5;
-  border-color: #007bff;
-  color: #007bff;
-}
-
-.ai-refine-btn.active {
-  background: #007bff;
-  border-color: #007bff;
-  color: white;
-}
-
-.undo-btn {
-  border-color: #ffc107;
-}
-
-.undo-btn:hover {
-  background: #fff8e1;
-  border-color: #ffa000;
-  color: #f57c00;
-}
 
 .ai-refine-prompt {
   margin-top: 12px;
@@ -822,26 +742,6 @@ const handleUndo = (expIndex, achievementIndex) => {
   margin-bottom: 12px;
 }
 
-.preset-btn {
-  padding: 6px 12px;
-  border: 1px solid #dee2e6;
-  background: white;
-  border-radius: 4px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.preset-btn:hover:not(:disabled) {
-  background: #e7f3ff;
-  border-color: #007bff;
-  color: #007bff;
-}
-
-.preset-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
 
 .custom-prompt {
   display: flex;
@@ -859,43 +759,8 @@ const handleUndo = (expIndex, achievementIndex) => {
 
 .prompt-input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
-
-.refine-submit-btn {
-  padding: 8px 16px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  transition: all 0.2s;
-}
-
-.refine-submit-btn:hover:not(:disabled) {
-  background: #0056b3;
-}
-
-.refine-submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.preservation-notice {
-  display: flex;
-  align-items: center;
-  padding: 20px 24px;
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 12px;
-  color: #1e40af;
-  font-size: 14px;
-  margin-top: 24px;
+  border-color: #1565C0;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
 }
 
 .fullscreen-actions {
@@ -912,42 +777,6 @@ const handleUndo = (expIndex, achievementIndex) => {
   justify-content: flex-end;
 }
 
-.action-btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.cancel-action {
-  background: #475569; /* 7.6:1 contrast - AAA compliant */
-  color: white;
-}
-
-.cancel-action:hover:not(:disabled) {
-  background: #334155; /* Darker on hover */
-}
-
-.apply-action {
-  background: #047857; /* 7.1:1 contrast - AAA compliant */
-  color: white;
-}
-
-.apply-action:hover:not(:disabled) {
-  background: #065f46; /* Darker on hover */
-}
-
-.action-btn:disabled {
-  background: #cbd5e1;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
 
 @media (max-width: 1200px) {
   .analysis-metrics-compact {

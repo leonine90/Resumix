@@ -3,8 +3,8 @@ import { SpeedInsights } from '@vercel/speed-insights/nuxt'
 </script>
 
 <template>
-  <div>
+  <v-app>
     <NuxtPage />
     <SpeedInsights />
-  </div>
+  </v-app>
 </template>

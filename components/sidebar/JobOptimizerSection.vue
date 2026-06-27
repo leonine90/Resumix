@@ -1,205 +1,91 @@
 <template>
-  <div class="control-section">
-    <button 
-      class="section-header" 
-      @click="$emit('toggle-section')"
-      :aria-expanded="isOpen ? 'true' : 'false'"
-      aria-controls="job-optimizer-content"
-      aria-label="Toggle job optimizer section"
-    >
-      <Icon class="section-icon" icon="material-symbols:work" style="font-size: 16px;" aria-hidden="true" />
-      <span class="section-title">Job Optimizer</span>
-      <Icon 
-        class="toggle-icon" 
-        :icon="isOpen ? 'material-symbols:expand-more' : 'material-symbols:chevron-right'" 
-        style="font-size: 12px;" 
-        aria-hidden="true"
-      />
-    </button>
-    <div 
-      v-if="isOpen" 
-      id="job-optimizer-content"
-      class="section-content"
-      role="region"
-      aria-label="Job optimizer controls"
-    >
-      <div class="section-header-with-info">
-        <h4 class="section-subtitle">AI Resume Tailoring</h4>
-        <button 
-          class="info-btn" 
-          @click="$emit('show-optimizer-info')" 
-          aria-label="Learn about AI resume optimization"
-        >
-          <Icon icon="material-symbols:info-outline" style="font-size: 16px;" aria-hidden="true" />
-        </button>
-      </div>
-      <button 
-        class="tailor-btn" 
-        @click="$emit('show-tailor-modal')"
+  <div class="section-body">
+    <div class="action-row mb-2">
+      <v-btn
+        block
+        color="secondary"
+        variant="tonal"
+        prepend-icon="mdi-brain"
+        size="small"
         :disabled="!hasAIConsent"
-        :aria-disabled="!hasAIConsent ? 'true' : 'false'"
-        :aria-label="hasAIConsent ? 'Tailor resume for job posting' : 'Tailor resume for job posting (AI features must be enabled)'"
-        aria-describedby="tailor-help-text"
+        :aria-label="hasAIConsent ? 'Tailor resume for job posting' : 'Tailor resume (AI features must be enabled)'"
+        @click="$emit('show-tailor-modal')"
       >
-        <Icon icon="material-symbols:psychology" style="font-size: 14px;" aria-hidden="true" />
         Tailor for Job Post
-      </button>
-      <small 
-        id="tailor-help-text" 
-        class="tailor-help" 
-        v-if="!hasAIConsent" 
-        style="color: #ef4444;"
-        role="alert"
+      </v-btn>
+      <v-btn
+        icon
+        size="x-small"
+        variant="text"
+        class="info-btn"
+        aria-label="Learn about AI resume optimization"
+        @click="$emit('show-optimizer-info')"
       >
-        ⚠️ AI features are disabled. Enable them in the footer to use this feature.
-      </small>
-      <small id="tailor-help-text" class="tailor-help" v-else>Optimize your resume content to match specific job requirements using AI</small>
+        <v-icon size="15">mdi-information-outline</v-icon>
+      </v-btn>
     </div>
+
+    <div v-if="!hasAIConsent" class="ai-notice" role="alert">
+      <v-icon size="13">mdi-lightning-bolt-outline</v-icon>
+      Enable AI features in the footer
+    </div>
+    <p v-else class="section-hint">Optimize your resume to match specific job requirements</p>
   </div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue'
-import { Icon } from '@iconify/vue'
 import { useConsent } from '~/composables/useConsent'
 
-defineProps({
-  isOpen: {
-    type: Boolean,
-    required: true
-  }
-})
-
-defineEmits(['show-tailor-modal', 'show-optimizer-info', 'toggle-section'])
+defineEmits(['show-tailor-modal', 'show-optimizer-info'])
 
 const { aiConsentEnabled: hasAIConsent, initializeConsent } = useConsent()
-
-onMounted(() => {
-  initializeConsent()
-})
+onMounted(() => initializeConsent())
 </script>
 
 <style scoped>
-.control-section {
-  margin-bottom: 12px;
+.section-body {
+  padding-bottom: 4px;
 }
 
-.section-header {
+.action-row {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  width: 100%;
-  text-align: left;
+  gap: 4px;
 }
 
-.section-header:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.section-icon {
-  font-size: 18px;
-  margin-right: 12px;
-  display: flex;
-  align-items: center;
-  color: #475569; /* 7.6:1 contrast - AAA compliant */
-}
-
-.section-title {
+.action-row .v-btn:first-child {
   flex: 1;
-  font-weight: 600;
-  color: #1e293b;
-  font-size: 13px;
-}
-
-.toggle-icon {
-  color: #475569; /* 7.6:1 contrast - AAA compliant */
-  transition: transform 0.2s ease;
-}
-
-.section-content {
-  padding: 12px 16px;
-  background: #fafbfc;
-  border: 1px solid #e2e8f0;
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  margin-top: -8px;
-}
-
-.section-header-with-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.section-subtitle {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0;
 }
 
 .info-btn {
-  background: none;
-  border: none;
-  color: #475569; /* 7.6:1 contrast - AAA compliant */
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.15s;
 }
 
 .info-btn:hover {
-  background: #f1f5f9;
-  color: #1e293b; /* Higher contrast on hover */
+  opacity: 1;
 }
 
-.tailor-btn {
-  width: 100%;
-  padding: 10px 14px;
-  margin-bottom: 8px;
-  border: none;
-  border-radius: 6px;
-  background: #6d28d9; /* 7.1:1 contrast - AAA compliant */
-  color: white;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.ai-notice {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.tailor-btn:hover:not(:disabled) {
-  background: #5b21b6; /* Darker on hover */
-}
-
-.tailor-btn:disabled {
-  background: #94a3b8;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.tailor-help {
-  display: block;
-  font-size: 11px;
-  color: #475569; /* 7.6:1 contrast - AAA compliant */
+  gap: 4px;
   margin-top: 8px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: rgb(var(--v-theme-on-surface-variant));
+  background: rgb(var(--v-theme-outline-variant));
+  opacity: 0.8;
+}
+
+.section-hint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: rgb(var(--v-theme-on-surface-variant));
+  opacity: 0.7;
   line-height: 1.4;
 }
 </style>
-

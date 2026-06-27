@@ -1,458 +1,178 @@
 <template>
-  <div class="match-analysis">
-    <div class="analysis-header">
-      <h3 class="analysis-title">
-        <Icon icon="material-symbols:analytics" style="font-size: 20px; margin-right: 8px;" />
+  <div>
+    <div class="text-center mb-6">
+      <div class="text-h6 font-weight-bold d-flex align-center justify-center mb-1">
+        <v-icon class="mr-2" color="secondary">mdi-chart-line</v-icon>
         Resume-Job Compatibility Analysis
-      </h3>
-      <p class="analysis-subtitle">
-        {{ analysisData.summary.compatibilityLevel }} compatibility level - {{ analysisData.summary.recommendation }}
+      </div>
+      <p class="text-body-2 text-medium-emphasis font-italic">
+        {{ analysisData.summary.compatibilityLevel }} compatibility level — {{ analysisData.summary.recommendation }}
       </p>
     </div>
 
-    <div class="metrics-grid">
-      <!-- Overall section moved to top -->
-      <div class="metric-card overall">
-        <div class="metric-header">
-          <h4>Overall Compatibility</h4>
-          <div class="score-circle overall-score" :style="getCircleStyle(analysisData.metrics.overallCompatibility.score)">
-            <span class="score-text">{{ analysisData.metrics.overallCompatibility.score }}%</span>
+    <!-- Overall card -->
+    <v-card variant="outlined" class="mb-4" border="s-lg" color="secondary">
+      <v-card-text>
+        <div class="d-flex align-center justify-space-between mb-4">
+          <div>
+            <div class="text-subtitle-1 font-weight-bold mb-1">Overall Compatibility</div>
+            <div class="text-body-2 text-medium-emphasis">
+              Overall assessment of how well your resume matches the job requirements based on skills, experience, and keyword alignment.
+            </div>
           </div>
+          <v-progress-circular
+            :model-value="analysisData.metrics.overallCompatibility.score"
+            :size="80"
+            :width="8"
+            :color="scoreColor(analysisData.metrics.overallCompatibility.score)"
+            class="ml-4 flex-shrink-0"
+          >
+            <span class="text-caption font-weight-bold">{{ analysisData.metrics.overallCompatibility.score }}%</span>
+          </v-progress-circular>
         </div>
-        <p class="metric-explanation">Overall assessment of how well your resume matches the job requirements based on skills, experience, and keyword alignment.</p>
-        <div class="metric-details">
-          <div class="strengths">
-            <h5>Key Strengths:</h5>
-            <ul>
-              <li v-for="strength in analysisData.summary.keyStrengths" :key="strength">{{ strength }}</li>
+        <v-row dense>
+          <v-col cols="12" sm="6">
+            <div class="text-caption font-weight-semibold text-success mb-1">Key Strengths</div>
+            <ul class="pl-4">
+              <li v-for="s in analysisData.summary.keyStrengths" :key="s" class="text-body-2 text-success">{{ s }}</li>
             </ul>
-          </div>
-          <div class="gaps">
-            <h5>Key Gaps:</h5>
-            <ul>
-              <li v-for="gap in analysisData.summary.keyGaps" :key="gap">{{ gap }}</li>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <div class="text-caption font-weight-semibold text-error mb-1">Key Gaps</div>
+            <ul class="pl-4">
+              <li v-for="g in analysisData.summary.keyGaps" :key="g" class="text-body-2 text-error">{{ g }}</li>
             </ul>
-          </div>
-        </div>
-      </div>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
 
-      <!-- Collapsible: Skills Match -->
-      <div class="metric-card collapsible">
-        <div class="metric-header clickable" @click="toggleMetric('skillsMatch')">
-          <div class="metric-title">
-            <Icon :icon="expanded.skillsMatch ? 'material-symbols:expand-more' : 'material-symbols:chevron-right'" class="toggle-icon" />
-            <h4>Skills Match</h4>
+    <!-- Collapsible metric panels -->
+    <v-expansion-panels v-model="openPanels" multiple variant="accordion" class="mb-4">
+      <v-expansion-panel
+        v-for="metric in metricPanels"
+        :key="metric.key"
+        :value="metric.key"
+      >
+        <v-expansion-panel-title>
+          <div class="d-flex align-center justify-space-between w-100 pr-2">
+            <span class="text-subtitle-2 font-weight-bold">{{ metric.label }}</span>
+            <v-progress-circular
+              :model-value="analysisData.metrics[metric.key].score"
+              :size="48"
+              :width="5"
+              :color="scoreColor(analysisData.metrics[metric.key].score)"
+            >
+              <span class="text-caption font-weight-bold">{{ analysisData.metrics[metric.key].score }}%</span>
+            </v-progress-circular>
           </div>
-          <div class="score-circle" :style="getCircleStyle(analysisData.metrics.skillsMatch.score)">
-            <span class="score-text">{{ analysisData.metrics.skillsMatch.score }}%</span>
-          </div>
-        </div>
-        <div v-if="expanded.skillsMatch" class="collapsible-content">
-          <p class="metric-explanation">How well your technical and soft skills align with what the job requires.</p>
-          <div class="metric-details">
-            <div class="strengths">
-              <h5>Strengths:</h5>
-              <ul>
-                <li v-for="strength in analysisData.metrics.skillsMatch.strengths" :key="strength">{{ strength }}</li>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <p class="text-body-2 text-medium-emphasis mb-3">{{ metric.explanation }}</p>
+          <v-row dense>
+            <v-col cols="12" sm="6">
+              <div class="text-caption font-weight-semibold text-success mb-1">Strengths</div>
+              <ul class="pl-4">
+                <li v-for="s in analysisData.metrics[metric.key].strengths" :key="s" class="text-body-2 text-success">{{ s }}</li>
               </ul>
-            </div>
-            <div class="gaps">
-              <h5>Missing Skills:</h5>
-              <ul>
-                <li v-for="skill in analysisData.metrics.skillsMatch.missingSkills" :key="skill">{{ skill }}</li>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <div class="text-caption font-weight-semibold text-error mb-1">{{ metric.gapLabel }}</div>
+              <ul class="pl-4">
+                <li v-for="g in analysisData.metrics[metric.key].missingSkills" :key="g" class="text-body-2 text-error">{{ g }}</li>
               </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Collapsible: Experience Relevance -->
-      <div class="metric-card collapsible">
-        <div class="metric-header clickable" @click="toggleMetric('experienceRelevance')">
-          <div class="metric-title">
-            <Icon :icon="expanded.experienceRelevance ? 'material-symbols:expand-more' : 'material-symbols:chevron-right'" class="toggle-icon" />
-            <h4>Experience Relevance</h4>
-          </div>
-          <div class="score-circle" :style="getCircleStyle(analysisData.metrics.experienceRelevance.score)">
-            <span class="score-text">{{ analysisData.metrics.experienceRelevance.score }}%</span>
-          </div>
-        </div>
-        <div v-if="expanded.experienceRelevance" class="collapsible-content">
-          <p class="metric-explanation">How relevant your work experience is to the job requirements and industry.</p>
-          <div class="metric-details">
-            <div class="strengths">
-              <h5>Strengths:</h5>
-              <ul>
-                <li v-for="strength in analysisData.metrics.experienceRelevance.strengths" :key="strength">{{ strength }}</li>
-              </ul>
-            </div>
-            <div class="gaps">
-              <h5>Areas to Improve:</h5>
-              <ul>
-                <li v-for="skill in analysisData.metrics.experienceRelevance.missingSkills" :key="skill">{{ skill }}</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Collapsible: Keyword Alignment -->
-      <div class="metric-card collapsible">
-        <div class="metric-header clickable" @click="toggleMetric('keywordAlignment')">
-          <div class="metric-title">
-            <Icon :icon="expanded.keywordAlignment ? 'material-symbols:expand-more' : 'material-symbols:chevron-right'" class="toggle-icon" />
-            <h4>Keyword Alignment</h4>
-          </div>
-          <div class="score-circle" :style="getCircleStyle(analysisData.metrics.keywordAlignment.score)">
-            <span class="score-text">{{ analysisData.metrics.keywordAlignment.score }}%</span>
-          </div>
-        </div>
-        <div v-if="expanded.keywordAlignment" class="collapsible-content">
-          <p class="metric-explanation">How well your resume uses the same terminology and keywords as the job posting.</p>
-          <div class="metric-details">
-            <div class="strengths">
-              <h5>Strengths:</h5>
-              <ul>
-                <li v-for="strength in analysisData.metrics.keywordAlignment.strengths" :key="strength">{{ strength }}</li>
-              </ul>
-            </div>
-            <div class="gaps">
-              <h5>Missing Keywords:</h5>
-              <ul>
-                <li v-for="skill in analysisData.metrics.keywordAlignment.missingSkills" :key="skill">{{ skill }}</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </v-col>
+          </v-row>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
 
     <!-- Low compatibility warning -->
-    <div v-if="analysisData.metrics.overallCompatibility.score < 65" class="low-compatibility-warning">
-      <Icon icon="material-symbols:warning" style="font-size: 20px; margin-right: 8px;" />
-      <div class="warning-content">
-        <h4>Low Compatibility Detected</h4>
-        <p>Your resume has a {{ analysisData.metrics.overallCompatibility.score }}% compatibility with this job. 
-           Optimization may not be effective with such low alignment. Consider revising your resume to better match 
-           the job requirements before optimizing.</p>
+    <v-alert
+      v-if="analysisData.metrics.overallCompatibility.score < 65"
+      type="warning"
+      variant="tonal"
+      density="comfortable"
+      icon="mdi-alert"
+      class="mb-4"
+    >
+      <div class="text-subtitle-2 font-weight-bold mb-1">Low Compatibility Detected</div>
+      <div class="text-body-2">
+        Your resume has a {{ analysisData.metrics.overallCompatibility.score }}% compatibility with this job.
+        Optimization may not be effective with such low alignment. Consider revising your resume to better match
+        the job requirements before optimizing.
       </div>
-    </div>
+    </v-alert>
 
-    <div class="analysis-actions">
-      <button 
-        @click="$emit('cancel')" 
+    <div class="d-flex justify-center gap-3">
+      <v-btn
+        variant="text"
         :disabled="isOptimizing"
-        class="cancel-btn"
+        prepend-icon="mdi-close"
+        @click="$emit('cancel')"
       >
-        <Icon icon="material-symbols:close" style="font-size: 16px; margin-right: 8px;" />
         Cancel
-      </button>
-      
-      <!-- Show different button based on compatibility score -->
-      <button 
+      </v-btn>
+      <v-btn
         v-if="analysisData.metrics.overallCompatibility.score >= 65"
-        @click="$emit('proceed')" 
+        color="secondary"
+        variant="elevated"
+        :loading="isOptimizing"
         :disabled="isOptimizing"
-        class="proceed-btn"
-        :class="{ 'optimizing': isOptimizing }"
+        prepend-icon="mdi-brain"
+        @click="$emit('proceed')"
       >
-        <Icon 
-          :icon="isOptimizing ? 'material-symbols:hourglass-top' : 'material-symbols:psychology'" 
-          style="font-size: 16px; margin-right: 8px;" 
-        />
-        {{ isOptimizing ? 'Optimizing...' : 'Proceed with Optimization' }}
-      </button>
-      
-      <button 
+        {{ isOptimizing ? 'Optimizing…' : 'Proceed with Optimization' }}
+      </v-btn>
+      <v-btn
         v-else
-        @click="$emit('revise')" 
-        class="revise-btn"
+        color="error"
+        variant="elevated"
+        prepend-icon="mdi-file-edit"
+        @click="$emit('revise')"
       >
-        <Icon icon="material-symbols:edit-document" style="font-size: 16px; margin-right: 8px;" />
-        Revise Resume & Try Again
-      </button>
+        Revise Resume &amp; Try Again
+      </v-btn>
     </div>
   </div>
 </template>
 
 <script setup>
-import { Icon } from '@iconify/vue'
 import { ref } from 'vue'
 
-const props = defineProps({
-  analysisData: {
-    type: Object,
-    required: true
-  },
-  isOptimizing: {
-    type: Boolean,
-    default: false
-  }
+defineProps({
+  analysisData: { type: Object, required: true },
+  isOptimizing: { type: Boolean, default: false },
 })
 
 defineEmits(['proceed', 'cancel', 'revise'])
 
-// Collapsible state
-const expanded = ref({
-  skillsMatch: false,
-  experienceRelevance: false,
-  keywordAlignment: false
-})
+const openPanels = ref([])
 
-const toggleMetric = (metric) => {
-  const areAllExpanded = Object.values(expanded.value).every(isExpanded => isExpanded)
-  const areAllCollapsed = Object.values(expanded.value).every(isExpanded => !isExpanded)
-  
-  if (areAllCollapsed) {
-    // If all are collapsed, expand all
-    Object.keys(expanded.value).forEach(key => {
-      expanded.value[key] = true
-    })
-  } else {
-    // If any are expanded (or all are expanded), collapse all
-    Object.keys(expanded.value).forEach(key => {
-      expanded.value[key] = false
-    })
-  }
-}
+const metricPanels = [
+  {
+    key: 'skillsMatch',
+    label: 'Skills Match',
+    explanation: 'How well your technical and soft skills align with what the job requires.',
+    gapLabel: 'Missing Skills',
+  },
+  {
+    key: 'experienceRelevance',
+    label: 'Experience Relevance',
+    explanation: 'How relevant your work experience is to the job requirements and industry.',
+    gapLabel: 'Areas to Improve',
+  },
+  {
+    key: 'keywordAlignment',
+    label: 'Keyword Alignment',
+    explanation: 'How well your resume uses the same terminology and keywords as the job posting.',
+    gapLabel: 'Missing Keywords',
+  },
+]
 
-const getCircleStyle = (score) => {
-  const percentage = Math.max(0, Math.min(100, Number(score) || 0)) / 100
-  let color
-  if (percentage >= 0.8) color = '#16a34a' // green-600
-  else if (percentage >= 0.6) color = '#f59e0b' // amber-500
-  else color = '#dc2626' // red-600
-
-  const deg = `${percentage * 360}deg`
-  return {
-    '--deg': deg,
-    background: `conic-gradient(${color} ${deg}, #e9ecef 0deg)`
-  }
+const scoreColor = (score) => {
+  if (score >= 80) return 'success'
+  if (score >= 60) return 'warning'
+  return 'error'
 }
 </script>
-
-<style scoped>
-.match-analysis {
-  padding: 24px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  margin-bottom: 24px;
-}
-
-.analysis-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
-
-.analysis-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0 0 8px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.analysis-subtitle {
-  font-size: 16px;
-  color: #6c757d;
-  margin: 0;
-  font-style: italic;
-}
-
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
-}
-
-.metric-card {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e9ecef;
-}
-
-.metric-card.overall {
-  grid-column: 1 / -1;
-  background: #ffffff;
-  border-left: 4px solid #764ba2;
-}
-
-.metric-card.collapsible .metric-header {
-  margin-bottom: 0;
-}
-
-.metric-card.collapsible .collapsible-content {
-  margin-top: 16px;
-}
-
-.metric-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.metric-header.clickable {
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  border-radius: 8px;
-  padding: 8px;
-  margin: -8px;
-}
-
-.metric-header.clickable:hover {
-  background-color: #f8f9fa;
-}
-
-.metric-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.toggle-icon {
-  font-size: 20px;
-  color: #6c757d;
-  transition: transform 0.2s ease;
-}
-
-.metric-header h4 {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0;
-  color: #2c3e50;
-}
-
-.score-circle {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.score-circle::before {
-  content: '';
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: white;
-}
-
-.score-text {
-  position: relative;
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
-  z-index: 1;
-}
-
-.metric-explanation {
-  font-size: 14px;
-  color: #6c757d;
-  margin-bottom: 16px;
-  line-height: 1.5;
-}
-
-.metric-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.strengths h5,
-.gaps h5 {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  color: #2c3e50;
-}
-
-.strengths h5 { color: #28a745; }
-.gaps h5 { color: #dc3545; }
-
-.strengths ul,
-.gaps ul {
-  margin: 0;
-  padding-left: 16px;
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-.strengths li { color: #28a745; }
-.gaps li { color: #dc3545; }
-
-.analysis-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.proceed-btn,
-.cancel-btn,
-.revise-btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: all 0.2s ease;
-}
-
-.proceed-btn { background: #28a745; color: white; }
-.proceed-btn:hover:not(:disabled) { background: #218838; transform: translateY(-1px); }
-.proceed-btn.optimizing { background: #f59e0b; }
-.proceed-btn:disabled { background: #cbd5e1; color: #9ca3af; cursor: not-allowed; }
-
-.cancel-btn { background: #6c757d; color: white; }
-.cancel-btn:hover:not(:disabled) { background: #5a6268; transform: translateY(-1px); }
-.cancel-btn:disabled { background: #cbd5e1; color: #9ca3af; cursor: not-allowed; }
-
-.revise-btn { background: #dc3545; color: white; }
-.revise-btn:hover { background: #c82333; transform: translateY(-1px); }
-
-.low-compatibility-warning {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
-  border-left: 4px solid #f39c12;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 24px 0;
-  color: #856404;
-}
-
-.warning-content h4 {
-  margin: 0 0 8px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #856404;
-}
-
-.warning-content p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #856404;
-}
-
-@media (max-width: 768px) {
-  .metrics-grid { grid-template-columns: 1fr; }
-  .metric-details { grid-template-columns: 1fr; }
-  .analysis-actions { flex-direction: column; }
-}
-</style>

@@ -1,19 +1,21 @@
 <template>
   <div class="pdf-downloader" role="region" aria-label="PDF download">
-    <button 
-      class="download-btn" 
-      @click="downloadPDF" 
+    <v-btn
+      color="primary"
+      variant="elevated"
+      :loading="isGenerating"
       :disabled="isGenerating"
-      :aria-busy="isGenerating ? 'true' : 'false'"
       aria-label="Download resume as PDF"
+      prepend-icon="mdi-file-pdf-box"
+      @click="downloadPDF"
     >
-      <Icon icon="material-symbols:picture-as-pdf" style="font-size: 16px;" aria-hidden="true" />
-      <span>{{ isGenerating ? 'Generating PDF...' : 'Download PDF' }}</span>
-    </button>
-    <div 
-      v-if="statusMessage" 
-      role="status" 
-      aria-live="polite" 
+      {{ isGenerating ? 'Generating…' : 'Download PDF' }}
+    </v-btn>
+
+    <div
+      v-if="statusMessage"
+      role="status"
+      aria-live="polite"
       class="sr-only"
     >
       {{ statusMessage }}
@@ -23,105 +25,61 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Icon } from '@iconify/vue'
 
 const isGenerating = ref(false)
 const statusMessage = ref('')
 
-// Function to extract all CSS from the page
 const extractCSS = () => {
   let css = ''
-  
-  // Get all stylesheets
-  const stylesheets = Array.from(document.styleSheets)
-  
-  for (const stylesheet of stylesheets) {
+  for (const stylesheet of Array.from(document.styleSheets)) {
     try {
-      // Try to access CSS rules (might fail for cross-origin stylesheets)
       const rules = Array.from(stylesheet.cssRules || stylesheet.rules || [])
-      
-      for (const rule of rules) {
-        css += rule.cssText + '\n'
-      }
-    } catch (e) {
-      // Skip stylesheets we can't access (CORS)
-      console.warn('Could not access stylesheet:', e)
+      for (const rule of rules) css += rule.cssText + '\n'
+    } catch {
+      // skip cross-origin
     }
   }
-  
-  // Also get inline styles
-  const styleElements = document.querySelectorAll('style')
-  styleElements.forEach(style => {
-    css += style.textContent + '\n'
-  })
-  
+  document.querySelectorAll('style').forEach(s => { css += s.textContent + '\n' })
   return css
 }
 
 const downloadPDF = async () => {
   if (isGenerating.value) return
-  
   isGenerating.value = true
-  statusMessage.value = 'Generating PDF, please wait...'
-  
+  statusMessage.value = 'Generating PDF, please wait…'
+
   try {
-    // Get the resume wrapper content
     const resumeWrapper = document.querySelector('.resume-wrapper')
-    if (!resumeWrapper) {
-      throw new Error('Resume content not found')
-    }
-    
-    // Clone the resume wrapper to extract HTML
+    if (!resumeWrapper) throw new Error('Resume content not found')
+
     const clone = resumeWrapper.cloneNode(true)
-    
-    // Remove elements that shouldn't be in the PDF
-    const elementsToRemove = clone.querySelectorAll(
-      '.pdf-downloader, .resume-sidebar, .floating-toolbar, .app-footer'
-    )
-    elementsToRemove.forEach(el => el.remove())
-    
-    // Get the HTML content
-    const html = clone.outerHTML
-    
-    // Extract all CSS from the page
-    const css = extractCSS()
-    
-    // Send request to server to generate PDF
+    clone.querySelectorAll('.pdf-downloader, .resume-sidebar, .floating-toolbar, .app-footer')
+        .forEach(el => el.remove())
+
     const response = await fetch('/api/generate-pdf', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ html, css })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ html: clone.outerHTML, css: extractCSS() }),
     })
-    
+
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || 'Failed to generate PDF')
+      const err = await response.json()
+      throw new Error(err.message || 'Failed to generate PDF')
     }
-    
-    // Get the PDF blob
+
     const blob = await response.blob()
-    
-    // Create a download link and trigger download
     const url = window.URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'resume.pdf'
+    const link = Object.assign(document.createElement('a'), { href: url, download: 'resume.pdf' })
     document.body.appendChild(link)
     link.click()
-    
-    // Clean up
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
-    
+
     statusMessage.value = 'PDF downloaded successfully'
     setTimeout(() => { statusMessage.value = '' }, 3000)
-    
   } catch (error) {
     console.error('Error generating PDF:', error)
     statusMessage.value = 'Failed to generate PDF. Please try again.'
-    alert('Failed to generate PDF. Please try again.')
     setTimeout(() => { statusMessage.value = '' }, 5000)
   } finally {
     isGenerating.value = false
@@ -134,46 +92,10 @@ const downloadPDF = async () => {
   position: fixed;
   top: 20px;
   right: 20px;
-  background: white;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 200px;
-}
-
-.download-btn {
-  padding: 8px 12px;
-  background: #b71c1c; /* Darker red for 7:1 contrast - AAA compliant */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.download-btn:hover:not(:disabled) {
-  background: #9a0007; /* Even darker on hover */
-}
-
-.download-btn:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-  opacity: 0.8;
 }
 
 @media print {
-  .pdf-downloader {
-    display: none !important;
-  }
+  .pdf-downloader { display: none !important; }
 }
 </style>
