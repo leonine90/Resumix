@@ -1,28 +1,17 @@
 <template>
   <div class="section-body">
-    <div class="action-row mb-2">
-      <v-btn
-        block
-        color="primary"
-        variant="tonal"
-        prepend-icon="mdi-download"
-        size="small"
-        aria-label="Export resume as JSON file"
-        @click="$emit('export')"
-      >
-        Export as JSON
-      </v-btn>
-      <v-btn
-        icon
-        size="x-small"
-        variant="text"
-        class="info-btn"
-        aria-label="Learn about import and export options"
-        @click="$emit('show-info')"
-      >
-        <v-icon size="15">mdi-information-outline</v-icon>
-      </v-btn>
-    </div>
+    <v-btn
+      block
+      color="primary"
+      variant="tonal"
+      prepend-icon="mdi-download"
+      size="small"
+      class="mb-2"
+      aria-label="Export resume as JSON file"
+      @click="$emit('export')"
+    >
+      Export as JSON
+    </v-btn>
 
     <v-btn
       block
@@ -41,7 +30,19 @@
       <v-icon size="13">mdi-lightning-bolt-outline</v-icon>
       Enable AI features in the footer
     </div>
-    <p v-else class="section-hint">Export your data or import a resume with AI</p>
+    <div v-else class="section-hint-row">
+      <p class="section-hint">Export your data or import a resume with AI</p>
+      <v-btn
+        icon
+        size="x-small"
+        variant="text"
+        class="info-btn"
+        aria-label="Learn about import and export options"
+        @click="$emit('show-info')"
+      >
+        <v-icon size="15">mdi-information-outline</v-icon>
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -60,14 +61,16 @@ onMounted(() => initializeConsent())
   padding-bottom: 4px;
 }
 
-.action-row {
+.section-hint-row {
   display: flex;
   align-items: center;
-  gap: 4px;
+  margin-top: 8px;
+  gap: 2px;
 }
 
-.action-row .v-btn:first-child {
+.section-hint-row .section-hint {
   flex: 1;
+  margin-top: 0;
 }
 
 .info-btn {

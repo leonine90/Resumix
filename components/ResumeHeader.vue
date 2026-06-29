@@ -179,6 +179,7 @@ aside > div {
 aside > div span,
 aside > div a {
   font-weight: normal;
+  margin-left: 4px;
 }
 
 /* Editable styles */

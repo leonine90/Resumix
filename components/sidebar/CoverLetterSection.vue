@@ -1,18 +1,25 @@
 <template>
   <div class="section-body">
-    <div class="action-row mb-2">
-      <v-btn
-        block
-        color="secondary"
-        variant="tonal"
-        prepend-icon="mdi-file-document-edit"
-        size="small"
-        :disabled="!hasAIConsent"
-        :aria-label="hasAIConsent ? 'Generate cover letter with AI' : 'Generate cover letter (AI features must be enabled)'"
-        @click="$emit('show-cover-letter-modal')"
-      >
-        Generate Cover Letter
-      </v-btn>
+    <v-btn
+      block
+      color="secondary"
+      variant="tonal"
+      prepend-icon="mdi-file-document-edit"
+      class="mb-2"
+      size="small"
+      :disabled="!hasAIConsent"
+      :aria-label="hasAIConsent ? 'Generate cover letter with AI' : 'Generate cover letter (AI features must be enabled)'"
+      @click="$emit('show-cover-letter-modal')"
+    >
+      Generate Cover Letter
+    </v-btn>
+
+    <div v-if="!hasAIConsent" class="ai-notice" role="alert">
+      <v-icon size="13">mdi-lightning-bolt-outline</v-icon>
+      Enable AI features in the footer
+    </div>
+    <div v-else class="section-hint-row">
+      <p class="section-hint">Create cover letters tailored to specific job postings</p>
       <v-btn
         icon
         size="x-small"
@@ -24,12 +31,6 @@
         <v-icon size="15">mdi-information-outline</v-icon>
       </v-btn>
     </div>
-
-    <div v-if="!hasAIConsent" class="ai-notice" role="alert">
-      <v-icon size="13">mdi-lightning-bolt-outline</v-icon>
-      Enable AI features in the footer
-    </div>
-    <p v-else class="section-hint">Create cover letters tailored to specific job postings</p>
   </div>
 </template>
 
@@ -48,14 +49,15 @@ onMounted(() => initializeConsent())
   padding-bottom: 4px;
 }
 
-.action-row {
+.section-hint-row {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
-.action-row .v-btn:first-child {
+.section-hint-row .section-hint {
   flex: 1;
+  margin-top: 0;
 }
 
 .info-btn {
