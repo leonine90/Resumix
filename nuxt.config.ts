@@ -5,5 +5,4 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vuetify'],
   },
-  css: ['@mdi/font/css/materialdesignicons.css'],
 })

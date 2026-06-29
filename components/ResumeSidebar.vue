@@ -181,20 +181,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, defineAsyncComponent } from 'vue'
 import HeaderElementsControl from './sidebar/HeaderElementsControl.vue'
 import ResumeSectionsControl from './sidebar/ResumeSectionsControl.vue'
 import ImportExportSection from './sidebar/ImportExportSection.vue'
 import JobOptimizerSection from './sidebar/JobOptimizerSection.vue'
 import CoverLetterSection from './sidebar/CoverLetterSection.vue'
-import AiImportModal from './modals/AiImportModal.vue'
-import ImportModal from './modals/ImportModal.vue'
-import InfoModal from './modals/InfoModal.vue'
-import TailorResumeModal from './modals/TailorResumeModal.vue'
-import OptimizerInfoModal from './modals/OptimizerInfoModal.vue'
-import CoverLetterModal from './modals/CoverLetterModal.vue'
-import CoverLetterInfoModal from './modals/CoverLetterInfoModal.vue'
 import { useResumeImport } from '~/composables/useResumeImport'
+
+const AiImportModal = defineAsyncComponent(() => import('./modals/AiImportModal.vue'))
+const ImportModal = defineAsyncComponent(() => import('./modals/ImportModal.vue'))
+const InfoModal = defineAsyncComponent(() => import('./modals/InfoModal.vue'))
+const TailorResumeModal = defineAsyncComponent(() => import('./modals/TailorResumeModal.vue'))
+const OptimizerInfoModal = defineAsyncComponent(() => import('./modals/OptimizerInfoModal.vue'))
+const CoverLetterModal = defineAsyncComponent(() => import('./modals/CoverLetterModal.vue'))
+const CoverLetterInfoModal = defineAsyncComponent(() => import('./modals/CoverLetterInfoModal.vue'))
 
 const props = defineProps({
   headerElements: { type: Object, required: true },

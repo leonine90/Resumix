@@ -137,8 +137,9 @@
 <script setup>
 import { resumeData } from '~/data/resume.js'
 import AppFooter from '~/components/AppFooter.vue'
-import ConsentModal from '~/components/modals/ConsentModal.vue'
 import KeyboardShortcuts from '~/components/KeyboardShortcuts.vue'
+
+const ConsentModal = defineAsyncComponent(() => import('~/components/modals/ConsentModal.vue'))
 
 const sidebarCollapsed = ref(false)
 
