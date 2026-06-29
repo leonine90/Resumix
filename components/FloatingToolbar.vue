@@ -3,8 +3,8 @@
     <v-card
       v-if="isSelectionActive && editable"
       class="floating-toolbar"
-      elevation="3"
-      rounded="sm"
+      elevation="0"
+      rounded="lg"
       role="toolbar"
       aria-label="Text formatting options"
       :style="toolbarPosition"
@@ -148,6 +148,8 @@ onMounted(() => {
   position: fixed;
   animation: fadeInUp 0.15s ease-out;
   user-select: none;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(8px);
 }
 
 .toolbar-content {

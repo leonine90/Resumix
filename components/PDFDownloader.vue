@@ -2,7 +2,7 @@
   <div class="pdf-downloader" role="region" aria-label="PDF download">
     <v-btn
       color="primary"
-      variant="elevated"
+      variant="tonal"
       :loading="isGenerating"
       :disabled="isGenerating"
       aria-label="Download resume as PDF"

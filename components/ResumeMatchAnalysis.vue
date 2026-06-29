@@ -116,7 +116,7 @@
       <v-btn
         v-if="analysisData.metrics.overallCompatibility.score >= 65"
         color="secondary"
-        variant="elevated"
+        variant="tonal"
         :loading="isOptimizing"
         :disabled="isOptimizing"
         prepend-icon="mdi-brain"
@@ -127,7 +127,7 @@
       <v-btn
         v-else
         color="error"
-        variant="elevated"
+        variant="tonal"
         prepend-icon="mdi-file-edit"
         @click="$emit('revise')"
       >

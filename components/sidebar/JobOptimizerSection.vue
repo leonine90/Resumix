@@ -6,7 +6,6 @@
       variant="tonal"
       prepend-icon="mdi-brain"
       class="mb-2"
-      size="small"
       :disabled="!hasAIConsent"
       :aria-label="hasAIConsent ? 'Tailor resume for job posting' : 'Tailor resume (AI features must be enabled)'"
       @click="$emit('show-tailor-modal')"

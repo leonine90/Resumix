@@ -7,7 +7,6 @@
       :rail-width="50"
       :width="280"
       color="surface-variant"
-      border="end"
       role="complementary"
       aria-label="Resume controls and settings"
     >
@@ -26,87 +25,119 @@
         <span v-if="!isCollapsed" class="sidebar-brand">Resumix</span>
       </div>
 
-      <v-divider />
-
       <!-- Content: only shown when expanded -->
       <nav v-if="!isCollapsed" class="sidebar-content" aria-label="Resume editing options">
-        <v-expansion-panels v-model="openPanels" multiple variant="accordion" class="pa-2">
-          <!-- Header Elements -->
-          <v-expansion-panel value="header" class="mb-1">
-            <v-expansion-panel-title class="panel-title" min-height="44">
-              <v-icon size="18" class="mr-2">mdi-account</v-icon>
-              <span class="text-body-2 font-weight-medium">Header Elements</span>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <HeaderElementsControl
-                :header-elements="headerElements"
-                :personal="personal"
-                @toggle-element="toggleHeaderElement"
-                @update-headshot="updateHeadshotUrl"
-              />
-            </v-expansion-panel-text>
-          </v-expansion-panel>
+        <!-- Tab Switcher -->
+        <div class="tab-switcher" role="tablist" aria-label="Sidebar mode">
+          <button
+            role="tab"
+            :aria-selected="activeTab === 'resume'"
+            :class="['tab-btn', { 'tab-btn--active': activeTab === 'resume' }]"
+            @click="activeTab = 'resume'"
+          >
+            <v-icon size="15" class="tab-btn-icon">mdi-file-document-outline</v-icon>
+            Resume
+          </button>
+          <button
+            role="tab"
+            :aria-selected="activeTab === 'ai'"
+            :class="['tab-btn', 'tab-btn--ai', { 'tab-btn--active tab-btn--ai-active': activeTab === 'ai' }]"
+            @click="activeTab = 'ai'"
+          >
+            <v-icon size="15" class="tab-btn-icon">mdi-auto-fix</v-icon>
+            AI Tools
+          </button>
+        </div>
 
-          <!-- Resume Sections -->
-          <v-expansion-panel value="sections" class="mb-1">
-            <v-expansion-panel-title class="panel-title" min-height="44">
-              <v-icon size="18" class="mr-2">mdi-view-list</v-icon>
-              <span class="text-body-2 font-weight-medium">Resume Sections</span>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <ResumeSectionsControl
-                :sections="sections"
-                :section-order="sectionOrder"
-                @toggle-section="toggleSection"
-                @update-order="updateSectionOrder"
-              />
-            </v-expansion-panel-text>
-          </v-expansion-panel>
+        <!-- Resume Tab -->
+        <div v-show="activeTab === 'resume'" role="tabpanel" aria-label="Resume configuration">
+          <v-expansion-panels v-model="openResumePanels" multiple variant="accordion" class="pa-2">
+            <!-- Header Elements -->
+            <v-expansion-panel value="header" class="mb-1">
+              <v-expansion-panel-title class="panel-title" min-height="44">
+                <v-icon size="18" class="mr-2">mdi-account</v-icon>
+                <span class="text-body-2 font-weight-medium">Header Elements</span>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <HeaderElementsControl
+                  :header-elements="headerElements"
+                  :personal="personal"
+                  @toggle-element="toggleHeaderElement"
+                  @update-headshot="updateHeadshotUrl"
+                />
+              </v-expansion-panel-text>
+            </v-expansion-panel>
 
-          <!-- Import & Export -->
-          <v-expansion-panel value="importExport" class="mb-1">
-            <v-expansion-panel-title class="panel-title" min-height="44">
-              <v-icon size="18" class="mr-2">mdi-swap-horizontal</v-icon>
-              <span class="text-body-2 font-weight-medium">Import &amp; Export</span>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <ImportExportSection
-                @export="handleExport"
-                @show-import="showImportModal = true"
-                @show-ai-import="showAiImportModal = true"
-                @show-info="showInfoModal = true"
-              />
-            </v-expansion-panel-text>
-          </v-expansion-panel>
+            <!-- Resume Sections -->
+            <v-expansion-panel value="sections" class="mb-1">
+              <v-expansion-panel-title class="panel-title" min-height="44">
+                <v-icon size="18" class="mr-2">mdi-view-list</v-icon>
+                <span class="text-body-2 font-weight-medium">Resume Sections</span>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <ResumeSectionsControl
+                  :sections="sections"
+                  :section-order="sectionOrder"
+                  @toggle-section="toggleSection"
+                  @update-order="updateSectionOrder"
+                />
+              </v-expansion-panel-text>
+            </v-expansion-panel>
 
-          <!-- Job Optimizer -->
-          <v-expansion-panel value="optimizer" class="mb-1">
-            <v-expansion-panel-title class="panel-title" min-height="44">
-              <v-icon size="18" class="mr-2">mdi-briefcase-search</v-icon>
-              <span class="text-body-2 font-weight-medium">Job Optimizer</span>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <JobOptimizerSection
-                @show-tailor-modal="showTailorModal = true"
-                @show-optimizer-info="showOptimizerInfoModal = true"
-              />
-            </v-expansion-panel-text>
-          </v-expansion-panel>
+            <!-- Import & Export -->
+            <v-expansion-panel value="importExport">
+              <v-expansion-panel-title class="panel-title" min-height="44">
+                <v-icon size="18" class="mr-2">mdi-swap-horizontal</v-icon>
+                <span class="text-body-2 font-weight-medium">Import &amp; Export</span>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <ImportExportSection
+                  @export="handleExport"
+                  @show-import="showImportModal = true"
+                  @show-ai-import="showAiImportModal = true"
+                  @show-info="showInfoModal = true"
+                />
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </div>
 
-          <!-- Cover Letter -->
-          <v-expansion-panel value="coverLetter">
-            <v-expansion-panel-title class="panel-title" min-height="44">
-              <v-icon size="18" class="mr-2">mdi-file-document-edit</v-icon>
-              <span class="text-body-2 font-weight-medium">Cover Letter</span>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <CoverLetterSection
-                @show-cover-letter-modal="showCoverLetterModal = true"
-                @show-cover-letter-info="showCoverLetterInfoModal = true"
-              />
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-        </v-expansion-panels>
+        <!-- AI Tools Tab -->
+        <div v-show="activeTab === 'ai'" role="tabpanel" aria-label="AI generation tools">
+          <div class="ai-tab-banner">
+            <v-icon size="14" class="ai-tab-banner-icon">mdi-lightning-bolt</v-icon>
+            <span>Powered by AI — requires AI features enabled</span>
+          </div>
+          <v-expansion-panels v-model="openAiPanels" multiple variant="accordion" class="pa-2 pt-1">
+            <!-- Job Optimizer -->
+            <v-expansion-panel value="optimizer" class="mb-1 ai-panel">
+              <v-expansion-panel-title class="panel-title" min-height="44">
+                <v-icon size="18" class="mr-2">mdi-briefcase-search</v-icon>
+                <span class="text-body-2 font-weight-medium">Job Optimizer</span>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <JobOptimizerSection
+                  @show-tailor-modal="showTailorModal = true"
+                  @show-optimizer-info="showOptimizerInfoModal = true"
+                />
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+
+            <!-- Cover Letter -->
+            <v-expansion-panel value="coverLetter" class="ai-panel">
+              <v-expansion-panel-title class="panel-title" min-height="44">
+                <v-icon size="18" class="mr-2">mdi-file-document-edit</v-icon>
+                <span class="text-body-2 font-weight-medium">Cover Letter</span>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <CoverLetterSection
+                  @show-cover-letter-modal="showCoverLetterModal = true"
+                  @show-cover-letter-info="showCoverLetterInfoModal = true"
+                />
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </div>
       </nav>
     </v-navigation-drawer>
 
@@ -185,7 +216,9 @@ const emit = defineEmits([
 const { exportData } = useResumeImport()
 
 const isCollapsed = ref(false)
-const openPanels = ref(['importExport'])
+const activeTab = ref('resume')
+const openResumePanels = ref(['importExport'])
+const openAiPanels = ref([])
 
 // Modal visibility
 const showImportModal = ref(false)
@@ -237,7 +270,7 @@ const handleApplyOptimizations = (updatedData) => {
 .sidebar-header-bar {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 10px 12px;
   min-height: 52px;
 }
 
@@ -259,24 +292,138 @@ const handleApplyOptimizations = (updatedData) => {
   flex: 1;
 }
 
-.panel-title {
+/* ── Tab Switcher ── */
+.tab-switcher {
+  display: flex;
+  gap: 6px;
+  padding: 6px 12px 4px;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, opacity 0.15s;
+  background: transparent;
+  color: rgb(var(--v-theme-on-surface));
+  opacity: 0.5;
+  letter-spacing: 0.01em;
+}
+
+.tab-btn:hover {
+  background: rgba(var(--v-theme-on-surface), 0.06);
+  opacity: 0.8;
+}
+
+.tab-btn--active {
+  background: rgba(21, 101, 192, 0.12);
+  color: #1565C0;
+  opacity: 1;
+}
+
+.tab-btn--ai.tab-btn--ai-active {
+  background: rgba(103, 58, 183, 0.1);
+  color: #673AB7;
+  opacity: 1;
+}
+
+.tab-btn-icon {
+  flex-shrink: 0;
+}
+
+/* ── AI Tab Banner ── */
+.ai-tab-banner {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 4px 12px 0;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: rgba(103, 58, 183, 0.08);
+  font-size: 11px;
+  color: #673AB7;
+  line-height: 1.3;
+}
+
+.ai-tab-banner-icon {
+  flex-shrink: 0;
+}
+
+/* Sidebar action buttons — smaller font to suit the narrow panel */
+:deep(.v-btn.v-btn--density-default) {
   font-size: 13px !important;
+  height: 34px !important;
 }
 
-:deep(.v-expansion-panel-text__wrapper) {
-  padding: 8px 12px 12px;
-}
+/* ── Flat expansion panels ── */
 
-:deep(.v-expansion-panel-title) {
-  padding: 0 12px;
-}
-
+/* Strip all card chrome from panels */
 :deep(.v-expansion-panel) {
+  background: transparent !important;
+  box-shadow: none !important;
   border-radius: 8px !important;
 }
 
+:deep(.v-expansion-panel::before) {
+  box-shadow: none !important;
+}
+
+/* Remove the top border accordion adds between adjacent panels */
+:deep(.v-expansion-panels--variant-accordion > :not(:first-child)) {
+  border-top: none !important;
+}
+
+/* Flat panel title */
+:deep(.v-expansion-panel-title) {
+  padding: 0 12px !important;
+  border-radius: 8px !important;
+  transition: background-color 0.15s !important;
+  font-size: 13px !important;
+  min-height: 40px !important;
+}
+
+:deep(.v-expansion-panel-title:hover) {
+  background: rgba(var(--v-theme-on-surface), 0.06) !important;
+}
+
+/* Active panel title — neutral grey so it doesn't clash with buttons inside */
 :deep(.v-expansion-panel--active > .v-expansion-panel-title) {
-  min-height: 44px;
+  background: rgba(var(--v-theme-on-surface), 0.08) !important;
+  color: rgb(var(--v-theme-on-surface)) !important;
+  border-radius: 8px 8px 0 0 !important;
+  min-height: 44px !important;
+}
+
+/* Active AI panel title — also neutral */
+:deep(.ai-panel.v-expansion-panel--active > .v-expansion-panel-title) {
+  background: rgba(var(--v-theme-on-surface), 0.08) !important;
+  color: rgb(var(--v-theme-on-surface)) !important;
+}
+
+:deep(.ai-panel .v-expansion-panel-title .v-icon) {
+  color: inherit;
+}
+
+:deep(.v-expansion-panel-text__wrapper) {
+  padding: 8px 12px 14px;
+}
+
+/* Panel content area — subtle neutral tint when open */
+:deep(.v-expansion-panel--active .v-expansion-panel-text) {
+  background: rgba(var(--v-theme-on-surface), 0.03);
+  border-radius: 0 0 8px 8px;
+}
+
+:deep(.ai-panel.v-expansion-panel--active .v-expansion-panel-text) {
+  background: rgba(var(--v-theme-on-surface), 0.03);
 }
 
 @media print {
@@ -291,7 +438,7 @@ const handleApplyOptimizations = (updatedData) => {
     height: auto !important;
     position: relative !important;
     border-right: none !important;
-    border-bottom: 1px solid rgb(var(--v-theme-outline)) !important;
+    border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.06) !important;
   }
 }
 </style>

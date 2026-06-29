@@ -6,7 +6,6 @@
       variant="tonal"
       prepend-icon="mdi-file-document-edit"
       class="mb-2"
-      size="small"
       :disabled="!hasAIConsent"
       :aria-label="hasAIConsent ? 'Generate cover letter with AI' : 'Generate cover letter (AI features must be enabled)'"
       @click="$emit('show-cover-letter-modal')"

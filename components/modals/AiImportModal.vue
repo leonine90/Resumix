@@ -76,7 +76,7 @@
                 v-if="uploadedFile"
                 size="x-small"
                 color="error"
-                variant="elevated"
+                variant="tonal"
                 prepend-icon="mdi-delete"
                 @click.stop="removeFile"
                 aria-label="Remove uploaded file"
@@ -136,7 +136,7 @@
         </v-btn>
         <v-btn
           color="primary"
-          variant="elevated"
+          variant="tonal"
           prepend-icon="mdi-upload"
           :loading="isProcessing"
           :disabled="(!resumeText.trim() && !uploadedFile) || isProcessing"

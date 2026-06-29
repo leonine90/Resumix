@@ -13,7 +13,7 @@
           <span class="text-body-2 font-weight-medium ai-label">AI Features</span>
           <v-switch
             v-model="aiConsentEnabled"
-            :color="aiConsentEnabled ? 'success' : undefined"
+            :color="aiConsentEnabled ? 'primary' : undefined"
             density="compact"
             hide-details
             inset
@@ -21,7 +21,7 @@
             :aria-label="`AI features are ${aiConsentEnabled ? 'enabled' : 'disabled'}. Click to ${aiConsentEnabled ? 'disable' : 'enable'}.`"
             @update:model-value="handleConsentChange"
           />
-          <span class="text-caption status-text" :class="aiConsentEnabled ? 'text-success' : 'text-disabled'">
+          <span class="text-caption status-text" :class="aiConsentEnabled ? 'text-primary' : 'text-disabled'">
             {{ aiConsentEnabled ? 'On' : 'Off' }}
           </span>
         </div>
@@ -39,8 +39,6 @@
           Delete Data
         </v-btn>
       </div>
-
-      <v-divider class="my-3" opacity="0.5" />
 
       <!-- Bottom row: legal links -->
       <nav class="footer-legal" aria-label="Legal links and contact information">
@@ -72,7 +70,7 @@
         </v-card-text>
         <v-card-actions class="pa-4 gap-2 justify-end">
           <v-btn variant="text" @click="showDeleteConfirm = false">Cancel</v-btn>
-          <v-btn color="error" variant="elevated" @click="confirmDelete">Delete Everything</v-btn>
+          <v-btn color="error" variant="tonal" @click="confirmDelete">Delete Everything</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -127,6 +125,7 @@ const confirmDelete = async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .ai-row {

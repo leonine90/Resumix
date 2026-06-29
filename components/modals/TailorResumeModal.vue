@@ -108,7 +108,7 @@
             </v-btn>
             <v-btn
               color="secondary"
-              variant="elevated"
+              variant="tonal"
               prepend-icon="mdi-chart-line"
               :loading="isAnalyzing"
               :disabled="!jobPostText.trim() || !resumeTextInput.trim() || isAnalyzing"

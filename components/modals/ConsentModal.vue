@@ -86,7 +86,7 @@
         </v-btn>
         <v-btn
           color="primary"
-          variant="elevated"
+          variant="tonal"
           aria-label="Accept all cookies including AI processing"
           @click="handleAcceptAll"
         >

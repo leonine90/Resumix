@@ -2,10 +2,9 @@
   <div class="section-body">
     <v-btn
       block
-      color="primary"
+      color="info"
       variant="tonal"
       prepend-icon="mdi-download"
-      size="small"
       class="mb-2"
       aria-label="Export resume as JSON file"
       @click="$emit('export')"
@@ -15,10 +14,9 @@
 
     <v-btn
       block
-      color="secondary"
+      color="success"
       variant="tonal"
       prepend-icon="mdi-upload"
-      size="small"
       :disabled="!hasAIConsent"
       :aria-label="hasAIConsent ? 'Import resume with AI processing' : 'Import resume with AI (AI features must be enabled)'"
       @click="$emit('show-ai-import')"

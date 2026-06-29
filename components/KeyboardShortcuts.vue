@@ -3,7 +3,7 @@
     <v-btn
       icon
       size="40"
-      elevation="3"
+      elevation="0"
       color="surface"
       class="shortcuts-fab"
       aria-label="View keyboard shortcuts"
@@ -64,9 +64,8 @@
           </v-alert>
         </v-card-text>
 
-        <v-divider />
         <v-card-actions class="pa-4 justify-end">
-          <v-btn color="primary" variant="elevated" @click="showModal = false">
+          <v-btn color="primary" variant="tonal" @click="showModal = false">
             Close
           </v-btn>
         </v-card-actions>

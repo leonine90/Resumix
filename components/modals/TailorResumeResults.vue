@@ -206,7 +206,7 @@
                         />
                         <v-btn
                           color="primary"
-                          variant="elevated"
+                          variant="tonal"
                           size="small"
                           :loading="refiningAchievement.isRefining"
                           :disabled="refiningAchievement.isRefining || !refiningAchievement.prompt.trim()"
@@ -261,7 +261,7 @@
         </v-btn>
         <v-btn
           color="secondary"
-          variant="elevated"
+          variant="tonal"
           prepend-icon="mdi-check"
           :loading="isApplying"
           :disabled="isApplying"

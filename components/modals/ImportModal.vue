@@ -42,7 +42,7 @@
         </v-btn>
         <v-btn
           color="primary"
-          variant="elevated"
+          variant="tonal"
           :disabled="!importJsonText.trim()"
           aria-label="Import resume data"
           @click="handleImport"

@@ -104,7 +104,7 @@
             </v-btn>
             <v-btn
               color="secondary"
-              variant="elevated"
+              variant="tonal"
               prepend-icon="mdi-file-document-edit"
               :loading="isGenerating"
               :disabled="!coverLetterJobDescription.trim() || !coverLetterResumeText.trim() || isGenerating"
@@ -145,7 +145,7 @@
             </v-btn>
             <v-btn
               color="primary"
-              variant="elevated"
+              variant="tonal"
               prepend-icon="mdi-download"
               aria-label="Download cover letter as PDF"
               @click="handleDownload"

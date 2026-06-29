@@ -20,12 +20,12 @@ export default defineNuxtPlugin((nuxtApp) => {
             'primary-container': '#E3F2FD',
             'on-primary-container': '#001D36',
 
-            // Secondary — AI / success green
-            secondary: '#2E7D32',
-            'secondary-darken-1': '#1B5E20',
+            // Secondary — AI purple
+            secondary: '#673AB7',
+            'secondary-darken-1': '#512DA8',
             'on-secondary': '#FFFFFF',
-            'secondary-container': '#E8F5E9',
-            'on-secondary-container': '#002105',
+            'secondary-container': '#EDE7F6',
+            'on-secondary-container': '#1A0048',
 
             // Error / destructive
             error: '#C62828',
@@ -79,8 +79,9 @@ export default defineNuxtPlugin((nuxtApp) => {
     },
     defaults: {
       VBtn: {
-        variant: 'elevated',
-        rounded: 'sm',
+        variant: 'tonal',
+        rounded: 'lg',
+        style: 'text-transform: none; letter-spacing: 0.01em;',
       },
       VCard: {
         rounded: 'md',
