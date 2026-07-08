@@ -138,6 +138,7 @@
 import { resumeData } from '~/data/resume.js'
 import AppFooter from '~/components/AppFooter.vue'
 import KeyboardShortcuts from '~/components/KeyboardShortcuts.vue'
+import { useSessionStorage } from '~/composables/useSessionStorage'
 
 const ConsentModal = defineAsyncComponent(() => import('~/components/modals/ConsentModal.vue'))
 
@@ -146,8 +147,51 @@ const sidebarCollapsed = ref(false)
 // Initialize text selection tracking for floating toolbar
 const { initializeSelectionTracking, destroySelectionTracking } = useTextSelection()
 
-// Make the data reactive
+// Initialize session storage
+const {
+  data: sessionData,
+  isLoading: isSessionLoading,
+  hasError: sessionHasError,
+  watchForChanges,
+  clearSessionStorage,
+  saveImmediately
+} = useSessionStorage()
+
+// Make the data reactive - use initial data immediately so the template can render safely
 const reactiveResumeData = ref({ ...resumeData })
+let resumeWatcherCleanup = null
+
+const initializeResumeData = (dataToUse) => {
+  reactiveResumeData.value = dataToUse
+
+  if (resumeWatcherCleanup) {
+    resumeWatcherCleanup()
+  }
+
+  resumeWatcherCleanup = watchForChanges(reactiveResumeData.value)
+}
+
+// Initialize data on mount
+onMounted(() => {
+  const useSessionData = sessionData.value && !sessionHasError.value
+  const initialData = useSessionData ? sessionData.value : { ...resumeData }
+  initializeResumeData(initialData)
+
+  if (!useSessionData) {
+    saveImmediately(reactiveResumeData.value)
+    console.log('Using initial data and saving to session storage')
+  } else {
+    console.log('Using session storage data')
+  }
+
+  // Cleanup on unmount
+  onUnmounted(() => {
+    destroySelectionTracking()
+    if (resumeWatcherCleanup) {
+      resumeWatcherCleanup()
+    }
+  })
+})
 
 
 
@@ -159,59 +203,102 @@ const wrapperMargin = computed(() => {
 // Check if there's a next section after the current one
 // Update functions for each section
 const updatePersonal = (newPersonal) => {
-  reactiveResumeData.value.personal = newPersonal
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.personal = newPersonal
+    // Save to session storage
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateHeaderElements = (newHeaderElements) => {
-  reactiveResumeData.value.headerElements = newHeaderElements
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.headerElements = newHeaderElements
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateResearchInterests = (newResearchInterests) => {
-  reactiveResumeData.value.researchInterests = newResearchInterests
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.researchInterests = newResearchInterests
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateEducation = (newEducation) => {
-  reactiveResumeData.value.education = newEducation
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.education = newEducation
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateSummary = (newSummary) => {
-  reactiveResumeData.value.summary = newSummary
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.summary = newSummary
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateExperience = (newExperience) => {
-  reactiveResumeData.value.experience = newExperience
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.experience = newExperience
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updatePublications = (newPublications) => {
-  reactiveResumeData.value.publications = newPublications
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.publications = newPublications
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateSkills = (newSkills) => {
-  reactiveResumeData.value.skills = newSkills
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.skills = newSkills
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateLanguages = (newLanguages) => {
-  reactiveResumeData.value.languages = newLanguages
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.languages = newLanguages
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateSignature = (newSignature) => {
-  reactiveResumeData.value.signature = newSignature
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.signature = newSignature
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateVolunteering = (newVolunteering) => {
-  reactiveResumeData.value.volunteering = newVolunteering
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.volunteering = newVolunteering
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateSections = (newSections) => {
-  reactiveResumeData.value.sections = newSections
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.sections = newSections
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateSectionOrder = (newSectionOrder) => {
-  reactiveResumeData.value.sectionOrder = newSectionOrder
+  if (reactiveResumeData.value) {
+    reactiveResumeData.value.sectionOrder = newSectionOrder
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateResumeData = (newResumeData) => {
-  reactiveResumeData.value = { ...newResumeData }
+  if (reactiveResumeData.value) {
+    Object.assign(reactiveResumeData.value, newResumeData)
+    saveImmediately(reactiveResumeData.value)
+  }
 }
 
 const updateSidebarCollapsed = (collapsed) => {
